@@ -1,4 +1,4 @@
-using TeseBackEndClient.Components;
+using TeseBlazor.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +29,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(TeseBackEndClient.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(TeseBlazor.Client._Imports).Assembly);
 
 app.Run();

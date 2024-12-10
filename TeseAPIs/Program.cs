@@ -21,7 +21,7 @@ builder.Services.AddSingleton<IStudentService, StudentService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("TeseBackendClient", builder =>
+    options.AddPolicy("TeseBlazor", builder =>
     {
         builder.WithOrigins("https://localhost:7103") // Replace with your Blazor app's URL
                .AllowAnyMethod()
@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("TeseBackendClient");
+app.UseCors("TeseBlazor");
 
 app.UseHttpsRedirection();
 

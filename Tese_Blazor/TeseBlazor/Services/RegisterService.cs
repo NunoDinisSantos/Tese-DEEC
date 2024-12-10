@@ -1,4 +1,4 @@
-﻿namespace TeseBackEndClient.RegisterService
+﻿namespace TeseBlazor.RegisterService
 {
     public class RegisterService
     {

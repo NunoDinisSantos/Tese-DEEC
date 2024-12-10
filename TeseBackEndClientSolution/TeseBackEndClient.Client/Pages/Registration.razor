@@ -1,0 +1,52 @@
+﻿@page "/registar"
+@rendermode InteractiveWebAssembly
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Registo</PageTitle>
+
+<h3>Registration</h3>
+<div>
+    <label for="numeroEstudante">Insere o teu número de estudante:</label>
+    <InputText id="numeroEstudante" @bind-Value="NumeroEstudante" />
+</div>
+
+<div>
+    <button class="btn btn-primary" @onclick="Registar">Criar conta com este ID</button>
+    <label>@ErrorMessage</label>
+</div>
+
+
+@code {
+    private string NumeroEstudante { get; set; } = string.Empty;
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private async Task Registar()
+    {
+        if (!System.Text.RegularExpressions.Regex.IsMatch(NumeroEstudante, @"^\d*$"))
+        {
+            ErrorMessage = "Erro: Só são permitidos números.";
+            return;
+        }
+
+        if (NumeroEstudante.Length != 10)
+        {
+            ErrorMessage = "Erro: Número de estudante é composto por 10 dígitos.";
+            return;
+        }
+
+        var response = await HttpClient.PostAsJsonAsync("api/misteriosaquaticos", NumeroEstudante);
+
+        if(response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/sucesso");
+            return;
+        }
+        else
+        {
+            ErrorMessage = "Erro ao criar jogador. Poderá já existir uma conta com esse ID";
+            StateHasChanged();
+            return;
+        }
+    }
+}

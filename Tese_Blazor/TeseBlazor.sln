@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeseBlazor", "TeseBackEndClient\TeseBlazor.csproj", "{DF8BBA19-1A8B-4B54-91C0-B76E07032FD0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeseBlazor.Client", "TeseBackEndClient.Client\TeseBlazor.Client.csproj", "{08A878C7-F0E3-49A6-B6E8-48496F476EF1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeseAPIs", "..\TeseAPIs\TeseAPIs.csproj", "{FF6F3C3D-FD31-401E-9353-5EE7D9429CD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeseBlazor", "TeseBlazor\TeseBlazor.csproj", "{729CFD57-C505-41C4-85CE-41B6DF6FCCE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeseBlazor.Client", "TeseBlazor.Client\TeseBlazor.Client.csproj", "{19F0B08A-0D2F-43E8-BF4C-57F7FE671DB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DF8BBA19-1A8B-4B54-91C0-B76E07032FD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF8BBA19-1A8B-4B54-91C0-B76E07032FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF8BBA19-1A8B-4B54-91C0-B76E07032FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF8BBA19-1A8B-4B54-91C0-B76E07032FD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08A878C7-F0E3-49A6-B6E8-48496F476EF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08A878C7-F0E3-49A6-B6E8-48496F476EF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08A878C7-F0E3-49A6-B6E8-48496F476EF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08A878C7-F0E3-49A6-B6E8-48496F476EF1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF6F3C3D-FD31-401E-9353-5EE7D9429CD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FF6F3C3D-FD31-401E-9353-5EE7D9429CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF6F3C3D-FD31-401E-9353-5EE7D9429CD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF6F3C3D-FD31-401E-9353-5EE7D9429CD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{729CFD57-C505-41C4-85CE-41B6DF6FCCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{729CFD57-C505-41C4-85CE-41B6DF6FCCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{729CFD57-C505-41C4-85CE-41B6DF6FCCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{729CFD57-C505-41C4-85CE-41B6DF6FCCE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F0B08A-0D2F-43E8-BF4C-57F7FE671DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F0B08A-0D2F-43E8-BF4C-57F7FE671DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F0B08A-0D2F-43E8-BF4C-57F7FE671DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F0B08A-0D2F-43E8-BF4C-57F7FE671DB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

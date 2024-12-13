@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SuperUser.MainPage" Title="DEEC - Misterios Aquaticos Super User">
+
+    <StackLayout Padding="10">
+
+
+        <Button Text="Refresh data" Command="{Binding RefreshData}" HorizontalOptions="Start" Margin="0,0,0,20"/>
+
+
+        <Label Text="Pesquisar por número estudante:" FontSize="12" FontAttributes="None" Margin="0,0,0,2"/>
+        <Grid VerticalOptions="Start" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <Entry Text="{Binding NumeroEstudanteProcurar}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
+
+            <Button Text="Procurar" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
+        </Grid>
+        <Grid Padding="5" BackgroundColor="DarkGray" WidthRequest="500" HorizontalOptions="Start">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+
+            <Label Text="Id Estudante" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
+            <Label Text="Créditos Totais" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Start"/>
+        </Grid>
+        <CollectionView ItemsSource="{Binding Estudantes}"
+                        SelectedItem="{Binding EstudanteSeleccionado, Mode=TwoWay}"
+                        SelectionMode="Single" Margin="0,0,0,20" WidthRequest="500" HorizontalOptions="Start" BackgroundColor="Black">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup Name="CommonStates">
+                    <VisualState Name="Normal"></VisualState>
+                    <VisualState Name="Selected">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="White"></Setter>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="5" Margin="0,0,0,5" BackgroundColor="Transparent">
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding PlayerId}" 
+                               FontSize="14" 
+                               VerticalOptions="Center" 
+                               WidthRequest="150" />
+                            <Label Text="{Binding Creditos}" 
+                               FontSize="14" 
+                               VerticalOptions="Center" />
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Grid WidthRequest="500" HorizontalOptions="Start">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <Label Text="Student ID" Margin="0,0,0,5" Grid.Column="0"/>
+            <Label Text="Credits" Margin="0,0,0,5" Grid.Column="1"/>
+        </Grid>
+        
+        <Grid WidthRequest="500" HorizontalOptions="Start" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+
+            <Entry Text="{Binding EstudanteSeleccionado.PlayerId}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="150" HorizontalOptions="Start" Grid.Column="0"/>
+            <Entry Text="{Binding EstudanteSeleccionado.Creditos}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="1"/>
+        </Grid>
+        
+
+        <!-- Update Buttons -->
+        <Label Text="Update creditos" Margin="0,0,0,5" WidthRequest="250" HorizontalOptions="Start"/>
+        <Entry Text="{Binding CustomCreditsAmount}" Keyboard="Numeric" Placeholder="+/- X créditos" WidthRequest="150" HorizontalOptions="Start" Margin="0,0,0,2"/>
+        <Button Text="Update Credits" Command="{Binding UpdateCustomCreditCommand}" WidthRequest="150" HorizontalOptions="Start"/>
+        <Label Text="{Binding UpdateCreditsMessage}" Margin="0,0,0,2" WidthRequest="250" HorizontalOptions="Start"/>
+
+        
+    </StackLayout>
+</ContentPage>

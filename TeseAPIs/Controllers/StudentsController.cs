@@ -5,17 +5,10 @@ using TeseAPIs.Services;
 namespace TeseAPIs.Controllers
 {
     [ApiController]
-    public class BackEndController : ControllerBase
+    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService) : ControllerBase
     {
-        private readonly IStudentService _studentService;
-
-        private readonly IStudentProgressService _studentProgressService;
-
-        public BackEndController(IStudentService studentRepository, IStudentProgressService studentProgressService)
-        {
-            _studentService = studentRepository;
-            _studentProgressService = studentProgressService;
-        }
+        private readonly IStudentService _studentService = studentRepository; 
+        private readonly IStudentProgressService _studentProgressService = studentProgressService;
 
         [HttpPost(ApiEndpoints.Tese.Create)]
         public async Task<IActionResult> Create([FromBody]string studentId)
@@ -63,7 +56,7 @@ namespace TeseAPIs.Controllers
                 return NotFound();
             }
 
-            var students = studentsProgress.MapToResponse();
+            var students = studentsProgress;
             return Ok(students);
         }
     }

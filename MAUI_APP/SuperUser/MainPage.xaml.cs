@@ -17,19 +17,19 @@ namespace SuperUser
         }
     }
 
-    public class MainViewModel : INotifyPropertyChanged
+    public partial class MainViewModel : INotifyPropertyChanged
     {
         private readonly StudentService _studentService;
-        public ObservableCollection<Estudante> Estudantes { get; set; } = new ObservableCollection<Estudante>();
-        private Estudante _currentStudent;
+        public ObservableCollection<Student> Students { get; set; } = [];
+        private Student _currentStudent;
 
-        public Estudante EstudanteSeleccionado
+        public Student SelectedStudent
         {
             get => _currentStudent;
             set
             {
                 _currentStudent = value;
-                OnPropertyChanged(nameof(EstudanteSeleccionado));
+                OnPropertyChanged(nameof(SelectedStudent));
             }
         }
         public ICommand UpdateCustomCreditCommand { get; }
@@ -58,14 +58,14 @@ namespace SuperUser
             }
         }
 
-        private string _numeroEstudanteProcurar;
+        private string _studentNumberToSearch;
 
-        public string NumeroEstudanteProcurar
+        public string StudentNumberToSearch
         {
-            get => _numeroEstudanteProcurar;
+            get => _studentNumberToSearch;
             set
             {
-                _numeroEstudanteProcurar = value;
+                _studentNumberToSearch = value;
                 OnPropertyChanged();
             }
         }
@@ -74,8 +74,8 @@ namespace SuperUser
         {
             _studentService = studentService;
             UpdateCustomCreditCommand = new Command(async () => await UpdateCredits(CustomCreditsAmount));
-            GetStudentByIdAsync = new Command(async () => await GetStudentById(NumeroEstudanteProcurar));
-            RefreshData = new Command(async () => await Refresh());
+            GetStudentByIdAsync = new Command(async () => await GetStudentById(StudentNumberToSearch));
+            RefreshData = new Command(() => Refresh());
 
             LoadStudents();
         }
@@ -86,14 +86,14 @@ namespace SuperUser
 
             if (response.Count>0)
             {
-                Estudantes.Clear();
+                Students.Clear();
                 foreach (var student in response)
                 {
-                    Estudantes.Add(student);
+                    Students.Add(student);
                 }
             }
         }
-        private async Task Refresh()
+        private void Refresh()
         {
             LoadStudents();
         }
@@ -101,16 +101,16 @@ namespace SuperUser
         private async Task GetStudentById(string studentId)
         {
             var response = await _studentService.GetStudentAsync(studentId);
-            Estudantes.Clear();
-            Estudantes.Add(response);
+            Students.Clear();
+            Students.Add(response);
         }
 
-        private async Task UpdateCredits(int sumCreditos)
+        private async Task UpdateCredits(int sumCredits)
         {
-            if (EstudanteSeleccionado != null)
+            if (SelectedStudent != null)
             {
                 string message = string.Empty;
-                var result = await _studentService.UpdateStudentCreditsAsync(EstudanteSeleccionado.PlayerId, sumCreditos);
+                var result = await _studentService.UpdateStudentCreditsAsync(SelectedStudent.PlayerId, sumCredits);
                 if (result != HttpStatusCode.OK)
                 {
                     message = "Algo falhou a tentar actualizar créditos.";
@@ -122,7 +122,7 @@ namespace SuperUser
                 {
                     _customCreditsAmount = 0;
                     message = "Créditos actualizados com sucesso.";
-                    OnPropertyChanged(nameof(EstudanteSeleccionado));
+                    OnPropertyChanged(nameof(SelectedStudent));
                     OnPropertyChanged(UpdateCreditsMessage);
 
                     _updateCreditsMessage = message;

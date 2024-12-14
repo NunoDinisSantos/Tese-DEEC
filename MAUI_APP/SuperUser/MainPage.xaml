@@ -15,7 +15,7 @@
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <Entry Text="{Binding NumeroEstudanteProcurar}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
+            <Entry Text="{Binding StudentNumberToSearch}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
 
             <Button Text="Procurar" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
         </Grid>
@@ -28,8 +28,8 @@
             <Label Text="Id Estudante" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
             <Label Text="Créditos Totais" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Start"/>
         </Grid>
-        <CollectionView ItemsSource="{Binding Estudantes}"
-                        SelectedItem="{Binding EstudanteSeleccionado, Mode=TwoWay}"
+        <CollectionView ItemsSource="{Binding Students}"
+                        SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
                         SelectionMode="Single" Margin="0,0,0,20" WidthRequest="500" HorizontalOptions="Start" BackgroundColor="Black">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup Name="CommonStates">
@@ -49,7 +49,7 @@
                                FontSize="14" 
                                VerticalOptions="Center" 
                                WidthRequest="150" />
-                            <Label Text="{Binding Creditos}" 
+                            <Label Text="{Binding Credits}" 
                                FontSize="14" 
                                VerticalOptions="Center" />
                         </StackLayout>
@@ -72,8 +72,8 @@
                 <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
 
-            <Entry Text="{Binding EstudanteSeleccionado.PlayerId}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="150" HorizontalOptions="Start" Grid.Column="0"/>
-            <Entry Text="{Binding EstudanteSeleccionado.Creditos}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="1"/>
+            <Entry Text="{Binding SelectedStudent.PlayerId}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="150" HorizontalOptions="Start" Grid.Column="0"/>
+            <Entry Text="{Binding SelectedStudent.Credits}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="1"/>
         </Grid>
         
 

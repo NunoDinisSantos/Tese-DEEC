@@ -1,53 +1,77 @@
 ﻿using Dapper;
 using TeseAPIs.Data;
-using TeseAPIs.Models;
+using TeseAPIs.Mapping.PlayersProgress;
 using TeseAPIs.Validations;
 
 namespace TeseAPIs.Services
 {
-    public class StudentProgressService : IStudentProgressService
+    public class StudentProgressService(IDbConnectionFactory connectionFactory, ICreditValidations creditValidations) : IStudentProgressService
     {
-        private readonly IDbConnectionFactory _connectionFactory;
-        private readonly ICreditValidations _creditValidations;
+        private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
+        private readonly ICreditValidations _creditValidations = creditValidations;
 
-        public StudentProgressService(IDbConnectionFactory connectionFactory, ICreditValidations creditValidations)
-        {
-            _connectionFactory = connectionFactory;
-            _creditValidations = creditValidations;
-        }
-
-        public async Task<IEnumerable<PlayerProgress>?> GetAllAsync()
+        public async Task<IEnumerable<PlayerProgressResponse>?> GetAllAsync()
         {
             using var connection = await _connectionFactory.CreateConnectionAsync();
 
-            var query = $"SELECT * FROM MisteriosAquaticos";
-            var result = await connection.QueryAsync<PlayerProgress>(query);
- 
-            return result.Select(x => new PlayerProgress
-            {
-                PlayerId = x.PlayerId,
-                TempoDeJogo = x.TempoDeJogo,
-                Moedas = x.Moedas,
-                PeixesApanhados = x.PeixesApanhados,
-                Tutorial = x.Tutorial,
-                Lanterna = x.Lanterna,
-                ModuloProfundidade = x.ModuloProfundidade,
-                ModuloReel = x.ModuloReel,
-                ModuloStorage = x.ModuloStorage,
-                ModuloTemperatura = x.ModuloTemperatura,
-                Days = x.Days,
-                ObjectosRaros = x.ObjectosRaros,
-                LastLogin = x.LastLogin,
-                DayStreak = x.DayStreak,
-                Creditos = x.Creditos         
-            }
-            );
+            var query = $"SELECT " +
+                $"ma.player_id AS PlayerId," +
+                $"ma.time_played AS TimePlayed," +
+                $"ma.tutorial AS Tutorial," +
+                $"ma.coins AS Coins," +
+                $"ma.fish_caught AS FishCaught," +
+                $"ma.flashlight AS Flashlight," +
+                $"ma.depth_module AS DepthModule," +
+                $"ma.reel_module AS ReelModule," +
+                $"ma.storage_module AS StorageModule," +
+                $"ma.temp_module AS TempModule," +
+                $"ma.days AS Days," +
+                $"ma.rare_objects AS RareObjects," +
+                $"ma.last_login AS LastLogin," +
+                $"ma.days_streak AS DaysStreak," +
+                $"ma.credits AS Credits," +
+                $"ach.treasure AS Treasure," +
+                $"ach.ancient_coral AS AncientCoral," +
+                $"ach.lost_research AS LostResearch," +
+                $"ach.temple_jewel AS TempleJewel," +
+                $"ach.boat_jewel AS BoatJewel," +
+                $"ach.old_ice AS OldIce" +
+                $" FROM MisteriosAquaticos ma" +
+                $" LEFT JOIN Achievements ach ON ma.player_id = ach.player_id";
+
+            var result = await connection.QueryAsync<PlayerProgressResponse>(query);
+
+            return result;
         }
 
-        public async Task<PlayerProgress?> GetByIdAsync(string studentId)
+        public async Task<PlayerProgressResponse?> GetByIdAsync(string studentId)
         {
             using var connection = await _connectionFactory.CreateConnectionAsync();
-            var result = await connection.QuerySingleOrDefaultAsync<PlayerProgress>(new CommandDefinition($"SELECT * FROM MisteriosAquaticos WHERE PlayerId = {studentId}"));
+            var result = await connection.QuerySingleOrDefaultAsync<PlayerProgressResponse>(new CommandDefinition($"SELECT " +
+                $"ma.player_id AS PlayerId," +
+                $"ma.time_played AS TimePlayed," +
+                $"ma.tutorial AS Tutorial," +
+                $"ma.coins AS Coins," +
+                $"ma.fish_caught AS FishCaught," +
+                $"ma.flashlight AS Flashlight," +
+                $"ma.depth_module AS DepthModule," +
+                $"ma.reel_module AS ReelModule," +
+                $"ma.storage_module AS StorageModule," +
+                $"ma.temp_module AS TempModule," +
+                $"ma.days AS Days," +
+                $"ma.rare_objects AS RareObjects," +
+                $"ma.last_login AS LastLogin," +
+                $"ma.days_streak AS DaysStreak," +
+                $"ma.credits AS Credits," +
+                $"ach.treasure AS Treasure," +
+                $"ach.ancient_coral AS AncientCoral," +
+                $"ach.lost_research AS LostResearch," +
+                $"ach.temple_jewel AS TempleJewel," +
+                $"ach.boat_jewel AS BoatJewel," +
+                $"ach.old_ice AS OldIce" +
+                $" FROM MisteriosAquaticos ma" +
+                $" LEFT JOIN Achievements ach ON ma.player_id = ach.player_id"+
+                $" WHERE ma.player_id = {studentId}"));
 
             if (result == null)
             {
@@ -61,20 +85,15 @@ namespace TeseAPIs.Services
         {
             var studentProgress = await GetByIdAsync(studentId);
 
-            if (studentProgress == null)
-            {
-                return false;
-            }
-
-           if(!_creditValidations.VerifyNoNegativeAmounts(studentProgress, sumCredits))
+           if((studentProgress == null || !_creditValidations.VerifyNoNegativeAmounts(studentProgress.Credits, sumCredits)))
            {
                 return false;
            }
 
-            studentProgress.Creditos += sumCredits;
+            studentProgress.Credits += sumCredits;
 
             using var connection = await _connectionFactory.CreateConnectionAsync();
-            var result = await connection.ExecuteAsync($"UPDATE MisteriosAquaticos SET Creditos = {studentProgress.Creditos} WHERE PlayerId = {studentId}");
+            var result = await connection.ExecuteAsync($"UPDATE MisteriosAquaticos SET credits = {studentProgress.Credits} WHERE player_id = {studentId}");
 
             return true;
         }

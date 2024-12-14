@@ -1,11 +1,12 @@
-﻿using TeseAPIs.Models;
+﻿using TeseAPIs.Mapping.PlayerProgress;
+using TeseAPIs.Mapping.PlayersProgress;
 
 namespace TeseAPIs.Services
 {
     public interface IStudentProgressService
     {
-        public Task<PlayerProgress?> GetByIdAsync(string studentId);
-        public Task<IEnumerable<PlayerProgress>?> GetAllAsync();
-        public Task<bool?> UpdateCreditsByIdAsync(string studentId, int sumCredits);
+        Task<PlayerProgressResponse?> GetByIdAsync(string studentId);
+        Task<IEnumerable<PlayerProgressResponse>?> GetAllAsync();
+        Task<bool?> UpdateCreditsByIdAsync(string studentId, int sumCredits);
     }
 }

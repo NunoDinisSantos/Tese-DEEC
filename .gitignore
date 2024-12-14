@@ -1,5 +1,17 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
+# Ignore Visual Studio temporary files, build results, and
+# common node modules
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.dbmdl
+*.opendb
+*.vscode/
 
-/.vs
+# Ignore Debug and Release folders
+Debug/
+Release/

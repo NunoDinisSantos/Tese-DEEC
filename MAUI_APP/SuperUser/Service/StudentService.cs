@@ -14,32 +14,35 @@ namespace SuperUser.Service
             _httpClient = httpClient;
         }
 
-        public async Task<List<Estudante>> GetStudentsAsync()
+        public async Task<List<Student>> GetStudentsAsync()
         {
             var response = await _httpClient.GetAsync("api/misteriosaquaticos");
-            response.EnsureSuccessStatusCode(); // Throws an exception if the status code is not successful
 
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<ResponseWrapper<Estudante>>(json);
-            return result?.Items ?? new List<Estudante>();
-        }
+            var result = JsonSerializer.Deserialize<List<Student>>(json); // Está mal -> result é 0 porque não está a ser mapeado
 
-        public async Task<Estudante> GetStudentAsync(string studentId)
-        {
-            var response = await _httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
-            response.EnsureSuccessStatusCode(); // Throws an exception if the status code is not successful
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Estudante>(json);
-
-            if (result == null) { return new Estudante() { PlayerId = "NOTFOUND" }; } 
+            if(result == null)
+            {
+                result = new List<Student>();
+            }
 
             return result;
         }
 
-        public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int creditos)
+        public async Task<Student> GetStudentAsync(string studentId)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}", creditos);
-            response.EnsureSuccessStatusCode();
+            var response = await _httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Student>(json);
+
+            if (result == null) { return new Student() { PlayerId = "NOTFOUND" }; } 
+
+            return result;
+        }
+
+        public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int credits)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}", credits);
 
             return response.StatusCode;
         }

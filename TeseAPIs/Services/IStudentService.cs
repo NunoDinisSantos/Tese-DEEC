@@ -2,6 +2,6 @@
 {
     public interface IStudentService
     {
-        public Task<bool> CreateAsync(string studentId);
+        Task<bool> CreateAsync(string studentId);
     }
 }

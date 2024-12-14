@@ -17,7 +17,7 @@ namespace SuperUser
 
             builder.Services.AddHttpClient<StudentService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:44335"); // A MUDAR
+                client.BaseAddress = new Uri("https://localhost:44335"); // TO CHANGE
             });
 
             builder.Services.AddSingleton<MainViewModel>();

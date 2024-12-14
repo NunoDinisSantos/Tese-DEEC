@@ -1,17 +1,10 @@
-﻿using TeseAPIs.Models;
-
-namespace TeseAPIs.Validations
+﻿namespace TeseAPIs.Validations
 {
     public class CreditValidations : ICreditValidations
     {
-        public bool VerifyNoNegativeAmounts(PlayerProgress progress, int creditos)
+        public bool VerifyNoNegativeAmounts(int progressCredits, int creditos)
         {
-            if (progress.Creditos + creditos < 0)
-            {
-                return false;
-            }
-
-            return true;
+            return progressCredits+creditos>=0;
         }
     }
 }

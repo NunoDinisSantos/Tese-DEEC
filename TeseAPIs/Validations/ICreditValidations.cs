@@ -1,9 +1,7 @@
-﻿using TeseAPIs.Models;
-
-namespace TeseAPIs.Validations
+﻿namespace TeseAPIs.Validations
 {
     public interface ICreditValidations
     {
-        public bool VerifyNoNegativeAmounts(PlayerProgress progress, int creditos);
+        bool VerifyNoNegativeAmounts(int progressCredits, int creditos);
     }
 }

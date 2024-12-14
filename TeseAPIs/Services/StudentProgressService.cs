@@ -7,12 +7,9 @@ namespace TeseAPIs.Services
 {
     public class StudentProgressService(IDbConnectionFactory connectionFactory, ICreditValidations creditValidations) : IStudentProgressService
     {
-        private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
-        private readonly ICreditValidations _creditValidations = creditValidations;
-
         public async Task<IEnumerable<PlayerProgressResponse>?> GetAllAsync()
         {
-            using var connection = await _connectionFactory.CreateConnectionAsync();
+            using var connection = await connectionFactory.CreateConnectionAsync();
 
             var query = $"SELECT " +
                 $"ma.player_id AS PlayerId," +
@@ -46,7 +43,7 @@ namespace TeseAPIs.Services
 
         public async Task<PlayerProgressResponse?> GetByIdAsync(string studentId)
         {
-            using var connection = await _connectionFactory.CreateConnectionAsync();
+            using var connection = await connectionFactory.CreateConnectionAsync();
             var result = await connection.QuerySingleOrDefaultAsync<PlayerProgressResponse>(new CommandDefinition($"SELECT " +
                 $"ma.player_id AS PlayerId," +
                 $"ma.time_played AS TimePlayed," +
@@ -81,21 +78,21 @@ namespace TeseAPIs.Services
             return result;
         }
 
-        public async Task<bool?> UpdateCreditsByIdAsync(string studentId, int sumCredits)
+        public async Task<PlayerProgressResponse?> UpdateCreditsByIdAsync(string studentId, int sumCredits)
         {
             var studentProgress = await GetByIdAsync(studentId);
 
-           if((studentProgress == null || !_creditValidations.VerifyNoNegativeAmounts(studentProgress.Credits, sumCredits)))
+           if((studentProgress == null || !creditValidations.VerifyNoNegativeAmounts(studentProgress.Credits, sumCredits)))
            {
-                return false;
+                return null;
            }
 
             studentProgress.Credits += sumCredits;
 
-            using var connection = await _connectionFactory.CreateConnectionAsync();
+            using var connection = await connectionFactory.CreateConnectionAsync();
             var result = await connection.ExecuteAsync($"UPDATE MisteriosAquaticos SET credits = {studentProgress.Credits} WHERE player_id = {studentId}");
 
-            return true;
+            return studentProgress;
         }
     }
 }

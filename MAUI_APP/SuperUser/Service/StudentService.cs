@@ -21,12 +21,7 @@ namespace SuperUser.Service
             var json = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<List<Student>>(json); // Está mal -> result é 0 porque não está a ser mapeado
 
-            if(result == null)
-            {
-                result = new List<Student>();
-            }
-
-            return result;
+            return result ?? new List<Student>();
         }
 
         public async Task<Student> GetStudentAsync(string studentId)
@@ -35,9 +30,7 @@ namespace SuperUser.Service
             var json = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<Student>(json);
 
-            if (result == null) { return new Student() { PlayerId = "NOTFOUND" }; } 
-
-            return result;
+            return result ?? new Student() { PlayerId = "NOTFOUND" };
         }
 
         public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int credits)

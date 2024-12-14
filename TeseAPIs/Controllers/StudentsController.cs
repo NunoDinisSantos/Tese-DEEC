@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeseAPIs.Mapping;
+using System.Net;
 using TeseAPIs.Services;
 
 namespace TeseAPIs.Controllers
@@ -7,25 +7,22 @@ namespace TeseAPIs.Controllers
     [ApiController]
     public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService) : ControllerBase
     {
-        private readonly IStudentService _studentService = studentRepository; 
-        private readonly IStudentProgressService _studentProgressService = studentProgressService;
-
         [HttpPost(ApiEndpoints.Tese.Create)]
         public async Task<IActionResult> Create([FromBody]string studentId)
         {
-            var created = await _studentService.CreateAsync(studentId);
-            if (!created)
+            var created = await studentRepository.CreateAsync(studentId);
+            if (string.Equals(created.PlayerId,"ERROR"))
             {
-                return BadRequest();
+                return Conflict("User already registered.");
             }
 
-            return Created();
+            return Created(ApiEndpoints.Tese.Create, created);
         }
 
         [HttpGet(ApiEndpoints.Tese.Get)]
         public async Task<IActionResult> Get([FromRoute] string id)
         {
-            var studentProgress = await _studentProgressService.GetByIdAsync(id);
+            var studentProgress = await studentProgressService.GetByIdAsync(id);
             if(studentProgress == null)
             {
                 return NotFound();
@@ -37,10 +34,10 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.Update)]
         public async Task<IActionResult> Update([FromRoute] string id, [FromBody] int credits)
         {
-            var updatedProgress = await _studentProgressService.UpdateCreditsByIdAsync(id, credits);
-            if(updatedProgress == null || updatedProgress == false)
+            var updatedProgress = await studentProgressService.UpdateCreditsByIdAsync(id, credits);
+            if(updatedProgress == null)
             {
-                return NotFound();
+                return Conflict("User does not exist.");
             }
 
             return Ok(updatedProgress);
@@ -49,7 +46,7 @@ namespace TeseAPIs.Controllers
         [HttpGet(ApiEndpoints.Tese.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            var studentsProgress = await _studentProgressService.GetAllAsync();
+            var studentsProgress = await studentProgressService.GetAllAsync();
 
             if (studentsProgress == null)
             {

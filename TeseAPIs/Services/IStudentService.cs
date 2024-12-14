@@ -1,7 +1,9 @@
-﻿namespace TeseAPIs.Services
+﻿using TeseAPIs.Mapping.PlayersProgress;
+
+namespace TeseAPIs.Services
 {
     public interface IStudentService
     {
-        Task<bool> CreateAsync(string studentId);
+        Task<PlayerProgressResponse> CreateAsync(string studentId);
     }
 }

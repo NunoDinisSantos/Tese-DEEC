@@ -1,21 +1,19 @@
 ﻿using Dapper;
 using TeseAPIs.Data;
+using TeseAPIs.Mapping.PlayersProgress;
 using TeseAPIs.Validations;
 
 namespace TeseAPIs.Services
 {
     public class StudentService(IDbConnectionFactory connectionFactory, IRegistrationValidations registrationValidations) : IStudentService
     {
-        private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
-        private readonly IRegistrationValidations _registrationValidations = registrationValidations;
-
-        public async Task<bool> CreateAsync(string studentId)
+        public async Task<PlayerProgressResponse> CreateAsync(string studentId)
         {
-            var canRegister = await _registrationValidations.VerifyIfCanRegister(studentId);
+            var canRegister = await registrationValidations.VerifyIfCanRegister(studentId);
 
             if (canRegister)
             {
-                using var connection = await _connectionFactory.CreateConnectionAsync();
+                using var connection = await connectionFactory.CreateConnectionAsync();
                 var dateNow = DateTime.Now;
 
                 var query = $"INSERT INTO MisteriosAquaticos" +
@@ -28,12 +26,38 @@ namespace TeseAPIs.Services
 
                 result = await connection.ExecuteAsync(query);
 
-                return true;
+                return new PlayerProgressResponse()
+                {
+                    PlayerId = studentId,
+                    TimePlayed = 0,
+                    Coins = 0,
+                    FishCaught = 0,
+                    Tutorial = 0,
+                    Flashlight = 0,
+                    DepthModule = 0,
+                    TempModule = 0,
+                    StorageModule = 0,
+                    ReelModule = 0,
+                    Days = 0,
+                    RareObjects = 0,
+                    LastLogin = dateNow,
+                    DayStreak = 0,
+                    Credits = 0,
+                    Treasure = 0,
+                    AncientCoral = 0,
+                    LostResearch = 0,
+                    TempleJewel = 0,
+                    BoatJewel = 0,
+                    OldIce = 0
+                };
             }
 
             else
             {
-                return false;
+                return new PlayerProgressResponse()
+                {
+                    PlayerId = "ERROR"
+                };
             }
         }
     }

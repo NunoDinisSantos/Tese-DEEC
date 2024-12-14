@@ -7,6 +7,6 @@ namespace TeseAPIs.Services
     {
         Task<PlayerProgressResponse?> GetByIdAsync(string studentId);
         Task<IEnumerable<PlayerProgressResponse>?> GetAllAsync();
-        Task<bool?> UpdateCreditsByIdAsync(string studentId, int sumCredits);
+        Task<PlayerProgressResponse> UpdateCreditsByIdAsync(string studentId, int sumCredits);
     }
 }

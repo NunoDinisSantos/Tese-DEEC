@@ -9,16 +9,16 @@ if (!$conn) {
     die("Error: Unable to connect to SQLite database.");
 }
 
-if (isset($_POST['PlayerId'])) {
-    $PlayerId = intval($_POST['PlayerId']);    
+if (isset($_POST['player_id'])) {
+    $playerId = $_POST['player_id'];    
 
     $sql = "UPDATE MisteriosAquaticos 
-            SET Tutorial = 1  
-            WHERE PlayerId = :PlayerId";
+            SET tutorial = 1  
+            WHERE player_id = :player_id";
 
     $stmt = $conn->prepare($sql);
 
-    $stmt->bindParam(':PlayerId', $PlayerId, PDO::PARAM_INT);
+    $stmt->bindParam(':player_id', $playerId, PDO::PARAM_INT);
 
     try {
         $stmt->execute();

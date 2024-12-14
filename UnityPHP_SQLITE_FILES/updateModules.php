@@ -9,30 +9,33 @@ if (!$conn) {
     die("Error: Unable to connect to SQLite database.");
 }
 
-if (isset($_POST['PlayerId'])) {
-    $PlayerId = intval($_POST['PlayerId']);    
-    $deepModule = intval($_POST['ModuloProfundidade']);
-    $tempModule = intval($_POST['ModuloTemperatura']);
-    $ReelModule = intval($_POST['ModuloReel']);
-    $storageModule = intval($_POST['ModuloStorage']);
-    $flashlight = intval($_POST['Lanterna']);
+if (isset($_POST['player_id'])) {
+    $playerId = $_POST['player_id'];    
+    $deepModule = intval($_POST['depth_module']);
+    $tempModule = intval($_POST['temp_module']);
+    $reelModule = intval($_POST['reel_module']);
+    $storageModule = intval($_POST['storage_module']);
+    $flashlight = intval($_POST['flashlight']);
+    $coins = intval($_POST['coins']);
 
     $sql = "UPDATE MisteriosAquaticos 
-            SET ModuloProfundidade = :deepModule, 
-                ModuloTemperatura = :tempModule, 
-                ModuloReel = :ReelModule, 
-                ModuloStorage = :storageModule, 
-                Lanterna = :flashlight 
-            WHERE PlayerId = :PlayerId";
+            SET depth_module = :depth_module, 
+                temp_module = :temp_module, 
+                reel_module = :reel_module, 
+                storage_module = :storage_module, 
+                flashlight = :flashlight,
+                coins = :coins 
+            WHERE player_id = :player_id";
 
     $stmt = $conn->prepare($sql);
 
-    $stmt->bindParam(':deepModule', $deepModule, PDO::PARAM_INT);
-    $stmt->bindParam(':tempModule', $tempModule, PDO::PARAM_INT);
-    $stmt->bindParam(':ReelModule', $ReelModule, PDO::PARAM_INT);
-    $stmt->bindParam(':storageModule', $storageModule, PDO::PARAM_INT);
+    $stmt->bindParam(':depth_module', $deepModule, PDO::PARAM_INT);
+    $stmt->bindParam(':temp_module', $tempModule, PDO::PARAM_INT);
+    $stmt->bindParam(':reel_module', $reelModule, PDO::PARAM_INT);
+    $stmt->bindParam(':coins', $coins, PDO::PARAM_INT);
+    $stmt->bindParam(':storage_module', $storageModule, PDO::PARAM_INT);
     $stmt->bindParam(':flashlight', $flashlight, PDO::PARAM_INT);
-    $stmt->bindParam(':PlayerId', $PlayerId, PDO::PARAM_INT);
+    $stmt->bindParam(':player_id', $playerId, PDO::PARAM_INT);
 
     try {
         $stmt->execute();

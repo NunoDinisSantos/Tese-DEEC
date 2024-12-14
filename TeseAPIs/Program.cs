@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("TeseBlazor", builder =>
     {
-        builder.WithOrigins("https://localhost:7103") // Replace with your Blazor app's URL
+        builder.WithOrigins("https://localhost:7103") // TO CHANGE
                .AllowAnyMethod()
                .AllowAnyHeader();
     });

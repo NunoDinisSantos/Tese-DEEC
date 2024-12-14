@@ -9,21 +9,21 @@ if (!$conn) {
     die("Error: Unable to connect to SQLite database.");
 }
 
-if (isset($_POST['PlayerId'])) {
-    $PlayerId = intval($_POST['PlayerId']);    
-    $dayStreak = intval($_POST['DayStreak']);
-    $lastLogin = $_POST['LastLogin']; // Assuming this is in a compatible SQLite datetime format
+if (isset($_POST['player_id'])) {
+    $playerId = $_POST['player_id'];    
+    $dayStreak = intval($_POST['days_streak']);
+    $lastLogin = $_POST['last_login']; // Assuming this is in a compatible SQLite datetime format
 
     $sql = "UPDATE MisteriosAquaticos 
-            SET DayStreak = :dayStreak, 
-                LastLogin = :lastLogin 
-            WHERE PlayerId = :PlayerId";
+            SET days_streak = :days_streak, 
+                last_login = :last_login 
+            WHERE player_id = :player_id";
 
     $stmt = $conn->prepare($sql);
 
-    $stmt->bindParam(':dayStreak', $dayStreak, PDO::PARAM_INT);
-    $stmt->bindParam(':lastLogin', $lastLogin, PDO::PARAM_STR);
-    $stmt->bindParam(':PlayerId', $PlayerId, PDO::PARAM_INT);
+    $stmt->bindParam(':days_streak', $dayStreak, PDO::PARAM_INT);
+    $stmt->bindParam(':last_login', $lastLogin, PDO::PARAM_STR);
+    $stmt->bindParam(':player_id', $playerId, PDO::PARAM_STR);
 
     try {
         $stmt->execute();

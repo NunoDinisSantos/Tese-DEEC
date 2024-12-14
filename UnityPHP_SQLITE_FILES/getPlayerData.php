@@ -7,8 +7,8 @@ $dbFile = "tese.db";
 $conn = new PDO("sqlite:" . $dbFile);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if (isset($_GET['PlayerId'])) {
-    $player_id = intval($_GET['PlayerId']);
+if (isset($_GET['player_id'])) {
+    $player_id = intval($_GET['player_id']);
 
     if (!$conn) {
         echo "Connection could not be established.<br />";
@@ -16,8 +16,8 @@ if (isset($_GET['PlayerId'])) {
     }
 
     $sql = "SELECT * FROM MisteriosAquaticos m 
-            INNER JOIN Achievements a ON m.PlayerId = a.PlayerId 
-            WHERE m.PlayerId = :player_id";
+            INNER JOIN Achievements a ON m.player_id = a.player_id 
+            WHERE m.player_id = :player_id";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':player_id', $player_id, PDO::PARAM_INT);

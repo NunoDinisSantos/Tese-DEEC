@@ -9,33 +9,33 @@ if (!$conn) {
     die("Error: Unable to connect to SQLite database.");
 }
 
-if (isset($_POST['PlayerId']) && isset($_POST['Tesouro']) && isset($_POST['CoralAnciao']) && isset($_POST['PesquisaPerdida']) && isset($_POST['JoiaTemplo']) && isset($_POST['JoiaBarco']) && isset($_POST['GeloAntigo'])) {
-    $PlayerId = intval($_POST['PlayerId']);    
-    $tesouro = intval($_POST['Tesouro']);
-    $coralAnciao = intval($_POST['CoralAnciao']);
-    $pesquisaPerdida = intval($_POST['PesquisaPerdida']);
-    $joiaTemplo = intval($_POST['JoiaTemplo']);
-    $joiaBarco = intval($_POST['JoiaBarco']);
-    $geloAntigo = intval($_POST['GeloAntigo']);
+if (isset($_POST['player_id']) && isset($_POST['treasure']) && isset($_POST['ancient_coral']) && isset($_POST['lost_research']) && isset($_POST['temple_jewel']) && isset($_POST['boat_jewel']) && isset($_POST['old_ice'])) {
+    $playerId = $_POST['player_id'];    
+    $treasure = intval($_POST['treasure']);
+    $ancientCoral = intval($_POST['ancient_coral']);
+    $lostResearch = intval($_POST['lost_research']);
+    $templeJewel = intval($_POST['temple_jewel']);
+    $boatJewel = intval($_POST['boat_jewel']);
+    $oldIce = intval($_POST['old_ice']);
 
     $sql = "UPDATE Achievements 
-            SET tesouro = :tesouro, 
-                coralAnciao = :coralAnciao, 
-                pesquisaPerdida = :pesquisaPerdida, 
-                joiaTemplo = :joiaTemplo, 
-                joiaBarco = :joiaBarco, 
-                geloAntigo = :geloAntigo 
-            WHERE PlayerId = :PlayerId";
+            SET treasure = :treasure, 
+                ancient_coral = :ancient_coral, 
+                lost_research = :lost_research, 
+                temple_jewel = :temple_jewel, 
+                boat_jewel = :boat_jewel, 
+                old_ice = :old_ice 
+            WHERE player_id = :player_id";
 
     $stmt = $conn->prepare($sql);
 
-    $stmt->bindParam(':tesouro', $tesouro, PDO::PARAM_INT);
-    $stmt->bindParam(':coralAnciao', $coralAnciao, PDO::PARAM_INT);
-    $stmt->bindParam(':pesquisaPerdida', $pesquisaPerdida, PDO::PARAM_INT);
-    $stmt->bindParam(':joiaTemplo', $joiaTemplo, PDO::PARAM_INT);
-    $stmt->bindParam(':joiaBarco', $joiaBarco, PDO::PARAM_INT);
-    $stmt->bindParam(':geloAntigo', $geloAntigo, PDO::PARAM_INT);
-    $stmt->bindParam(':PlayerId', $PlayerId, PDO::PARAM_INT);
+    $stmt->bindParam(':treasure', $treasure, PDO::PARAM_INT);
+    $stmt->bindParam(':ancient_coral', $ancientCoral, PDO::PARAM_INT);
+    $stmt->bindParam(':lost_research', $lostResearch, PDO::PARAM_INT);
+    $stmt->bindParam(':temple_jewel', $templeJewel, PDO::PARAM_INT);
+    $stmt->bindParam(':boat_jewel', $boatJewel, PDO::PARAM_INT);
+    $stmt->bindParam(':old_ice', $oldIce, PDO::PARAM_INT);
+    $stmt->bindParam(':player_id', $playerId, PDO::PARAM_INT);
 
     try {
         $stmt->execute();

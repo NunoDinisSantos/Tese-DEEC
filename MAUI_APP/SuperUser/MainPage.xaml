@@ -2,13 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SuperUser.MainPage" Title="DEEC - Misterios Aquaticos Super User">
-
     <StackLayout Padding="10">
-
-
+        <ActivityIndicator IsRunning="{Binding Waiting}"
+                           IsVisible="{Binding Waiting}"
+                           Color="Purple" VerticalOptions="Center" HorizontalOptions="Center"
+                            />
         <Button Text="Refresh data" Command="{Binding RefreshData}" HorizontalOptions="Start" Margin="0,0,0,20"/>
-
-
         <Label Text="Pesquisar por número estudante:" FontSize="12" FontAttributes="None" Margin="0,0,0,2"/>
         <Grid VerticalOptions="Start" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
@@ -16,7 +15,7 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <Entry Text="{Binding StudentNumberToSearch}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
-
+           
             <Button Text="Procurar" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
         </Grid>
         <Grid Padding="5" BackgroundColor="DarkGray" WidthRequest="500" HorizontalOptions="Start">
@@ -81,8 +80,8 @@
         <Label Text="Update creditos" Margin="0,0,0,5" WidthRequest="250" HorizontalOptions="Start"/>
         <Entry Text="{Binding CustomCreditsAmount}" Keyboard="Numeric" Placeholder="+/- X créditos" WidthRequest="150" HorizontalOptions="Start" Margin="0,0,0,2"/>
         <Button Text="Update Credits" Command="{Binding UpdateCustomCreditCommand}" WidthRequest="150" HorizontalOptions="Start"/>
-        <Label Text="{Binding UpdateCreditsMessage}" Margin="0,0,0,2" WidthRequest="250" HorizontalOptions="Start"/>
+        <Label Text="{Binding UpdateCreditsMessage}" Margin="0,0,0,4" WidthRequest="500" HorizontalOptions="Start"/>
+        <Label Text="{Binding ShowErrorMessage}" Margin="0,0,0,2" WidthRequest="500" HorizontalOptions="Start" FontAttributes="Bold"/>
 
-        
     </StackLayout>
 </ContentPage>

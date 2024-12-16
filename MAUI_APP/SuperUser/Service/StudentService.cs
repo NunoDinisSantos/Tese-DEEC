@@ -16,21 +16,36 @@ namespace SuperUser.Service
 
         public async Task<List<Student>> GetStudentsAsync()
         {
-            var response = await _httpClient.GetAsync("api/misteriosaquaticos");
+            try
+            {
+                var response = await _httpClient.GetAsync("api/misteriosaquaticos");
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<List<Student>>(json); // Está mal -> result é 0 porque não está a ser mapeado
+                return result ?? new List<Student>();
+            }
 
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<List<Student>>(json); // Está mal -> result é 0 porque não está a ser mapeado
+            catch (Exception ex)
+            {
+                return new List<Student>();
+            }
 
-            return result ?? new List<Student>();
         }
 
         public async Task<Student> GetStudentAsync(string studentId)
         {
-            var response = await _httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Student>(json);
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<Student>(json);
 
-            return result ?? new Student() { PlayerId = "NOTFOUND" };
+                return result ?? new Student() { PlayerId = "NOTFOUND" };
+            }
+
+            catch (Exception ex)
+            {
+                return new Student() { PlayerId = "NOTFOUND" };
+            }
         }
 
         public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int credits)

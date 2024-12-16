@@ -43,7 +43,18 @@ namespace SuperUser
             set
             {
                 _customCreditsAmount = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(CustomCreditsAmount));
+            }
+        }
+
+        private bool _waiting;
+        public bool Waiting
+        {
+            get => _waiting;
+            set
+            {
+                _waiting = value;
+                OnPropertyChanged(nameof(Waiting));
             }
         }
 
@@ -54,7 +65,7 @@ namespace SuperUser
             set
             {
                 _updateCreditsMessage = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(UpdateCreditsMessage));
             }
         }
 
@@ -66,7 +77,19 @@ namespace SuperUser
             set
             {
                 _studentNumberToSearch = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(StudentNumberToSearch));
+            }
+        }
+
+        private string _showErrorMessage;
+
+        public string ShowErrorMessage
+        {
+            get => _showErrorMessage;
+            set
+            {
+                _showErrorMessage = value;
+                OnPropertyChanged(nameof(ShowErrorMessage));
             }
         }
 
@@ -82,17 +105,30 @@ namespace SuperUser
 
         private async void LoadStudents()
         {
+            Waiting = true;
+
             var response = await _studentService.GetStudentsAsync();
 
-            if (response.Count>0)
+            if (response.Count > 0)
             {
+                _showErrorMessage = string.Empty;
+                OnPropertyChanged(nameof(ShowErrorMessage));
                 Students.Clear();
                 foreach (var student in response)
                 {
                     Students.Add(student);
                 }
             }
+
+            else
+            {
+                _showErrorMessage = "Falha ao encontrar estudantes. A API poderá estar em baixo.";
+                OnPropertyChanged(nameof(ShowErrorMessage));
+            }
+
+            Waiting = false;
         }
+
         private void Refresh()
         {
             LoadStudents();
@@ -100,34 +136,63 @@ namespace SuperUser
 
         private async Task GetStudentById(string studentId)
         {
+            Waiting = true;
+
             var response = await _studentService.GetStudentAsync(studentId);
-            Students.Clear();
-            Students.Add(response);
+
+            if (string.Equals(response.PlayerId, "NOTFOUND"))
+            {
+                _showErrorMessage = "Falha ao encontrar estudante. A API poderá estar em baixo.";
+                OnPropertyChanged(nameof(ShowErrorMessage));
+            }
+            else
+            {
+                _showErrorMessage = string.Empty;
+                OnPropertyChanged(nameof(ShowErrorMessage));
+                Students.Clear();
+                Students.Add(response);
+            }
+
+            Waiting = false;
         }
 
         private async Task UpdateCredits(int sumCredits)
         {
             if (SelectedStudent != null)
             {
+                Waiting = true;
+
                 string message = string.Empty;
                 var result = await _studentService.UpdateStudentCreditsAsync(SelectedStudent.PlayerId, sumCredits);
                 if (result != HttpStatusCode.OK)
                 {
                     message = "Algo falhou a tentar actualizar créditos.";
                     _updateCreditsMessage = message;
-                    OnPropertyChanged(UpdateCreditsMessage);
+                    Application.Current.MainPage.Dispatcher.Dispatch(() => UpdateCreditsMessage = _updateCreditsMessage);
+                    OnPropertyChanged(nameof(CustomCreditsAmount));
                 }
 
                 else
                 {
-                    _customCreditsAmount = 0;
-                    message = "Créditos actualizados com sucesso.";
-                    OnPropertyChanged(nameof(SelectedStudent));
-                    OnPropertyChanged(UpdateCreditsMessage);
+                    if (_customCreditsAmount < 0)
+                    {
+                        message = "Foram subtraídos " + (_customCreditsAmount * -1) + " créditos ao estudante " + SelectedStudent.PlayerId;
+                    }
 
+                    else 
+                    {
+                        message = "Foram adicionados " + _customCreditsAmount + " créditos ao estudante " + SelectedStudent.PlayerId;
+                    }
+
+                    _customCreditsAmount = 0;
                     _updateCreditsMessage = message;
+                    OnPropertyChanged(nameof(SelectedStudent));
+                    OnPropertyChanged(nameof(CustomCreditsAmount));
                     Refresh();
+                    Application.Current.MainPage.Dispatcher.Dispatch(() => UpdateCreditsMessage = _updateCreditsMessage);
                 }
+
+                Waiting = false;
             }
         }
 

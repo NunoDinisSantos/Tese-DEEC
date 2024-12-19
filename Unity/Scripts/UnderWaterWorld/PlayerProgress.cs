@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
@@ -10,7 +11,7 @@ public class PlayerProgress : MonoBehaviour
     public float MultiplierStreak = 1.0f;
 
     public int Money;
-    public float TimePlayed;
+    public TimeSpan TimePlayed;
     public float PatientYHelp;
     public float PatientXHelp;
     public bool AutomaticReel;
@@ -251,6 +252,6 @@ public class PlayerProgress : MonoBehaviour
 
     public void CallSaveDay(int days)
     {
-        database.CallUpdateDays(days,FishCaught,Money,Creditos);
+        database.CallUpdateDays(days,FishCaught,Money,Creditos,TimePlayed);
     }
 }

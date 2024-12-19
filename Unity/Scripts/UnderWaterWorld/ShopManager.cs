@@ -39,6 +39,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private DayManager dayManager;
     int moneyGained;
     int creditsGained;
+    TimeSpan timePlayed;
     public DateTime dateNow;
 
     [Header("Modules Shop")]
@@ -232,7 +233,7 @@ public class ShopManager : MonoBehaviour
 
         int fishCount = inventory.fishListMoneyWorth.Count + underwaterInventory.fishListMoneyWorth.Count;
         int achievCount = inventory.achievListMoneyWorth.Count + underwaterInventory.achievListMoneyWorth.Count;
-        TimeSpan timePlayed = DateTime.Now - dateNow;
+        timePlayed = DateTime.Now - dateNow;
 
         string statsString = "- Apanhou " + fishCount + " peixes!\n\n";
         if (timePlayed.Minutes == 0)
@@ -243,6 +244,7 @@ public class ShopManager : MonoBehaviour
         {
             statsString += "- Este dia durou " + timePlayed.Minutes + " minutos!\n\n";
         }
+        
         statsString += "- Apanhou " + achievCount + " objectos raros!";
         stats.text = statsString;       
     }
@@ -260,7 +262,7 @@ public class ShopManager : MonoBehaviour
 
         int fishCount = inventory.fishListMoneyWorth.Count + underwaterInventory.fishListMoneyWorth.Count;
         int achievCount = inventory.achievListMoneyWorth.Count + underwaterInventory.achievListMoneyWorth.Count;
-        TimeSpan timePlayed = DateTime.Now - dateNow;
+        timePlayed = DateTime.Now - dateNow;
 
         string statsString = "- Apanhou " + fishCount + " peixes!\n\n";
         if (timePlayed.Minutes == 0)
@@ -330,6 +332,7 @@ public class ShopManager : MonoBehaviour
 
     public void SellFish()
     {
+        _PlayerProgress.TimePlayed = timePlayed;
         _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
         inventory.fishDayCatched = 0;
         inventory.fishListMoneyWorth.Clear();
@@ -344,10 +347,12 @@ public class ShopManager : MonoBehaviour
         GainSpentMoneyText.text = "+" + moneyGained;
         GainSpentMoneyText.color = Color.green;
         _PlayerProgress.UpdateMoney(moneyGained);
+
         playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
         playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
         animationStore.Play("CoinAnim");
         moneyGained = 0;
+        timePlayed = TimeSpan.Zero;
         underwaterInventory.ClearList();
         dayManager.TerminateDay();
     }

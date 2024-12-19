@@ -17,11 +17,11 @@
         public DateTime LastLogin { get; set; }
         public int DayStreak { get; set; }
         public int Credits { get; set; }
-        public int Treasure { get; set; }
-        public int AncientCoral { get; set; }
-        public int LostResearch { get; set; }
-        public int TempleJewel { get; set; }
-        public int BoatJewel { get; set; }
-        public int OldIce { get; set; }
+        public bool Treasure { get; set; }
+        public bool AncientCoral { get; set; }
+        public bool LostResearch { get; set; }
+        public bool TempleJewel { get; set; }
+        public bool BoatJewel { get; set; }
+        public bool OldIce { get; set; }
     }
 }

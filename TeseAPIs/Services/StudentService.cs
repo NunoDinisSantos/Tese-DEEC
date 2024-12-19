@@ -43,12 +43,12 @@ namespace TeseAPIs.Services
                     LastLogin = dateNow,
                     DayStreak = 0,
                     Credits = 0,
-                    Treasure = 0,
-                    AncientCoral = 0,
-                    LostResearch = 0,
-                    TempleJewel = 0,
-                    BoatJewel = 0,
-                    OldIce = 0
+                    Treasure = false,
+                    AncientCoral = false,
+                    LostResearch = false,
+                    TempleJewel = false,
+                    BoatJewel = false,
+                    OldIce = false
                 };
             }
 

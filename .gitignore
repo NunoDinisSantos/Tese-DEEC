@@ -15,3 +15,5 @@ obj/
 # Ignore Debug and Release folders
 Debug/
 Release/
+*.cs.meta
+*.meta

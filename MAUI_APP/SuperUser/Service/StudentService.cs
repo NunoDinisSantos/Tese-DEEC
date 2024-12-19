@@ -50,7 +50,7 @@ namespace SuperUser.Service
 
         public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int credits)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}", credits);
+            var response = await _httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}/credits", credits);
 
             return response.StatusCode;
         }

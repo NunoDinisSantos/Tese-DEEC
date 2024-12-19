@@ -50,21 +50,21 @@ namespace SuperUser.Models
         public int Credits { get; set; }
 
         [JsonPropertyName("treasure")]
-        public int Treasure { get; set; }
+        public bool Treasure { get; set; }
 
         [JsonPropertyName("lost_research")]
-        public int LostResearch { get; set; }
+        public bool LostResearch { get; set; }
 
         [JsonPropertyName("boat_jewel")]
-        public int BoatJewel { get; set; }
+        public bool BoatJewel { get; set; }
 
         [JsonPropertyName("temple_jewel")]
-        public int TempleJewel { get; set; }
+        public bool TempleJewel { get; set; }
 
         [JsonPropertyName("ancient_coral")]
-        public int AncientCoral { get; set; }
+        public bool AncientCoral { get; set; }
 
         [JsonPropertyName("old_ice")]
-        public int OldIce { get; set; }
+        public bool OldIce { get; set; }
     }
 }

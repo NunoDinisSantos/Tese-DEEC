@@ -1,10 +1,12 @@
-﻿@page "/sucesso"
+﻿@page "/sucesso/{playerId}"
 @rendermode InteractiveWebAssembly
 
-<label>Conta criada com sucesso!</label>
-<label>O seu Id é o número de estudante que usou!</label>
-<label>Pode fechar a janela.</label>
+<div>Conta criada com sucesso! O seu Id é o número de estudante que usou para registar!</div>
+<div>Número de estudante registado: @playerId</div>
+<div>Pode fechar a janela.</div>
 
 @code {
 
+    [Parameter]
+    public string playerId { get; set; }
 }

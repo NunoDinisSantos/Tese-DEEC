@@ -39,7 +39,8 @@
 
         if(response.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/sucesso");
+            string navigate = "/sucesso/" + NumeroEstudante;
+            NavigationManager.NavigateTo(navigate);
             return;
         }
         else

@@ -18,7 +18,6 @@
             public const string UpdateDayStreak = $"{Base}/{{id:int}}/daystreak";
 
             public const string GetAll = Base;
-
         }
     }
 }

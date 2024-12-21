@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  web:
+    image: teseblazor
+    container_name: teseblazor
+    restart: unless-stopped
+    networks:
+      - webnet
+    environment:
+      - VIRTUAL_HOST=misteriosaquaticos.pt  # Domain to route to this service
+      - LETSENCRYPT_HOST=misteriosaquaticos.pt
+      - LETSENCRYPT_EMAIL=nunodinis1993@gmail.com
+      - VIRTUAL_PORT=8080  # Match the actual port used by your app
+    expose:
+      - "8080"  # Internal port for Blazor
+
+  api:
+    build:
+      context: ../TeseAPIs  # Path to the folder containing TeseAPI source and Dockerfile
+      dockerfile: Dockerfile  # Relative path to Dockerfile within the context
+    container_name: teseapi
+    volumes:
+      - "/home/nuno/Tese/UnityPHP_SQLITE_FILES:/app/UnityPHP_SQLITE_FILES"
+    restart: unless-stopped
+    networks:
+      - webnet
+    environment:
+      - VIRTUAL_HOST=api.misteriosaquaticos.pt  # Subdomain for the API
+      - LETSENCRYPT_HOST=api.misteriosaquaticos.pt
+      - LETSENCRYPT_EMAIL=nunodinis1993@gmail.com
+      - VIRTUAL_PORT=8081  # Change to a unique port for the API
+    expose:
+      - "8080"  # Internal port for the API
+    ports:
+      - "8081:8080"  # Map container's 8080 to 5000 for Nginx
+
+  nginx:
+    image: jwilder/nginx-proxy
+    container_name: nginx
+    restart: unless-stopped
+    networks:
+      - webnet
+    ports:
+      - "80:80"    # HTTP
+      - "443:443"  # HTTPS
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./www:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt
+    restart: unless-stopped
+    networks:
+      - webnet
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./www:/usr/share/nginx/html
+    volumes_from:
+      - nginx
+
+networks:
+  webnet:
+    driver: bridge

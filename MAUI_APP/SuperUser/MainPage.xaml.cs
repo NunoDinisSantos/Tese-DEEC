@@ -122,6 +122,7 @@ namespace SuperUser
 
             else
             {
+                Students.Clear();
                 _showErrorMessage = "Falha ao encontrar estudantes. A API poderá estar em baixo.";
                 OnPropertyChanged(nameof(ShowErrorMessage));
             }

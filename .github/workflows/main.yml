@@ -28,7 +28,7 @@ jobs:
           context: TeseAPIs # Path to the Dockerfile
       #    file: TeseAPIs/Dockerfile # Specify the Dockerfile path
           push: true
-          tags: nunodinis93/tese:tag
+          tags: nunodinis93/teseapi
 
       # Push the Docker image to Docker Hub
       #- name: Push Docker Image

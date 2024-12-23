@@ -26,7 +26,6 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Inventory inventory;
     [SerializeField] private UnderwaterInventory underwaterInventory;
 
-    [SerializeField] private PlayerMovementWater playerMovementWater; 
     [SerializeField] private Button BuyButton;
 
     [SerializeField] private Animation animationStore;
@@ -121,13 +120,7 @@ public class ShopManager : MonoBehaviour
                 break;
         }
 
-        if (_PlayerProgress.Money - itemCost < 0)
-        {
-            BuyButton.interactable = false; 
-            return;
-        }
-
-        if(itemIndex == 4 && shipFlashlight > 0)
+        if (itemIndex == 4 && shipFlashlight > 0)
         {
             BuyButton.interactable = false;
             comprarCusto.text = "Nível máximo!";
@@ -159,6 +152,12 @@ public class ShopManager : MonoBehaviour
         {
             BuyButton.interactable = false;
             comprarCusto.text = "Nível máximo!";
+            return;
+        }
+
+        if (_PlayerProgress.Money - itemCost < 0)
+        {
+            BuyButton.interactable = false; 
             return;
         }
 

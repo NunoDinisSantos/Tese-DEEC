@@ -32,7 +32,6 @@ public class FishControllerScript : MonoBehaviour
             zone.gameObject.SetActive(false);
         }
         
-        //DeactivateSpawners();
         currentFishScene = 0;
 
         switch (zoneName)

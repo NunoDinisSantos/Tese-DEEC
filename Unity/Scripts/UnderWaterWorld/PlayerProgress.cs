@@ -203,18 +203,18 @@ public class PlayerProgress : MonoBehaviour
             case 1:
                 shipTemperatureModule++;
                 PlayerDataScript.playerDataInstance.TempModule = shipTemperatureModule;
-                playerHealth.UpdateModules();
+                //playerHealth.UpdateModules();
 
                 break;
             case 2:
                 shipReelStrenghtModule++;
                 PlayerDataScript.playerDataInstance.ReelModule = shipReelStrenghtModule;
-                HarpoonTrigger.UpdateModule();
+                //HarpoonTrigger.UpdateModule();
                 break;
             case 3:
                 shipStorageModule++;
                 PlayerDataScript.playerDataInstance.StorageModule = shipStorageModule;
-                inventory.UpdateStorageSpace();
+                //inventory.UpdateStorageSpace();
                 break;
             case 4:
                 shipFlashlight++;
@@ -224,6 +224,10 @@ public class PlayerProgress : MonoBehaviour
         }
 
         database.CallUpdateModules(shipDepthModule, shipTemperatureModule, shipReelStrenghtModule, shipStorageModule, shipFlashlight, Money);
+        inventory.UpdateStorageSpace();
+        HarpoonTrigger.UpdateModule();
+        playerHealth.UpdateModules();
+        PlayerVisionController.UpdateFlashlight();
     }
 
     public void UpdateMoney(int money)

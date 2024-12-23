@@ -45,11 +45,10 @@ public class StoreSubDecorator : MonoBehaviour
         if (shipDepthModule > 0)
         {
             if (shipDepthModule == 1)
-                DeepModule[shipDepthModule - 1].SetActive(true);
+                DeepModule[0].SetActive(true);
             else
             {
-                DeepModule[shipDepthModule - 1].SetActive(true);
-                DeepModule[shipDepthModule].SetActive(true);
+                DeepModule[1].SetActive(true);
             }
         }
 

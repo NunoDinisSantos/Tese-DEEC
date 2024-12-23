@@ -38,12 +38,23 @@ public class FishWaypoints : MonoBehaviour
         maxZ = SpawnParent.GetChild(5).transform.position.z;
         minZ = SpawnParent.GetChild(4).transform.position.z;
 
+        SetRandomInitialPosition();
         StartCoroutine(MoveFish());
     }
 
     private void OnDisable()
     {
         spawned = false;    
+    }
+
+    private void SetRandomInitialPosition()
+    {
+        float x = Random.Range(minX, maxX);
+        float y = Random.Range(minY, maxY);
+        float z = Random.Range(minZ, maxZ);
+
+        Vector3 newWaypoint = new Vector3(x, y, z);
+        transform.position = newWaypoint;
     }
 
     private IEnumerator MoveFish()
@@ -88,7 +99,6 @@ public class FishWaypoints : MonoBehaviour
         Quaternion rot = Quaternion.LookRotation(newDirection)*Quaternion.Euler(0, -90, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime*rotationSpeed);
     }
-
 
     private void OnDrawGizmos()
     {

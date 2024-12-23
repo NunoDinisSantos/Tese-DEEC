@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class FishSpawnerBoundaries : MonoBehaviour
 {
+    public int maxNumberOfFishInBoundary = 10;
+    public int currentNumberOfFishInBoundary = 0;
     [SerializeField] private List<Transform> Boundaries = new();
     [SerializeField] private Transform[] fishSpawns;
 
@@ -13,6 +15,17 @@ public class FishSpawnerBoundaries : MonoBehaviour
         {
             Boundaries.Add(transform.GetChild(i));
         }
+    }
+
+    public bool WillSpawnFish()
+    {
+        if (currentNumberOfFishInBoundary < maxNumberOfFishInBoundary)
+        {
+            currentNumberOfFishInBoundary++;
+            return true;
+        }
+
+        return false;       
     }
 
     private void OnDrawGizmos()

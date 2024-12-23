@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel;
 using UnityEngine;
 
@@ -275,57 +276,6 @@ public class HarpoonTrigger : MonoBehaviour
     //########################################                             ################################################
     //#####################################################################################################################
 
-    private void ReelFish(int segment)
-    {
-        //totalReelProgress += 1f / numSegments; // -- Obsolete -> Was for VR patientes
-
-        HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -2.3f), HarpoonRetractSpeed * 0.01f);
-        GrabbedFishTransform.position = HarpoonHandModel.transform.position;
-
-        //#####################################################################################################################
-        //########################################                             ################################################
-        //########################################       DAR CRÉDITOS AQUI     ################################################
-        //########################################                             ################################################
-        //#####################################################################################################################
-        creditTimer -= Time.deltaTime;
-
-        if (creditTimer < 0)
-        {
-            creditTimer = GiveCreditTimer;
-            _playerProgress.UpdateCredits(1);
-        }
-
-        //#####################################################################################################################
-        //#####################################################################################################################
-        //#####################################################################################################################
-        //#####################################################################################################################
-        //#####################################################################################################################
-
-        if (reelFishSound)
-        {
-            reelFishSound = true;
-            ReelingSoundAndParticles();
-        }
-
-        if (HarpoonHandModel.transform.localPosition.z - HarpoonSpawnPoint.z - handOffset >= 0)
-        {            
-            GrabbedFishTransform.gameObject.SetActive(false);
-            
-            if (!grabbedAchievObject)
-            {
-                SendFishToInventory(GrabbedFishTransform.gameObject.GetComponent<Fish>());
-                GrabbedFishTransform.gameObject.transform.position = GrabbedFishTransform.GetComponent<FishWaypoints>().spawnedPosition;
-                GrabbedFishTransform.gameObject.SetActive(true); 
-            }
-            else
-            {
-                SendAchievObjectToInvetory(GrabbedFishTransform.gameObject.GetComponent<AchievementObject>());
-            }
-
-            ResetStatus();
-        }
-    }
-
     private void ReelFishtwo()
     {
         if(!isReeling)
@@ -357,16 +307,25 @@ public class HarpoonTrigger : MonoBehaviour
             if (!grabbedAchievObject)
             {
                 SendFishToInventory(GrabbedFishTransform.gameObject.GetComponent<Fish>());
-                GrabbedFishTransform.gameObject.transform.position = GrabbedFishTransform.GetComponent<FishWaypoints>().spawnedPosition;
-                GrabbedFishTransform.gameObject.SetActive(true);
+                ResetStatus();
+                StartCoroutine(ActivateFishAfterTime());
             }
             else
             {
                 SendAchievObjectToInvetory(GrabbedFishTransform.gameObject.GetComponent<AchievementObject>());
+                ResetStatus();
             }
 
-            ResetStatus();
+            //ResetStatus();
         }
+    }
+
+    private IEnumerator ActivateFishAfterTime()
+    {
+        float activateWaitingTimer = Random.Range(10, 30);
+        yield return new WaitForSeconds(activateWaitingTimer);
+        GrabbedFishTransform.gameObject.transform.position = GrabbedFishTransform.GetComponent<FishWaypoints>().spawnedPosition;
+        GrabbedFishTransform.gameObject.SetActive(true);
     }
 
     private void SendFishToInventory(Fish fish)

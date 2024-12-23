@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class MusicManagerScript : MonoBehaviour
 {
-    public bool isPlayingMusic = false;
+    [SerializeField] private bool isPlayingMusic = false;
     private AudioSource audioSource;
-    public AudioClip[] songs;
-    public int timeUntilNewSong = 0;
-    private float currentVolume = 0;
-    [SerializeField] private float volumeFadeInOut = 0.5f;
+    [SerializeField] private AudioClip[] songs;
+    [SerializeField] private int timeUntilNewSong = 0;
+    [SerializeField] private int maxWaitingTime = 240;
+    [SerializeField] private int minWaitingTime = 120;
+
 
     void Start()
     {
@@ -26,10 +27,20 @@ public class MusicManagerScript : MonoBehaviour
             audioSource.clip = songs[i];
             audioSource.Play();
             songLenght = songs[i].length;
-            currentVolume = 0.35f;
+            audioSource.volume = 0.35f;
+            isPlayingMusic = true;
         }
 
         yield return new WaitForSeconds(songLenght-3);
+
+        float timer = 3f;
+        while(timer > 0)
+        {
+            timer -= Time.deltaTime;
+            audioSource.volume = audioSource.volume-audioSource.volume*0.001f;
+        }
+
+
         isPlayingMusic = false;
         StartCoroutine(Rest());
     }
@@ -37,7 +48,7 @@ public class MusicManagerScript : MonoBehaviour
     private IEnumerator Rest()
     {
         audioSource.volume = 0.0f;      
-        timeUntilNewSong = Random.Range(120, 240);
+        timeUntilNewSong = Random.Range(minWaitingTime, maxWaitingTime);
         yield return new WaitForSeconds(timeUntilNewSong);
 
         StartCoroutine(PlayMusic());

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Net.Http;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -8,12 +9,14 @@ public class DataBaseLoaderScript : MonoBehaviour
 {
     public string playerId;
     //public string partialFileEndpoint = "http://localhost/Tese/"; // TO CHANGE
-    private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE
+    //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
+    private string partialFileEndpoint = "http://misteriosaquaticos.pt:8081/";
     public PlayerData playerData;
     public PlayerDataScript playerDataScript;
     public bool loaded = false;
     public int maxDayStreak = 3;
     public bool errorGettingPlayer = false;
+    private HttpClient _client;
 
     IEnumerator GetDataFromApi(string playerId)
     {

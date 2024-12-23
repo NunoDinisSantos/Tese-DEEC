@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StoreColliderScript : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class StoreColliderScript : MonoBehaviour
     [SerializeField] private Proxy proxy;
     [SerializeField] private GameObject storeSub;
     [SerializeField] private GameObject miscStoreObjects;
+
+    public GameObject ConfirmBackToMenu;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -67,6 +70,25 @@ public class StoreColliderScript : MonoBehaviour
         canvasStore.SetActive(true);
         storeSub.SetActive(true);
         miscStoreObjects.SetActive(true);
+    }
+
+    public void BackToMenu(int x)
+    {
+        if (x == 0)
+        {
+            ConfirmBackToMenu.SetActive(false);
+        }
+
+        if (x == 1)
+        {
+            ConfirmBackToMenu.SetActive(true);
+        }
+
+        if (x == 2)
+        {
+            ConfirmBackToMenu.SetActive(false);
+            SceneManager.LoadScene(0);
+        }
     }
 
     public void BackToWater()

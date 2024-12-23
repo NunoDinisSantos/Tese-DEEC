@@ -11,7 +11,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int temperatureModule;
     [SerializeField] private PlayerProgress progress;
     [SerializeField] private int maxDepth;
-    float timer = 3f;
+    float timer = 1f;
     [SerializeField] float warnTimer = 0f;
     [SerializeField] private int Health = 100;
     [SerializeField] private TMP_Text Profundidade;
@@ -27,12 +27,19 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private GameObject coldWarningText;
     [SerializeField] private GameObject hotWarningText;
     [SerializeField] private bool animatingHearth = false;
+    private PlayerMovementWater playerMovementWater;
+
+    private bool forceNoDamage = false;
+    private PlayerVisionController _playerVision;
 
     void Start()
     {
+        playerMovementWater = GetComponent<PlayerMovementWater>();
         BackToGameAppear();
         UpdateModules();
         healthText.text = Health.ToString();
+        _playerVision = GetComponent<PlayerVisionController>();
+        _playerVision.SetWaterOriginalColor();
     }
 
     private void Update()
@@ -44,6 +51,9 @@ public class PlayerHealth : MonoBehaviour
 
     private void CheckIfShouldTakeDamage()
     {
+        if (forceNoDamage)
+            return;
+
         if((transform.position.y - 48)*-1 > maxDepth) // 48 = water surface
         {
             takingDamageFromDepth = true;
@@ -68,7 +78,7 @@ public class PlayerHealth : MonoBehaviour
             if(timer < 0)
             {
                 DecrementHealth();
-                timer = 3 ;
+                timer = 1 ;
             }
         }
 
@@ -84,12 +94,15 @@ public class PlayerHealth : MonoBehaviour
 
     private void DecrementHealth()
     {
-        Health -= 5;
-        timer = 3f;
+        Health -= 7;
+        timer = 1f;
         healthText.text = Health.ToString();
-
+        Debug.Log("Called decrement");
         if (Health < 0)
         {
+            playerMovementWater.speed = 0.0f; // alterar para 10 depois
+            forceNoDamage = true;
+            healthText.text ="0";
             CallDeecSoS();
         }
     }
@@ -98,7 +111,7 @@ public class PlayerHealth : MonoBehaviour
     {
         PlayerMessageScript.SetActive(true);
         PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage("Submarino avariado! A enviar ajuda!");
-        StartCoroutine(Respawn());
+        StartCoroutine("Respawn");
     }
 
     public void JustRespawn()
@@ -109,6 +122,8 @@ public class PlayerHealth : MonoBehaviour
         coldAudioSource.enabled = false;
         coldWarningText.SetActive(false);
         string line = "Mais um dia de trabalho! Boa!";
+        _playerVision.SetWaterOriginalColor();
+
         int i = Random.Range(0, 5);
         switch(i)
         {
@@ -145,20 +160,19 @@ public class PlayerHealth : MonoBehaviour
         GetComponent<PlayerMovementWater>().enabled = false;
         yield return new WaitForSeconds(1.5f);
         transform.position = respawnPoint.position;
+        _playerVision.SetWaterOriginalColor();
         yield return new WaitForSeconds(3);
         _animation.Play("FadeOut");
         GetComponent<PlayerMovementWater>().enabled = true;
         Health = 100;
         healthText.text = Health.ToString();
+        forceNoDamage = false;
+        playerMovementWater.speed = 10.0f; 
+        StopCoroutine("Respawn");
     }
 
     private void BackToGameAppear()
     {
-        /*_animation.Play("FadeIn");
-        GetComponent<PlayerMovementWater>().enabled = false;
-        yield return new WaitForSeconds(1.5f);
-        transform.position = respawnPoint.position;
-        yield return new WaitForSeconds(3);*/
         _animation.Play("FadeOut");
         GetComponent<PlayerMovementWater>().enabled = true;
     }
@@ -250,7 +264,7 @@ public class PlayerHealth : MonoBehaviour
                 AudioWarnings.PlayAudioClip(1);
             }
 
-            warnTimer = 3;
+            warnTimer = timer;
         }
     }
 }

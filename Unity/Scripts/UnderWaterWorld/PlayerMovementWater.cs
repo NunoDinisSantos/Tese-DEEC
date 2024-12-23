@@ -179,17 +179,13 @@ public class PlayerMovementWater : MonoBehaviour
             waterDiveParticles[0].SetActive(true);
             waterDiveParticles[0].GetComponent<AudioSource>().Play();
             inWater = true;
-
-            playerVisionController.ChangeColorView(0); // current zone!
-
+            playerVisionController.SetAmbientColors(false); //Checks if is night time to set colors straight. If is day, doesn't change!
             return inWater; 
         }
 
         if(transform.position.y < inBetweenWaterLevel)
         {
             inWater = false;
-            //audioSource.clip = audioClips[1];
-
             if (inShore)
             {
                 return inShore;
@@ -201,11 +197,9 @@ public class PlayerMovementWater : MonoBehaviour
             mainCamera.farClipPlane = 1500;
             controlVolumes.SwitchVolumes(0);
             Fog.SetActive(false);
-            //skyboxMat.SetColor("_FogColor", skyboxMat.GetColor("_BotColor"));
             skyboxMat.SetColor("_AlphaColor", Color.black);
             skyboxMat.SetFloat("_StarAmount", dayManager.starAmount);
-
-            playerVisionController.ChangeColorView(0);
+            playerVisionController.SetAmbientColors(true);
             waterDiveParticles[1].SetActive(true);
             waterDiveParticles[1].GetComponent<AudioSource>().Play();
             inShore = true;

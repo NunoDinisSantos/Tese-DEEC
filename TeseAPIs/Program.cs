@@ -27,10 +27,6 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddAuthorization(x =>
-{
-    x.AddPolicy("Admin", p => p.RequireClaim("admin", "true"));
-});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -46,11 +42,16 @@ builder.Services.AddSingleton<IStudentProgressService, StudentProgressService>()
 builder.Services.AddSingleton<IStudentService, StudentService>();
 
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8081); // Use the container's internal port
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("TeseBlazor", builder =>
     {
-        builder.WithOrigins("https://localhost:7103") // TO CHANGE
+        builder.AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader();
     });

@@ -26,7 +26,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: TeseAPIs # Path to the Dockerfile
-          file: TeseAPIs/Dockerfile # Specify the Dockerfile path
+      #    file: TeseAPIs/Dockerfile # Specify the Dockerfile path
           push: true
           tags: nunodinis93/tese:tag
 

@@ -6,7 +6,7 @@ on:
       - master  # Trigger on push to the main branch
 
 jobs:
-  build-and-push:
+  build-and-push-teseapi:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,9 +22,17 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # Build the Docker image
-      - name: Build and push Docker image
+      - name: Build and push Docker image teseapi
         uses: docker/build-push-action@v4
         with:
           context: TeseAPIs # Path to the Dockerfile
           push: true
           tags: nunodinis93/teseapi
+          
+      # Build the Docker image
+      - name: Build and push Docker image teseblazor
+        uses: docker/build-push-action@v4
+        with:
+          context: Tese_Blazor # Path to the Dockerfile
+          push: true
+          tags: nunodinis93/teseblazor

@@ -2,6 +2,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44335/") }); // TO CHANGE
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://172.19.0.4") });
 
 await builder.Build().RunAsync();

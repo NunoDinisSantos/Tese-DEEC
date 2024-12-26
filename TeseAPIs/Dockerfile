@@ -2,9 +2,16 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+USER root
 WORKDIR /app
 
+# Install SQLite tools
+RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
+    groupadd -g 1000 hostgroup && \
+    usermod -aG hostgroup app && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+USER app
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -25,4 +32,5 @@ RUN dotnet publish "./TeseAPIs.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+EXPOSE 8081
 ENTRYPOINT ["dotnet", "TeseAPIs.dll"]

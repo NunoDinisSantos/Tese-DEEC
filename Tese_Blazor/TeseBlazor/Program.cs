@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://172.19.0.3/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://172.19.0.3:8081/") });
 
 builder.WebHost.ConfigureKestrel(options =>
 {

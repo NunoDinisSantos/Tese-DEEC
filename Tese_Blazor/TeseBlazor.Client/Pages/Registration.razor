@@ -22,7 +22,7 @@
     private string ErrorMessage { get; set; } = string.Empty;
 
     private async Task Registar()
-    {
+    {       
         if (!System.Text.RegularExpressions.Regex.IsMatch(NumeroEstudante, @"^\d*$"))
         {
             ErrorMessage = "Erro: Só são permitidos números.";
@@ -35,19 +35,27 @@
             return;
         }
 
-        var response = await HttpClient.PostAsJsonAsync("api/misteriosaquaticos", NumeroEstudante);
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("api/misteriosaquaticos", NumeroEstudante);
 
-        if(response.IsSuccessStatusCode)
-        {
-            string navigate = "/sucesso/" + NumeroEstudante;
-            NavigationManager.NavigateTo(navigate);
-            return;
+            if (response.IsSuccessStatusCode)
+            {
+                string navigate = "/sucesso/" + NumeroEstudante;
+                NavigationManager.NavigateTo(navigate);
+                return;
+            }
+            else
+            {
+                ErrorMessage = "Erro ao criar jogador. Poderá já existir uma conta com esse ID";
+                StateHasChanged();
+                return;
+            }
         }
-        else
+
+        catch(Exception e)
         {
-            ErrorMessage = "Erro ao criar jogador. Poderá já existir uma conta com esse ID";
-            StateHasChanged();
-            return;
+            Console.WriteLine(e.Message);
         }
     }
 }

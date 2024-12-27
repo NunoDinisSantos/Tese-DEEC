@@ -47,14 +47,23 @@ builder.WebHost.ConfigureKestrel(options =>
     options.ListenAnyIP(8081); // Use the container's internal port
 });
 
-builder.Services.AddCors(options =>
+/*builder.Services.AddCors(options =>
 {
     options.AddPolicy("TeseBlazor", builder =>
     {
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
-               .AllowAnyHeader();
+        .AllowAnyHeader();
     });
+});*/
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorApp", builder =>
+                builder.WithOrigins("http://172.19.0.4:8080") // URL of your Blazor app
+                       .AllowAnyMethod()
+                       .AllowAnyHeader());
 });
 
 var app = builder.Build();

@@ -37,7 +37,6 @@
 
         try
         {
-            Console.WriteLine("Making request...");
             var response = await HttpClient.PostAsJsonAsync("api/misteriosaquaticos", NumeroEstudante);
 
             if (response.IsSuccessStatusCode)
@@ -57,7 +56,6 @@
         catch(Exception e)
         {
             ErrorMessage = e.Message;
-            Console.WriteLine(e.Message);
         }
     }
 }

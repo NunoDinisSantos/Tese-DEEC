@@ -5,20 +5,13 @@ using System.Text.Json;
 
 namespace SuperUser.Service
 {
-    public class StudentService
+    public class StudentService(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
-
-        public StudentService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
         public async Task<List<Student>> GetStudentsAsync()
         {
             try
             {
-                var response = await _httpClient.GetAsync("api/misteriosaquaticos");
+                var response = await httpClient.GetAsync("api/misteriosaquaticos");
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<Student>>(json);
                 return result ?? new List<Student>();
@@ -35,7 +28,7 @@ namespace SuperUser.Service
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
+                var response = await httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<Student>(json);
 
@@ -49,8 +42,8 @@ namespace SuperUser.Service
         }
 
         public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int credits)
-        {
-            var response = await _httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}/credits", credits);
+        { 
+            var response = await httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}/credits", credits);
 
             return response.StatusCode;
         }

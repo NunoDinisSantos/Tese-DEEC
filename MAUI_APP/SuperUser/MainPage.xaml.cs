@@ -105,6 +105,9 @@ namespace SuperUser
 
         private async void LoadStudents()
         {
+            _showErrorMessage = string.Empty;
+            OnPropertyChanged(nameof(ShowErrorMessage));
+
             Waiting = true;
 
             var response = await _studentService.GetStudentsAsync();
@@ -123,7 +126,7 @@ namespace SuperUser
             else
             {
                 Students.Clear();
-                _showErrorMessage = "Falha ao encontrar estudantes. A API poderá estar em baixo.";
+                _showErrorMessage = "Failed finding students.";
                 OnPropertyChanged(nameof(ShowErrorMessage));
             }
 
@@ -137,13 +140,16 @@ namespace SuperUser
 
         private async Task GetStudentById(string studentId)
         {
+            _showErrorMessage = string.Empty;
+            OnPropertyChanged(nameof(ShowErrorMessage));
+
             Waiting = true;
 
             var response = await _studentService.GetStudentAsync(studentId);
 
             if (string.Equals(response.PlayerId, "NOTFOUND"))
             {
-                _showErrorMessage = "Falha ao encontrar estudante. A API poderá estar em baixo.";
+                _showErrorMessage = "Failed finding student.";
                 OnPropertyChanged(nameof(ShowErrorMessage));
             }
             else
@@ -167,7 +173,7 @@ namespace SuperUser
                 var result = await _studentService.UpdateStudentCreditsAsync(SelectedStudent.PlayerId, sumCredits);
                 if (result != HttpStatusCode.OK)
                 {
-                    message = "Algo falhou a tentar actualizar créditos.";
+                    message = "Something failed while trying to update credits.";
                     _updateCreditsMessage = message;
                     Application.Current.MainPage.Dispatcher.Dispatch(() => UpdateCreditsMessage = _updateCreditsMessage);
                     OnPropertyChanged(nameof(CustomCreditsAmount));
@@ -177,12 +183,12 @@ namespace SuperUser
                 {
                     if (_customCreditsAmount < 0)
                     {
-                        message = "Foram subtraídos " + (_customCreditsAmount * -1) + " créditos ao estudante " + SelectedStudent.PlayerId;
+                        message = "Subtracted " + (_customCreditsAmount * -1) + " credits to student " + SelectedStudent.PlayerId;
                     }
 
                     else 
                     {
-                        message = "Foram adicionados " + _customCreditsAmount + " créditos ao estudante " + SelectedStudent.PlayerId;
+                        message = "Added " + _customCreditsAmount + " credits to student " + SelectedStudent.PlayerId;
                     }
 
                     _customCreditsAmount = 0;

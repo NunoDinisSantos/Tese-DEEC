@@ -6,6 +6,13 @@ a, .btn-link {
     color: #006bb7;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+    background: url('/backgrounds/TeseGameGif.gif') no-repeat center center fixed;
+    background-size: cover;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -48,4 +55,84 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+.top-bar-rectangle {
+    background: linear-gradient(135deg, #0ef0a8, #0eacf0);
+    width: stretch;
+    height: 100px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    align-items: center;
+}
+
+
+.top-bar-rectangle h1 {
+    color: white;
+    text-align: center;
+    position: center;
+    width: 700px;
+    height: 80px;
+    padding-top: 25px;
+}
+
+
+.description-container {
+    color: white;
+    margin-top: 250px;
+    font-size: large;
+    text-align: center;
+}
+
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-top: -350px;
+}
+
+.center-rectangle {
+    background: linear-gradient(0, #202c9f, #0eacf0);
+    width: 400px;
+    height: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+}
+
+.center-rectangle h1 {
+    color: white;
+    margin-top: -50px;
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.center-rectangle input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+.center-rectangle button {
+    background: #0072ff;
+    color: white;
+    border: medium;
+    cursor: pointer;
+    width: 220px;
+    height: 50px;
+}
+
+.center-rectangle label {
+    color: white;
+    padding: 10px
+}
+
+.center-rectangle button:hover {
+    background: #005bb5;
 }

@@ -27,35 +27,39 @@
             <Label Text="Id Estudante" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
             <Label Text="Créditos Totais" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Start"/>
         </Grid>
-        <CollectionView ItemsSource="{Binding Students}"
+        <ScrollView VerticalScrollBarVisibility="Always">
+            <CollectionView ItemsSource="{Binding Students}"
                         SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
                         SelectionMode="Single" Margin="0,0,0,20" WidthRequest="500" HorizontalOptions="Start" BackgroundColor="Black">
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup Name="CommonStates">
-                    <VisualState Name="Normal"></VisualState>
-                    <VisualState Name="Selected">
-                        <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="White"></Setter>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame CornerRadius="5" Margin="0,0,0,5" BackgroundColor="Transparent">
-                        <StackLayout Orientation="Horizontal">
-                            <Label Text="{Binding PlayerId}" 
+                <CollectionView.HeightRequest>500</CollectionView.HeightRequest>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup Name="CommonStates">
+                        <VisualState Name="Normal"></VisualState>
+                        <VisualState Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="White"></Setter>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame CornerRadius="5" Margin="0,0,0,5" BackgroundColor="Transparent">
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding PlayerId}" 
                                FontSize="14" 
                                VerticalOptions="Center" 
                                WidthRequest="150" />
-                            <Label Text="{Binding Credits}" 
+                                <Label Text="{Binding Credits}" 
                                FontSize="14" 
                                VerticalOptions="Center" />
-                        </StackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+        
         <Grid WidthRequest="500" HorizontalOptions="Start">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
@@ -77,7 +81,7 @@
         
 
         <!-- Update Buttons -->
-        <Label Text="Update creditos" Margin="0,0,0,5" WidthRequest="250" HorizontalOptions="Start"/>
+        <Label Text="Update credits" Margin="0,0,0,5" WidthRequest="250" HorizontalOptions="Start"/>
         <Entry Text="{Binding CustomCreditsAmount}" Keyboard="Numeric" Placeholder="+/- X créditos" WidthRequest="150" HorizontalOptions="Start" Margin="0,0,0,2"/>
         <Button Text="Update Credits" Command="{Binding UpdateCustomCreditCommand}" WidthRequest="150" HorizontalOptions="Start"/>
         <Label Text="{Binding UpdateCreditsMessage}" Margin="0,0,0,4" WidthRequest="500" HorizontalOptions="Start"/>

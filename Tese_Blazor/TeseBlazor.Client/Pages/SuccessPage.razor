@@ -1,9 +1,11 @@
 ﻿@page "/sucesso/{playerId}"
 @rendermode InteractiveWebAssembly
+<div class="header-div-successful">
+    <div>Account created successfully!</div>
+    <div>Student number registered: @playerId</div>
+    <div>You can close this window.</div>
+</div> 
 
-<div>Account created successfully! Your game ID is the one you have just used to register!</div>
-<div>Student number registered: @playerId</div>
-<div>You can close this window.</div>
 
 @code {
 

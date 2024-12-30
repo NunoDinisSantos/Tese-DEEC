@@ -97,7 +97,6 @@ public class PlayerHealth : MonoBehaviour
         Health -= 7;
         timer = 1f;
         healthText.text = Health.ToString();
-        Debug.Log("Called decrement");
         if (Health < 0)
         {
             playerMovementWater.speed = 0.0f; // alterar para 10 depois

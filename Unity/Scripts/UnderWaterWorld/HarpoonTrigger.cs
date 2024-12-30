@@ -6,7 +6,7 @@ public class HarpoonTrigger : MonoBehaviour
 {
     public bool isReeling = false;
 
-    [HideInInspector] private int HarpoonLength = 15;
+    [HideInInspector] private int HarpoonLength = 25;
     [HideInInspector] private float HarpoonSpeed;
     [Header("Devia ser consoante a velocidade do movimento do execicio")]
     [SerializeField] private float HarpoonRetractSpeed = 0.3f;
@@ -92,13 +92,13 @@ public class HarpoonTrigger : MonoBehaviour
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
             case 1:
-                HarpoonLength = 45;
-                HarpoonSpeed = 35;
+                HarpoonLength = 35;
+                HarpoonSpeed = 24;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f; 
                 break;
             case 2:
-                HarpoonLength = 70;
-                HarpoonSpeed = 65;
+                HarpoonLength = 50;
+                HarpoonSpeed = 30;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
         }
@@ -117,13 +117,13 @@ public class HarpoonTrigger : MonoBehaviour
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
             case 1:
-                HarpoonLength = 45;
-                HarpoonSpeed = 35;
+                HarpoonLength = 35;
+                HarpoonSpeed = 24;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
             case 2:
-                HarpoonLength = 70;
-                HarpoonSpeed = 65;
+                HarpoonLength = 50;
+                HarpoonSpeed = 30;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
         }

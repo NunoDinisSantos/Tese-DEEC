@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class FishWaypoints : MonoBehaviour
 {
@@ -29,14 +30,13 @@ public class FishWaypoints : MonoBehaviour
             return;
 
         spawned = true;
-        //int indexSpawn = SpawnParent.transform.childCount - 2;
-        //SpawnParent = SpawnParent.GetChild(Random.Range(0,indexSpawn));
         minY = SpawnParent.GetChild(1).transform.position.y;
         maxY = SpawnParent.GetChild(3).transform.position.y;
         maxX = SpawnParent.GetChild(6).transform.position.x;
         minX = SpawnParent.GetChild(4).transform.position.x;
         maxZ = SpawnParent.GetChild(5).transform.position.z;
         minZ = SpawnParent.GetChild(4).transform.position.z;
+
 
         SetRandomInitialPosition();
         StartCoroutine(MoveFish());

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
@@ -7,6 +8,7 @@ public class PlayerProgress : MonoBehaviour
     [Header("Creditos & Divisor")]
     public int Creditos;
     public int CreditosGained;
+    [Description("Divisor = 200 ==> 200 coins = 1 credit")]
     [SerializeField] private int Divisor = 200; // 200 coins = 1 credit
     public float MultiplierStreak = 1.0f;
 

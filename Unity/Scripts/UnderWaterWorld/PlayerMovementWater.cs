@@ -16,6 +16,7 @@ public class PlayerMovementWater : MonoBehaviour
     [SerializeField] private GameObject[] ZonesToDeActivate;
     [SerializeField] private Camera mainCamera;
     private Camera thisCamera;
+    [SerializeField] private AudioSource surfaceSound;
 
     [SerializeField] private bool inSpace = false;
     public bool ByPassWater = false; 
@@ -49,8 +50,6 @@ public class PlayerMovementWater : MonoBehaviour
     [Header("Look Proxy")]
     public float lookX;
     public float lookY;
-
-
 
     Rigidbody rb;
 
@@ -89,18 +88,6 @@ public class PlayerMovementWater : MonoBehaviour
     {
         PlayerLook();
 
-        if (inSpace)
-        {
-            PlayerMovement(horizontalInput, verticalInput);
-            return;
-        }
-
-        if (!InWater() && !ByPassWater)
-        {
-            Falling();
-            return;
-        }
-
         if (!reelingFish)
         {
             PlayerMovement(horizontalInput, verticalInput);
@@ -111,10 +98,18 @@ public class PlayerMovementWater : MonoBehaviour
     {
         if (!reelingFish)
         {
-            PlayerMove();
+            if (InWater())
+            {
+                PlayerMove();
+            }
+
+            else if (!ByPassWater)
+            {
+                Falling();
+                return;
+            }
         }
     }
-
 
     private void CalculateFogColorAndDensity()
     {
@@ -179,6 +174,7 @@ public class PlayerMovementWater : MonoBehaviour
             waterDiveParticles[0].SetActive(true);
             waterDiveParticles[0].GetComponent<AudioSource>().Play();
             inWater = true;
+            ActivateSoundSurface(0.0f);
             playerVisionController.SetAmbientColors(false); //Checks if is night time to set colors straight. If is day, doesn't change!
             return inWater; 
         }
@@ -202,6 +198,7 @@ public class PlayerMovementWater : MonoBehaviour
             playerVisionController.SetAmbientColors(true);
             waterDiveParticles[1].SetActive(true);
             waterDiveParticles[1].GetComponent<AudioSource>().Play();
+            ActivateSoundSurface(0.15f);
             inShore = true;
             return inShore;
         }
@@ -209,8 +206,14 @@ public class PlayerMovementWater : MonoBehaviour
         return false;
     }
 
+    private void ActivateSoundSurface(float volume)
+    {
+        surfaceSound.volume = volume;
+    }
+
     private void Falling()
     {
+        rb.velocity = new Vector3(0,0,0);
         transform.position = new Vector3(transform.position.x, transform.position.y - (myGravity*Time.deltaTime),transform.position.z);
     }
 

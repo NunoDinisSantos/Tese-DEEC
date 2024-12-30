@@ -22,6 +22,8 @@ public class DayManager : MonoBehaviour
     public GameObject shopCanvas;
     [SerializeField] private Proxy proxy;
     [SerializeField] private GameObject miscStoreObjects;
+    [SerializeField] private AudioClip[] surfaceSounds;
+    [SerializeField] private AudioSource surfaceAudioSource;
 
     private void Start()
     {
@@ -34,6 +36,7 @@ public class DayManager : MonoBehaviour
         if (i <= 55)
         {
             isDay = true;
+            playerVisionController.SetAmbientColors(isDay);
             waterDayNight[0].SetActive(true);
             waterDayNight[1].SetActive(false);
             SetSceneColor(0);
@@ -41,17 +44,20 @@ public class DayManager : MonoBehaviour
             if (i <= 70)
             {
                 typeOfDay[0].SetActive(true);
+                surfaceAudioSource.clip = surfaceSounds[0];
                 return;
             }
 
             if (i > 70 && i < 90)
             {
                 typeOfDay[1].SetActive(true);
+                surfaceAudioSource.clip = surfaceSounds[0];
                 return;
             }
             else
             {
                 typeOfDay[2].SetActive(true);
+                surfaceAudioSource.clip = surfaceSounds[1];
                 return;
             }
         }
@@ -59,6 +65,7 @@ public class DayManager : MonoBehaviour
         else
         {
             isDay = false;
+            playerVisionController.SetAmbientColors(isDay);
             waterDayNight[0].SetActive(false);
             waterDayNight[1].SetActive(true);
             SetSceneColor(1);
@@ -66,17 +73,20 @@ public class DayManager : MonoBehaviour
             if (i <= 70)
             {
                 typeOfDay[3].SetActive(true);
+                surfaceAudioSource.clip = surfaceSounds[0];
                 return;
             }
 
             if (i > 70 && i < 90)
             {
                 typeOfDay[4].SetActive(true);
+                surfaceAudioSource.clip = surfaceSounds[1];
                 return;
             }
             else
             {
                 typeOfDay[5].SetActive(true);
+                surfaceAudioSource.clip = surfaceSounds[0];
                 return;
             }
         }

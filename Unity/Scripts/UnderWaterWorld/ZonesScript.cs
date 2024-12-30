@@ -26,7 +26,7 @@ public class ZonesScript : MonoBehaviour
     {
         if(HotZone)
         {
-            PlayerHealth.EnterHotZone(1);
+            PlayerHealth.EnterHotZone(2);
             Debug.Log("Entered hot zone...");
             fishControllerScript.ActivateSpawner("Hot");
             playerVisionController.ChangeColorView(8);
@@ -47,7 +47,7 @@ public class ZonesScript : MonoBehaviour
 
         if (ColdZone)
         {
-            PlayerHealth.EnterColdZone(2);
+            PlayerHealth.EnterColdZone(1);
             Debug.Log("Entered Cold zone...");
             fishControllerScript.ActivateSpawner("Ice");
             playerVisionController.ChangeColorView(5);

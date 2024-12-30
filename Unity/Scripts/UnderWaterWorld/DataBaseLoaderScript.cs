@@ -8,9 +8,9 @@ using UnityEngine.Networking;
 public class DataBaseLoaderScript : MonoBehaviour
 {
     public string playerId;
-    //public string partialFileEndpoint = "http://localhost/Tese/"; // TO CHANGE
+    //public string partialFileEndpoint = "http://88.198.115.159/"; // TO CHANGE
     //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
-    private string partialFileEndpoint = "http://misteriosaquaticos.pt:8081/";
+    private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
     public PlayerData playerData;
     public PlayerDataScript playerDataScript;
     public bool loaded = false;

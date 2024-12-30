@@ -5,34 +5,55 @@
 
 <PageTitle>Registo</PageTitle>
 
-<div class="top-bar-rectangle">
+<div class="header-div">
+    <div class="top-bar-rectangle">   
+        <h1>Misterios Aquaticos - DEEC</h1>
+    </div>
+
+    <div class="top-bar-description">
+        <div>
+            This work is part of a dissertation from the Department of Electrical and Computers Engineering, University of Coimbra.
+        </div>
+        <div>
+            The goal is to do some exercise while having fun! You can also win credits which you can trade for real world rewards!
+        </div>
+    </div>
+</div>
+
+
+<div class="center-rectangle">
+
+    <h1>Registration</h1>
     
-    <h1>Misterios Aquaticos - DEEC</h1>
+    <desc-label>
+        Use your student number in your card as your ID to play the game.
+    </desc-label>
 
+    <div class="student-number-container">
+        <label for="numeroEstudante">Insert student number:</label>
+        <InputText id="numeroEstudante" @bind-Value="NumeroEstudante" />
+        <button class="btn btn-primary" @onclick="Registar">Create account</button>
+        <label>@ErrorMessage</label>
+    </div>
 </div>
-<div>
-This work is part of a dissertation from the Department of Electrical and Computers Engineering, University of Coimbra.
-</div>
 
 
-<div class="description-container">
-Use your student number in your card as your ID to play the game! The goal is to do some exercise while having fun! You can also win credits which you can trade for real world rewards!
-</div>
 
-<div class="centered-container">
-    <div class="center-rectangle">
-        <h1>Registration</h1>
-        <div>
-            <label for="numeroEstudante">Insert student number:</label>
-            <InputText id="numeroEstudante" @bind-Value="NumeroEstudante" />
-        </div>
 
-        <div>
-            <button class="btn btn-primary" @onclick="Registar">Create account</button>
-            <label>@ErrorMessage</label>
-        </div>
-        </div>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @code {
     private string NumeroEstudante { get; set; } = string.Empty;

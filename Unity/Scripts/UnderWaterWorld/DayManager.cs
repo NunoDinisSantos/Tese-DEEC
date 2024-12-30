@@ -45,6 +45,7 @@ public class DayManager : MonoBehaviour
             {
                 typeOfDay[0].SetActive(true);
                 surfaceAudioSource.clip = surfaceSounds[0];
+                surfaceAudioSource.Play();
                 return;
             }
 
@@ -52,12 +53,14 @@ public class DayManager : MonoBehaviour
             {
                 typeOfDay[1].SetActive(true);
                 surfaceAudioSource.clip = surfaceSounds[0];
+                surfaceAudioSource.Play();
                 return;
             }
             else
             {
                 typeOfDay[2].SetActive(true);
                 surfaceAudioSource.clip = surfaceSounds[1];
+                surfaceAudioSource.Play();
                 return;
             }
         }
@@ -74,6 +77,7 @@ public class DayManager : MonoBehaviour
             {
                 typeOfDay[3].SetActive(true);
                 surfaceAudioSource.clip = surfaceSounds[0];
+                surfaceAudioSource.Play();
                 return;
             }
 
@@ -81,12 +85,14 @@ public class DayManager : MonoBehaviour
             {
                 typeOfDay[4].SetActive(true);
                 surfaceAudioSource.clip = surfaceSounds[1];
+                surfaceAudioSource.Play();
                 return;
             }
             else
             {
                 typeOfDay[5].SetActive(true);
                 surfaceAudioSource.clip = surfaceSounds[0];
+                surfaceAudioSource.Play();
                 return;
             }
         }

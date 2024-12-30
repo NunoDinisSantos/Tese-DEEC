@@ -87,18 +87,18 @@ public class HarpoonTrigger : MonoBehaviour
         switch(_playerProgress.shipReelStrenghtModule)
         {
             case 0:
-                HarpoonLength = 25;
-                HarpoonSpeed = 18;
+                HarpoonLength = 35;
+                HarpoonSpeed = 20;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
             case 1:
-                HarpoonLength = 35;
-                HarpoonSpeed = 24;
+                HarpoonLength = 45;
+                HarpoonSpeed = 27;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f; 
                 break;
             case 2:
-                HarpoonLength = 50;
-                HarpoonSpeed = 30;
+                HarpoonLength = 55;
+                HarpoonSpeed = 32;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
         }
@@ -112,18 +112,18 @@ public class HarpoonTrigger : MonoBehaviour
         switch (_playerProgress.shipReelStrenghtModule)
         {
             case 0:
-                HarpoonLength = 25;
-                HarpoonSpeed = 18;
+                HarpoonLength = 35;
+                HarpoonSpeed = 20;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
             case 1:
-                HarpoonLength = 35;
-                HarpoonSpeed = 24;
+                HarpoonLength = 45;
+                HarpoonSpeed = 27;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
             case 2:
-                HarpoonLength = 50;
-                HarpoonSpeed = 30;
+                HarpoonLength = 55;
+                HarpoonSpeed = 32;
                 HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
                 break;
         }

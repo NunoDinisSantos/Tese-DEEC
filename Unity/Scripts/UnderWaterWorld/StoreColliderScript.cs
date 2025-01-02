@@ -4,23 +4,23 @@ using UnityEngine.SceneManagement;
 
 public class StoreColliderScript : MonoBehaviour
 {
-    public bool inStore = false;
-    public PlayerMovementWater playerMovement;
-    public Collider playerStoreCollider;
-    public Transform playerTransform;
-    public Transform[] TargetTransf;
+    [HideInInspector] public bool inStore = false;
+    [HideInInspector] public PlayerMovementWater playerMovement;
+    [HideInInspector] public Collider playerStoreCollider;
+    [HideInInspector] public Transform playerTransform;
+    [HideInInspector] public Transform[] TargetTransf;
 
-    public float threshold = 0.5f;
-    public float speed = 0.1f;
-    public Animation canvasAnimation;
-    public GameObject canvasStore;
-    public GameObject shopCamera;
-    public ShopManager shopManager;
-    [SerializeField] private Proxy proxy;
-    [SerializeField] private GameObject storeSub;
-    [SerializeField] private GameObject miscStoreObjects;
+    [HideInInspector] public float threshold = 0.5f;
+    [HideInInspector] public float speed = 0.1f;
+    [HideInInspector] public Animation canvasAnimation;
+    [HideInInspector] public GameObject canvasStore;
+    [HideInInspector] public GameObject shopCamera;
+    [HideInInspector] public ShopManager shopManager;
+    [HideInInspector][SerializeField] private Proxy proxy;
+    [HideInInspector][SerializeField] private GameObject storeSub;
+    [HideInInspector][SerializeField] private GameObject miscStoreObjects;
 
-    public GameObject ConfirmBackToMenu;
+    [HideInInspector] public GameObject ConfirmBackToMenu;
 
     private void OnTriggerEnter(Collider other)
     {

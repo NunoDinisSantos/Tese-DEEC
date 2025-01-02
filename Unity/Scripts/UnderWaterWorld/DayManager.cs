@@ -1,29 +1,34 @@
 using System.Collections;
+using System.ComponentModel;
 using UnityEngine;
 
 public class DayManager : MonoBehaviour
 {
-    public PlayerProgress progress;
-    public Animation canvasAnimation;
-    public GameObject[] typeOfDay;
-    [SerializeField] private Material skyboxMat;
-    public Color[] dayColor;
-    public PlayerHealth playerHealth;
-    public PlayerMovementWater playerMovementWater;
-    public StoreColliderScript storeCol;
-    public bool isDay = true;
-    public PlayerVisionController playerVisionController;
-    public GameObject StorageGuys;
-    public UnderWaterStoreFishScript underWaterStoreFish;
-    [SerializeField] private GameObject Fog;
-    [SerializeField] private GameObject[] waterDayNight;
-    public int starAmount = 6;
-    public GameObject shopCamera;
-    public GameObject shopCanvas;
-    [SerializeField] private Proxy proxy;
-    [SerializeField] private GameObject miscStoreObjects;
-    [SerializeField] private AudioClip[] surfaceSounds;
-    [SerializeField] private AudioSource surfaceAudioSource;
+    [Description("Control star amount Day and Night")]
+    public int starAmountDay = 2;
+    public int starAmountNight = 15;
+
+    [HideInInspector] public PlayerProgress progress;
+    [HideInInspector] public Animation canvasAnimation;
+    [HideInInspector] public GameObject[] typeOfDay;
+    [HideInInspector] [SerializeField] private Material skyboxMat;
+    [HideInInspector] public Color[] dayColor;
+    [HideInInspector] public PlayerHealth playerHealth;
+    [HideInInspector] public PlayerMovementWater playerMovementWater;
+    [HideInInspector] public StoreColliderScript storeCol;
+    [HideInInspector] public bool isDay = true;
+    [HideInInspector] public PlayerVisionController playerVisionController;
+    [HideInInspector] public GameObject StorageGuys;
+    [HideInInspector] public UnderWaterStoreFishScript underWaterStoreFish;
+    [HideInInspector] [SerializeField] private GameObject Fog;
+    [HideInInspector] [SerializeField] private GameObject[] waterDayNight;
+    [HideInInspector] public int starAmount;
+    [HideInInspector] public GameObject shopCamera;
+    [HideInInspector] public GameObject shopCanvas;
+    [HideInInspector] [SerializeField] private Proxy proxy;
+    [HideInInspector] [SerializeField] private GameObject miscStoreObjects;
+    [HideInInspector] [SerializeField] private AudioClip[] surfaceSounds;
+    [HideInInspector] [SerializeField] private AudioSource surfaceAudioSource;
 
     private void Start()
     {
@@ -36,7 +41,7 @@ public class DayManager : MonoBehaviour
         if (i <= 55)
         {
             isDay = true;
-            playerVisionController.SetAmbientColors(isDay);
+            playerVisionController.SetAmbientColorsTerminateDay(isDay);
             waterDayNight[0].SetActive(true);
             waterDayNight[1].SetActive(false);
             SetSceneColor(0);
@@ -68,7 +73,7 @@ public class DayManager : MonoBehaviour
         else
         {
             isDay = false;
-            playerVisionController.SetAmbientColors(isDay);
+            playerVisionController.SetAmbientColorsTerminateDay(isDay);
             waterDayNight[0].SetActive(false);
             waterDayNight[1].SetActive(true);
             SetSceneColor(1);
@@ -186,7 +191,7 @@ public class DayManager : MonoBehaviour
             playerVisionController.isDayTime = true;
             playerVisionController.FogColor(isDay);
             skyboxMat.SetColor("_BotColor", dayColor[0]);
-            starAmount = 2;
+            starAmount = starAmountDay;
             skyboxMat.SetFloat("_StarAmount", starAmount);
             skyboxMat.SetColor("_AlphaColor", Color.black);
             return;
@@ -197,7 +202,7 @@ public class DayManager : MonoBehaviour
             playerVisionController.FogColor(isDay);
             playerVisionController.isDayTime = false;
             skyboxMat.SetColor("_BotColor", dayColor[1]);            
-            starAmount = 7;
+            starAmount = starAmountNight;
             skyboxMat.SetFloat("_StarAmount", starAmount);
             skyboxMat.SetColor("_AlphaColor", Color.black);
         }

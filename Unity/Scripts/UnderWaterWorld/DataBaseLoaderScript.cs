@@ -7,16 +7,16 @@ using UnityEngine.Networking;
 
 public class DataBaseLoaderScript : MonoBehaviour
 {
-    public string playerId;
+    [HideInInspector] public string playerId;
     //public string partialFileEndpoint = "http://88.198.115.159/"; // TO CHANGE
     //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
     private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
-    public PlayerData playerData;
-    public PlayerDataScript playerDataScript;
-    public bool loaded = false;
+    [HideInInspector] public PlayerData playerData;
+    [HideInInspector] public PlayerDataScript playerDataScript;
+    [HideInInspector] public bool loaded = false;
     public int maxDayStreak = 3;
-    public bool errorGettingPlayer = false;
-    private HttpClient _client;
+    [HideInInspector] public bool errorGettingPlayer = false;
+    [HideInInspector] private HttpClient _client;
 
     IEnumerator GetDataFromApi(string playerId)
     {

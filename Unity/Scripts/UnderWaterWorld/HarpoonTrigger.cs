@@ -10,50 +10,50 @@ public class HarpoonTrigger : MonoBehaviour
     [HideInInspector] private float HarpoonSpeed;
     [Header("Devia ser consoante a velocidade do movimento do execicio")]
     [SerializeField] private float HarpoonRetractSpeed = 0.3f;
-    [SerializeField] private Camera MainCamera;
-    [SerializeField] private Vector3 HarpoonSpawnPoint;
-    [SerializeField] private GameObject HarpoonHandTarget;
-    [SerializeField] private GameObject HarpoonHandModel;
-    public bool canFire = true;
-    [SerializeField] bool fired = false;
-    public bool aiming = false;
-    private bool wantsToStopAim = false;
-    [SerializeField] public bool locked = false;
-    [SerializeField] PlayerMovementWater playerMovementWater;
-    public float multiplyer = 1;
-    public float timerMax = 4;
-    Vector2 aim = Vector2.zero;
-    [SerializeField] private bool retractingHarpoon = false;
+    [HideInInspector][SerializeField] private Camera MainCamera;
+    [HideInInspector][SerializeField] private Vector3 HarpoonSpawnPoint;
+    [HideInInspector][SerializeField] private GameObject HarpoonHandTarget;
+    [HideInInspector][SerializeField] private GameObject HarpoonHandModel;
+    [HideInInspector] public bool canFire = true;
+    [HideInInspector][SerializeField] bool fired = false;
+    [HideInInspector] public bool aiming = false;
+    [HideInInspector] private bool wantsToStopAim = false;
+    [HideInInspector][SerializeField] public bool locked = false;
+    [HideInInspector][SerializeField] PlayerMovementWater playerMovementWater;
+    [HideInInspector] public float multiplyer = 1;
+    [HideInInspector] public float timerMax = 4;
+    [HideInInspector] Vector2 aim = Vector2.zero;
+    [HideInInspector][SerializeField] private bool retractingHarpoon = false;
 
     private bool grabbedFish = false;
-    [SerializeField] private int fishStrength = 1;
-    [SerializeField] private Transform GrabbedFishTransform;
-    public float handOffset = 0.8f;
-    [SerializeField] private bool pullingDirectionClockwise = true;
-    [SerializeField] private float GrabX;
-    [SerializeField] private float GrabY;
-    [SerializeField] private float GrabAngle;
-    [SerializeField] private float AngleTolerance = 10f;
-    [SerializeField] private float RTolerance = 0.5f;
-    public bool stopAimCalled = false;
-    [SerializeField] private float aimingSensitivityMultiplierX = 0.01f;
-    [SerializeField] private float aimingSensitivityMultiplierY = 0.01f;
-    [SerializeField] public bool FiredFromProxy = false;
-    [SerializeField] private bool CloseTocompleteRot = false;
-    [SerializeField] private Inventory inventory;
-    [SerializeField] private GameObject PlayerMessageScript;
-    [SerializeField] private AudioCuesManagerScript cuesManagerScript;
+    [HideInInspector][SerializeField] private int fishStrength = 1;
+    [HideInInspector][SerializeField] private Transform GrabbedFishTransform;
+    [HideInInspector] public float handOffset = 0.8f;
+    [HideInInspector][SerializeField] private bool pullingDirectionClockwise = true;
+    [HideInInspector][SerializeField] private float GrabX;
+    [HideInInspector][SerializeField] private float GrabY;
+    [HideInInspector][SerializeField] private float GrabAngle;
+    [HideInInspector][SerializeField] private float AngleTolerance = 10f;
+    [HideInInspector][SerializeField] private float RTolerance = 0.5f;
+    [HideInInspector] public bool stopAimCalled = false;
+    [HideInInspector][SerializeField] private float aimingSensitivityMultiplierX = 0.01f;
+    [HideInInspector][SerializeField] private float aimingSensitivityMultiplierY = 0.01f;
+    [HideInInspector][SerializeField] public bool FiredFromProxy = false;
+    [HideInInspector][SerializeField] private bool CloseTocompleteRot = false;
+    [HideInInspector][SerializeField] private Inventory inventory;
+    [HideInInspector][SerializeField] private GameObject PlayerMessageScript;
+    [HideInInspector][SerializeField] private AudioCuesManagerScript cuesManagerScript;
     private AudioSource audioSource;
-    [SerializeField] private AudioClip[] audioClips;
+    [HideInInspector][SerializeField] private AudioClip[] audioClips;
     private bool reelFishSound = false;
     private bool reelSound = false;
-    public GameObject FireParticles;
-    public FishControllerScript fishController;
-    public PlayerProgress _playerProgress;
-    public GameObject CanvasMira;
+    [HideInInspector] public GameObject FireParticles;
+    [HideInInspector] public FishControllerScript fishController;
+    [HideInInspector] public PlayerProgress _playerProgress;
+    [HideInInspector] public GameObject CanvasMira;
     private bool grabbedAchievObject = false;
     private bool checkedWhatIs = false;
-    [SerializeField] private Animation fishInventoryAnimation;
+    [HideInInspector][SerializeField] private Animation fishInventoryAnimation;
     private GetPatientCircleData patientCircleData;
 
     //#################################################################################
@@ -72,7 +72,7 @@ public class HarpoonTrigger : MonoBehaviour
     */
     #endregion
     private float fishEscapeTimer = 3f;
-    [SerializeField] private Collider harpoonCollider;
+    [HideInInspector][SerializeField] private Collider harpoonCollider;
 
     private float vertical;
     private float horizontal;

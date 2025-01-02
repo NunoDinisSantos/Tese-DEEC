@@ -5,7 +5,7 @@ public class FishControllerScript : MonoBehaviour
     public int maxFishScene = 50;
     public int currentFishScene = 0;
     [SerializeField] private Transform[] ZonesSpawner;
-    [SerializeField] private string currentZone;
+    [HideInInspector][SerializeField] private string currentZone;
     public Collider playerZoneCollider;
     int indexSpawner = 0;
 

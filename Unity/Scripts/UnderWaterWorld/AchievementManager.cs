@@ -6,22 +6,21 @@ using UnityEngine.UI;
 
 public class AchievementManager : MonoBehaviour
 {
-    public List<int> achievementsGainedType = new();
+    [HideInInspector] public List<int> achievementsGainedType = new();
     PlayerProgress progress;
-    [Header("Achievements")]
-    public bool hasCoralAchiev;
-    public bool hasTempleAchiv;
-    public bool hasShipAchiev;
-    public bool hasBaseAchiv;
-    public bool hasIceAchiv;
-    public bool hasTreasureAchiev;
-    public Animation canvasAchievAnimation;
-    public TMP_Text AchievementTextTitle;
-    public TMP_Text AchievementText;
-    public Image achievImage;
+    [HideInInspector] public bool hasCoralAchiev;
+    [HideInInspector] public bool hasTempleAchiv;
+    [HideInInspector] public bool hasShipAchiev;
+    [HideInInspector] public bool hasBaseAchiv;
+    [HideInInspector] public bool hasIceAchiv;
+    [HideInInspector] public bool hasTreasureAchiev;
+    [HideInInspector] public Animation canvasAchievAnimation;
+    [HideInInspector] public TMP_Text AchievementTextTitle;
+    [HideInInspector] public TMP_Text AchievementText;
+    [HideInInspector] public Image achievImage;
     int counter = 0;
-    public GameObject[] AchievementsObjects;
-    public DataBaseLoaderScript database;
+    [HideInInspector] public GameObject[] AchievementsObjects;
+    [HideInInspector] public DataBaseLoaderScript database;
 
     void Start()
     {

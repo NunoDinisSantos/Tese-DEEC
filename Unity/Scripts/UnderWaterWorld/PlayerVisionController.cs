@@ -12,21 +12,21 @@ public class PlayerVisionController : MonoBehaviour
     private Color currentColorLerp;
     private Color currentWaterColorLerp;
     private Camera mainCamera;
-    [SerializeField] private GameObject[] water;
+    [HideInInspector] [SerializeField] private GameObject[] water;
     [SerializeField] private Color[] waterColors;
     [SerializeField] private Color[] waterColorsNight;
-    [SerializeField] private Material skyboxMat;
-    [SerializeField] private Material[] waterMat;
+    [HideInInspector] [SerializeField] private Material skyboxMat;
+    [HideInInspector] [SerializeField] private Material[] waterMat;
     private Material currentWaterMat;
-    [SerializeField] private Image NoFlashLightObject;
+    [HideInInspector] [SerializeField] private Image NoFlashLightObject;
     private Color flashLightColor;
-    [SerializeField] private PlayerProgress progress;
-    public int flashlight = 0;
-    public bool isDayTime = true;
+    [HideInInspector] [SerializeField] private PlayerProgress progress;
+    [HideInInspector] public int flashlight = 0;
+    [HideInInspector] public bool isDayTime = true;
     private bool warned = false;
     private bool inDeep = false;
-    [SerializeField] private GameObject needFlashlightWarning;
-    [SerializeField] private AudioCuesManagerScript cuesManagerScript;
+    [HideInInspector] [SerializeField] private GameObject needFlashlightWarning;
+    [HideInInspector] [SerializeField] private AudioCuesManagerScript cuesManagerScript;
     //0 - 0.35 - 0.57 - blue
     //0.05 - 0.57 - 0.40 - Green
 
@@ -126,6 +126,20 @@ public class PlayerVisionController : MonoBehaviour
         }
     }
 
+    public void SetAmbientColorsTerminateDay(bool day)
+    {
+        if (day)
+        {
+            RenderSettings.ambientSkyColor = EnvironmentColors[0];
+            RenderSettings.ambientEquatorColor = EnvironmentColors[1];
+        }
+        else
+        {
+            RenderSettings.ambientSkyColor = EnvironmentColors[2];
+            RenderSettings.ambientEquatorColor = EnvironmentColors[3];
+        }
+    }
+
     public void SetAmbientColors(bool day)
     {
         if (day)
@@ -136,10 +150,19 @@ public class PlayerVisionController : MonoBehaviour
         else
         {
             if (isDayTime)
+            {
                 return;
+            }
+               
             RenderSettings.ambientSkyColor = EnvironmentColors[2];
             RenderSettings.ambientEquatorColor = EnvironmentColors[3];
         }
+    }
+
+    public void SetAmbientColorAtSurface()
+    {
+        RenderSettings.ambientSkyColor = EnvironmentColors[0];
+        RenderSettings.ambientEquatorColor = EnvironmentColors[1];
     }
 
     public void ChangeColorViewWater(int colorIndex)

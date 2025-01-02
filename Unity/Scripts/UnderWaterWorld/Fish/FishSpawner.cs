@@ -4,24 +4,19 @@ using UnityEngine;
 
 public class FishSpawner : MonoBehaviour
 {
-    [SerializeField] private FishControllerScript fishControllerScript;
-    public bool currentSpawning = false;
+    [HideInInspector][SerializeField] private FishControllerScript fishControllerScript;
+    [HideInInspector] public bool currentSpawning = false;
     [SerializeField] private Transform FishPool;
     int fishIndexPool = 0;
     int maxFishIndexPool;
     int maxFishScene = 0;
     [SerializeField] private List<Transform> Areas = new();
-    [SerializeField] private GameObject[] validPoolFishInZone;
-    [SerializeField] private float percentagemFish1;
-    [SerializeField] private float percentagemFish2;
-    [SerializeField] private float percentagemFish3;
-    [SerializeField] private float percentagemFish4;
-    [SerializeField] private float percentagemFish5;
+    //[SerializeField] private GameObject[] validPoolFishInZone;
 
-    [SerializeField] private string zone;
+    [HideInInspector][SerializeField] private string zone;
 
-    [SerializeField] private int maxFishInBoundaries;
-    public int currentFish = 0;
+    [SerializeField] private int sumOfFishInZone;
+    [HideInInspector] public int currentFish = 0;
 
     private void OnDisable()
     {
@@ -38,7 +33,7 @@ public class FishSpawner : MonoBehaviour
         for(int i = 0; i < transform.childCount-1; i++)
         {
             Areas.Add(transform.GetChild(i));
-            maxFishInBoundaries += Areas[i].GetComponent<FishSpawnerBoundaries>().maxNumberOfFishInBoundary;
+            sumOfFishInZone += Areas[i].GetComponent<FishSpawnerBoundaries>().maxNumberOfFishInBoundary;
         }
 
 
@@ -74,7 +69,7 @@ public class FishSpawner : MonoBehaviour
         float timer = 5;
 
 
-        if (fishControllerScript.currentFishScene < maxFishScene && fishIndexPool < maxFishIndexPool && currentFish < maxFishInBoundaries) // Atencao que o index++ não é solution porque o player pode apanhar um peixe de uma posição random!
+        if (fishControllerScript.currentFishScene < maxFishScene && fishIndexPool < maxFishIndexPool && currentFish < sumOfFishInZone) // Atencao que o index++ não é solution porque o player pode apanhar um peixe de uma posição random!
         {
             int randomPool = Random.Range(0, 100);
 

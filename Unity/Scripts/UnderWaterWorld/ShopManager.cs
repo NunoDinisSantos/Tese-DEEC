@@ -5,48 +5,68 @@ using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
 {
-    [SerializeField] PlayerProgress _PlayerProgress;
-    [SerializeField] private int shipFlashlight;
-    [SerializeField] private int shipDepthModule;
-    [SerializeField] private int shipStorageModule;
-    [SerializeField] private int shipReelStrenghtModule;
-    [SerializeField] private int shipTemperatureModule;
+    [Header("Item cost = baseCost + moduleLevel*multiplier")]
 
-    [SerializeField] private GameObject[] Panels;
-    [SerializeField] private Button[] Buttons;
+    [Header("Depth module cost")]
+    [SerializeField] private int depthModuleBaseCost = 1500;
+    [SerializeField] private int depthModuleLevelMultiplier = 2000;
 
-    [SerializeField] private int itemIndex;
-    [SerializeField] int itemCost = 0;
-    [SerializeField] private TMP_Text descriptionText;
-    [SerializeField] private TMP_Text comprarCusto;
-    [SerializeField] private TMP_Text[] playerMoney;
-    [SerializeField] private TMP_Text stats;
+    [Header("Temperature module cost")]
+    [SerializeField] private int tempModuleBaseCost = 1500;
+    [SerializeField] private int tempModuleLevelMultiplier = 2000;
+
+    [Header("Reel module cost")]
+    [SerializeField] private int reelModuleBaseCost = 600;
+    [SerializeField] private int reelModuleLevelMultiplier = 1900;
+
+    [Header("Storage module cost")]
+    [SerializeField] private int storageModuleBaseCost = 600;
+    [SerializeField] private int storageModuleLevelMultiplier = 1900;
+
+    [Header("Flashlight module cost")]
+    [SerializeField] private int flashlightBaseCost = 5000;
+
+    [HideInInspector][SerializeField] PlayerProgress _PlayerProgress;
+    [HideInInspector][SerializeField] private int shipFlashlight;
+    [HideInInspector][SerializeField] private int shipDepthModule;
+    [HideInInspector][SerializeField] private int shipStorageModule;
+    [HideInInspector][SerializeField] private int shipReelStrenghtModule;
+    [HideInInspector][SerializeField] private int shipTemperatureModule;
+
+    [HideInInspector][SerializeField] private GameObject[] Panels;
+    [HideInInspector][SerializeField] private Button[] Buttons;
+
+    [HideInInspector][SerializeField] private int itemIndex;
+    [HideInInspector][SerializeField] int itemCost = 0;
+    [HideInInspector][SerializeField] private TMP_Text descriptionText;
+    [HideInInspector][SerializeField] private TMP_Text comprarCusto;
+    [HideInInspector][SerializeField] private TMP_Text[] playerMoney;
+    [HideInInspector][SerializeField] private TMP_Text stats;
 
     private string itemDescription;
-    [SerializeField] private Inventory inventory;
-    [SerializeField] private UnderwaterInventory underwaterInventory;
+    [HideInInspector][SerializeField] private Inventory inventory;
+    [HideInInspector][SerializeField] private UnderwaterInventory underwaterInventory;
 
-    [SerializeField] private Button BuyButton;
+    [HideInInspector][SerializeField] private Button BuyButton;
 
-    [SerializeField] private Animation animationStore;
-    [SerializeField] private Animation playerCameraAnimation;
+    [HideInInspector][SerializeField] private Animation animationStore;
+    [HideInInspector][SerializeField] private Animation playerCameraAnimation;
     private ShowInventoryStore showInventoryStore;
-    [SerializeField] private TMP_Text ShowMesssageStore;
-    [SerializeField] private TMP_Text GainSpentMoneyText;
-    [SerializeField] private AchievementManager AchievementManager;
+    [HideInInspector][SerializeField] private TMP_Text ShowMesssageStore;
+    [HideInInspector][SerializeField] private TMP_Text GainSpentMoneyText;
+    [HideInInspector][SerializeField] private AchievementManager AchievementManager;
     private AudioSource audioSource;
-    [SerializeField] private DayManager dayManager;
+    [HideInInspector][SerializeField] private DayManager dayManager;
     int moneyGained;
     int creditsGained;
     TimeSpan timePlayed;
-    public DateTime dateNow;
+    [HideInInspector] public DateTime dateNow;
 
-    [Header("Modules Shop")]
-    public GameObject[] DeepModule;
-    public GameObject[] TempModule;
-    public GameObject[] ReelModule;
-    public GameObject[] StorageModule;
-    public GameObject FlashLight;
+    [HideInInspector] public GameObject[] DeepModule;
+    [HideInInspector] public GameObject[] TempModule;
+    [HideInInspector] public GameObject[] ReelModule;
+    [HideInInspector] public GameObject[] StorageModule;
+    [HideInInspector] public GameObject FlashLight;
 
 
     private void Start()
@@ -80,7 +100,7 @@ public class ShopManager : MonoBehaviour
         switch (itemIndex)
         {
             case 0:
-                itemCost = 1500 + shipDepthModule*2000;
+                itemCost = depthModuleBaseCost + shipDepthModule*depthModuleLevelMultiplier;
                 itemDescription = "Este módulo garante mais protecção ao submarino podendo ir até mais fundo!";
                 descriptionText.text = itemDescription;
                 comprarCusto.text = "Comprar: " + itemCost;
@@ -88,7 +108,7 @@ public class ShopManager : MonoBehaviour
                     DeepModule[shipDepthModule].SetActive(true);
                 break;
             case 1:
-                itemCost = 1500 + shipTemperatureModule * 2000;
+                itemCost = tempModuleBaseCost + shipTemperatureModule * tempModuleLevelMultiplier;
                 itemDescription = "Este módulo garante mais protecção ao submarino permitindo aguentar temperaturas mais baixas (nível 1) ou elevadas (nível 2)!";
                 descriptionText.text = itemDescription;
                 comprarCusto.text = "Comprar: " + itemCost;
@@ -96,7 +116,7 @@ public class ShopManager : MonoBehaviour
                     TempModule[shipTemperatureModule].SetActive(true);
                 break;
             case 2:
-                itemCost = 600 + shipReelStrenghtModule * 600;
+                itemCost = reelModuleBaseCost + shipReelStrenghtModule * reelModuleLevelMultiplier;
                 itemDescription = "Este módulo equipa o submarino com uma corda mais comprida e um motor que permite disparar a ventosa mais rápido!";
                 descriptionText.text = itemDescription;
                 comprarCusto.text = "Comprar: " + itemCost;
@@ -104,7 +124,7 @@ public class ShopManager : MonoBehaviour
                     ReelModule[shipReelStrenghtModule].SetActive(true);
                 break;
             case 3:
-                itemCost = 600 + shipStorageModule * 1900; ;
+                itemCost = storageModuleBaseCost + shipStorageModule * storageModuleLevelMultiplier; ;
                 itemDescription = "Este módulo aumenta o tamanho do reservatório. Assim pode apanhar mais peixes, ou peixes maiores!";
                 descriptionText.text = itemDescription;
                 comprarCusto.text = "Comprar: " + itemCost;
@@ -112,7 +132,7 @@ public class ShopManager : MonoBehaviour
                     StorageModule[shipStorageModule].SetActive(true);
                 break;
             case 4:
-                itemCost = 5000;
+                itemCost = flashlightBaseCost;
                 itemDescription = "Este módulo adiciona uma lanterna para conseguir ver nas zonas mais escuras!";
                 descriptionText.text = itemDescription;
                 comprarCusto.text = "Comprar: " + itemCost;

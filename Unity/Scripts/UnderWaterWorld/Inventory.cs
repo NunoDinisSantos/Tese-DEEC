@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private PlayerProgress progress;
-    [SerializeField] private int StorageSize;
-    [SerializeField] private int currentStorageSpace;
-    [SerializeField] private int money;
-    [SerializeField] private int Gems;
-    [SerializeField] private TMP_Text StorageSizeText;
-    public bool fullStorage = false;
-    [SerializeField] public List<int> fishListMoneyWorth;
-    [SerializeField] public List<int> fishListType;
-    [SerializeField] public List<int> achievListMoneyWorth;
-    [SerializeField] public List<int> achievListType;
-    [SerializeField] public List<int> achievListCreditWorth;
+    [HideInInspector][SerializeField] private PlayerProgress progress;
+    [HideInInspector][SerializeField] private int StorageSize;
+    [HideInInspector][SerializeField] private int currentStorageSpace;
+    [HideInInspector][SerializeField] private int money;
+    [HideInInspector][SerializeField] private int Gems;
+    [HideInInspector][SerializeField] private TMP_Text StorageSizeText;
+    [HideInInspector]public bool fullStorage = false;
+    [HideInInspector][SerializeField] public List<int> fishListMoneyWorth;
+    [HideInInspector][SerializeField] public List<int> fishListType;
+    [HideInInspector][SerializeField] public List<int> achievListMoneyWorth;
+    [HideInInspector][SerializeField] public List<int> achievListType;
+    [HideInInspector][SerializeField] public List<int> achievListCreditWorth;
+    [HideInInspector] public int fishDayCatched = 0;
 
-    public int fishDayCatched = 0;
     private void Start()
     {
         int storageModule = progress.shipStorageModule;

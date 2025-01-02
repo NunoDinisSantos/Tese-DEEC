@@ -1,43 +1,47 @@
 using System;
-using System.ComponentModel;
 using UnityEngine;
 
 public class PlayerProgress : MonoBehaviour
 {
-    public DataBaseLoaderScript database;
+    [HideInInspector] public DataBaseLoaderScript database;
     [Header("Creditos & Divisor")]
-    public int Creditos;
-    public int CreditosGained;
-    [Description("Divisor = 200 ==> 200 coins = 1 credit")]
+    [HideInInspector] public int Creditos;
+    [HideInInspector] public int CreditosGained;
+    [Header("Divisor = 200 ==> 200 coins = 1 credit")]
     [SerializeField] private int Divisor = 200; // 200 coins = 1 credit
-    public float MultiplierStreak = 1.0f;
+    [HideInInspector] public float MultiplierStreak = 1.0f;
 
-    public int Money;
-    public TimeSpan TimePlayed;
-    public float PatientYHelp;
-    public float PatientXHelp;
-    public bool AutomaticReel;
-    public int FishCaught;
-    public int TreasuresCaught;
-    public int Days;
-    public int TUTORIAL;
+    [HideInInspector] public int Money;
+    [HideInInspector] public TimeSpan TimePlayed;
+    //[HideInInspector] public float PatientYHelp;
+    //[HideInInspector] public float PatientXHelp;
+    [HideInInspector] public bool AutomaticReel;
+    [HideInInspector] public int FishCaught;
+    [HideInInspector] public int TreasuresCaught;
+    [HideInInspector] public int Days;
+    [HideInInspector] public int TUTORIAL;
 
-    [Header("Modules")]
-    public int shipFlashlight = 0;
-    public int shipDepthModule = 0;
-    public int shipStorageModule = 0;
-    public int shipReelStrenghtModule = 0;
-    public int shipTemperatureModule = 0;
+    [HideInInspector] public int shipFlashlight = 0;
+    [HideInInspector] public int shipDepthModule = 0;
+    [HideInInspector] public int shipStorageModule = 0;
+    [HideInInspector] public int shipReelStrenghtModule = 0;
+    [HideInInspector] public int shipTemperatureModule = 0;
 
-    public Inventory inventory;
-    public PlayerMovementWater PlayerMovementWater;
-    public PlayerVisionController PlayerVisionController;
-    public HarpoonTrigger HarpoonTrigger;
-    public PlayerHealth playerHealth;
+    [HideInInspector] public Inventory inventory;
+    [HideInInspector] public PlayerMovementWater PlayerMovementWater;
+    [HideInInspector] public PlayerVisionController PlayerVisionController;
+    [HideInInspector] public HarpoonTrigger HarpoonTrigger;
+    [HideInInspector] public PlayerHealth playerHealth;
+
+    [SerializeField] private float multiPlierDay0 = 1.00f;
+    [SerializeField] private float multiPlierDay1 = 1.25f;
+    [SerializeField] private float multiPlierDay2 = 1.5f;
+    [SerializeField] private float multiPlierDay3 = 2.0f;
+
 
     void Awake()
     {
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        //Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
         #region GetPlayerData
         shipDepthModule = PlayerDataScript.playerDataInstance.DepthModule;
@@ -54,16 +58,16 @@ public class PlayerProgress : MonoBehaviour
         switch (PlayerDataScript.playerDataInstance.DayStreak)
         {
             case 0:
-                MultiplierStreak = 1.0f;
+                MultiplierStreak = multiPlierDay0;
                 break;
             case 1:
-                MultiplierStreak = 1.25f;
+                MultiplierStreak = multiPlierDay1;
                 break;
             case 2:
-                MultiplierStreak = 1.5f;
+                MultiplierStreak = multiPlierDay2;
                 break;
             case 3:
-                MultiplierStreak = 2f;
+                MultiplierStreak = multiPlierDay3;
                 break;
         }
         #endregion

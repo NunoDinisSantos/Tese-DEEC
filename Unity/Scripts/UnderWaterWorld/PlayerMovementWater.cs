@@ -8,67 +8,64 @@ public class PlayerMovementWater : MonoBehaviour
     bool EasyControls = true;
 
     [Header("Misc")]
-    [SerializeField] private Material skyboxMat;
-    [SerializeField] private AudioSource underWaterSound;
-    [SerializeField] private AudioSource engineSound;
-    [SerializeField] private float volumeEngine = 0;
-    [SerializeField] private float volumeEngineMultiplier = 1;
-    [SerializeField] private GameObject[] ZonesToDeActivate;
-    [SerializeField] private Camera mainCamera;
+    [HideInInspector][SerializeField] private Material skyboxMat;
+    [HideInInspector][SerializeField] private AudioSource underWaterSound;
+    [HideInInspector][SerializeField] private AudioSource engineSound;
+    [HideInInspector][SerializeField] private float volumeEngine = 0;
+    [HideInInspector][SerializeField] private float volumeEngineMultiplier = 1;
+    [HideInInspector][SerializeField] private GameObject[] ZonesToDeActivate;
+    [HideInInspector][SerializeField] private Camera mainCamera;
     private Camera thisCamera;
-    [SerializeField] private AudioSource surfaceSound;
+    [HideInInspector][SerializeField] private AudioSource surfaceSound;
 
-    [SerializeField] private bool inSpace = false;
-    public bool ByPassWater = false; 
-    [SerializeField] bool reelingFish = false;
-    [SerializeField] bool inWater = false;
-    [SerializeField] bool inShore = false;
-    [SerializeField] float myGravity = 9.8f; 
-    [SerializeField] float waterSurface = 48f;
-    [SerializeField] float inBetweenWaterLevel = 50.5f;
+    [HideInInspector] public bool ByPassWater = false;
+    [HideInInspector][SerializeField] bool reelingFish = false;
+    [HideInInspector][SerializeField] bool inWater = false;
+    [HideInInspector][SerializeField] bool inShore = false;
+    [HideInInspector][SerializeField] float myGravity = 9.8f;
+    [HideInInspector][SerializeField] float waterSurface = 48f;
+    [HideInInspector][SerializeField] float inBetweenWaterLevel = 50.5f;
     // Patient Helpers ------------
-    [SerializeField] float sensibilidadeX = 70f;
-    [SerializeField] float sensibilidadeY = 70f;
+    [HideInInspector][SerializeField] float sensibilidadeX = 70f;
+    [HideInInspector][SerializeField] float sensibilidadeY = 70f;
     float xRotation;
     float yRotation;
-    public Transform orientation;
-    [SerializeField] private ControlVolumes controlVolumes;
+    [HideInInspector] public Transform orientation;
+    [HideInInspector][SerializeField] private ControlVolumes controlVolumes;
     //-----------------------------
 
     [Header("Movement")]
-    public float speed;
+    [HideInInspector] public float speed;
     [SerializeField] float maxSpeed;
-    public float horizontalInput;
-    public float verticalInput;
+    [HideInInspector] public float horizontalInput;
+    [HideInInspector] public float verticalInput;
 
+    [HideInInspector]
     [SerializeField]
     int horizontalMovementMulti = 1;
+    [HideInInspector]
     [SerializeField]
     int verticalMovementMulti = 1;
     Vector3 moveDirection;
 
     [Header("Look Proxy")]
-    public float lookX;
-    public float lookY;
+    [HideInInspector] public float lookX;
+    [HideInInspector] public float lookY;
 
     Rigidbody rb;
 
-    public bool aiming = false;
-    [SerializeField] private HarpoonTrigger ht;
-    [SerializeField] private int maxFogColor = 160;
-    [SerializeField] private int minFogColor = 0;
-    [SerializeField] private float lastDepthSaved = 95f;
-    [SerializeField] private float NextDepthTreshold = 5;
+    [HideInInspector] public bool aiming = false;
+    [HideInInspector][SerializeField] private HarpoonTrigger ht;
 
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip[] audioClips;
-    [SerializeField] private GameObject[] waterDiveParticles;
-    [SerializeField] private GameObject Fog;
-    [SerializeField] private GameObject Hand;
+    [HideInInspector][SerializeField] private AudioSource audioSource;
+    [HideInInspector][SerializeField] private AudioClip[] audioClips;
+    [HideInInspector][SerializeField] private GameObject[] waterDiveParticles;
+    [HideInInspector][SerializeField] private GameObject Fog;
+    [HideInInspector][SerializeField] private GameObject Hand;
 
-    public bool lookLocked = false;
-    private PlayerVisionController playerVisionController;
-    [SerializeField] private DayManager dayManager;
+    [HideInInspector] public bool lookLocked = false;
+    [HideInInspector] private PlayerVisionController playerVisionController;
+    [HideInInspector][SerializeField] private DayManager dayManager;
     
     void Start()
     {
@@ -108,50 +105,6 @@ public class PlayerMovementWater : MonoBehaviour
                 Falling();
                 return;
             }
-        }
-    }
-
-    private void CalculateFogColorAndDensity()
-    {
-        float dist = transform.position.y - lastDepthSaved;
-        float abs = Mathf.Abs(dist);
-        float green = RenderSettings.fogColor.g;
-        float blue = RenderSettings.fogColor.b;
-        float red = RenderSettings.fogColor.r;
-
-        if (dist < 0) // descer
-        {
-            if(abs > NextDepthTreshold)
-            {
-                lastDepthSaved = transform.position.y;
-                NextDepthTreshold = lastDepthSaved + NextDepthTreshold;
-                green -= 0.1f;
-                blue -= 0.1f;
-                red -= 0.1f;
-
-                if(red < 0)
-                {
-                    green = 0; red = 0; blue = 0;
-                }
-
-                RenderSettings.fogColor = new Color(green/255, blue/255, red / 255);
-            }
-            return;
-        }
-        else//subir
-        {
-            lastDepthSaved = transform.position.y;
-            NextDepthTreshold = lastDepthSaved - NextDepthTreshold;
-            green+=0.1f;
-            blue += 0.1f;
-            red += 0.1f;
-
-            if (red > 0.7f)
-            {
-                green = 0.7f; red = 0.7f; blue = 0.7f;
-            }
-
-            RenderSettings.fogColor = new Color(green / 255, blue / 255, red / 255);
         }
     }
 
@@ -195,7 +148,8 @@ public class PlayerMovementWater : MonoBehaviour
             Fog.SetActive(false);
             skyboxMat.SetColor("_AlphaColor", Color.black);
             skyboxMat.SetFloat("_StarAmount", dayManager.starAmount);
-            playerVisionController.SetAmbientColors(true);
+            //playerVisionController.SetAmbientColors(true);
+            playerVisionController.SetAmbientColorAtSurface();
             waterDiveParticles[1].SetActive(true);
             waterDiveParticles[1].GetComponent<AudioSource>().Play();
             ActivateSoundSurface(0.15f);

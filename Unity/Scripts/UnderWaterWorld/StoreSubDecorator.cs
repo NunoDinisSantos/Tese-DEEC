@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class StoreSubDecorator : MonoBehaviour
 {
-    public int shipFlashlight = 0;
-    public int shipDepthModule = 0;
-    public int shipStorageModule = 0;
-    public int shipReelStrenghtModule = 0;
-    public int shipTemperatureModule = 0;
+    [HideInInspector] public int shipFlashlight = 0;
+    [HideInInspector] public int shipDepthModule = 0;
+    [HideInInspector] public int shipStorageModule = 0;
+    [HideInInspector] public int shipReelStrenghtModule = 0;
+    [HideInInspector] public int shipTemperatureModule = 0;
 
-    public GameObject[] DeepModule;
-    public GameObject[] TempModule;
-    public GameObject[] ReelModule;
-    public GameObject[] StorageModule;
-    public GameObject FlashLight;
+    [HideInInspector] public GameObject[] DeepModule;
+    [HideInInspector] public GameObject[] TempModule;
+    [HideInInspector] public GameObject[] ReelModule;
+    [HideInInspector] public GameObject[] StorageModule;
+    [HideInInspector] public GameObject FlashLight;
 
     void Start()
     {

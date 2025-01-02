@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class MusicManagerScript : MonoBehaviour
 {
-    [SerializeField] private bool isPlayingMusic = false;
+    [HideInInspector][SerializeField] private bool isPlayingMusic = false;
     private AudioSource audioSource;
+    [SerializeField] private float musicVolume = 0.1f;
     [SerializeField] private AudioClip[] songs;
-    [SerializeField] private int timeUntilNewSong = 0;
-    [SerializeField] private int maxWaitingTime = 240;
-    [SerializeField] private int minWaitingTime = 120;
-
+    [HideInInspector][SerializeField] private int timeUntilNewSong = 0;
+    [HideInInspector][SerializeField] private int maxWaitingTime = 240;
+    [HideInInspector][SerializeField] private int minWaitingTime = 120;
 
     void Start()
     {
@@ -27,7 +27,7 @@ public class MusicManagerScript : MonoBehaviour
             audioSource.clip = songs[i];
             audioSource.Play();
             songLenght = songs[i].length;
-            audioSource.volume = 0.35f;
+            audioSource.volume = musicVolume;
             isPlayingMusic = true;
         }
 

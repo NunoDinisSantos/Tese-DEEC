@@ -4,11 +4,11 @@ using UnityEngine.UI;
 
 public class ShowInventoryStore : MonoBehaviour
 {
-    [SerializeField] private Image[] fishesCaught;
-    [SerializeField] private Sprite[] fishSprites;
-    [SerializeField] private List<int> fishTypeList;
-    [SerializeField] private List<int> achievTypeList;
-    [SerializeField] private AchievementManager achievementManager;
+    [HideInInspector][SerializeField] private Image[] fishesCaught;
+    [HideInInspector][SerializeField] private Sprite[] fishSprites;
+    [HideInInspector][SerializeField] private List<int> fishTypeList;
+    [HideInInspector][SerializeField] private List<int> achievTypeList;
+    [HideInInspector][SerializeField] private AchievementManager achievementManager;
 
     public int HandleStoreInventory(Inventory inventory)
     {

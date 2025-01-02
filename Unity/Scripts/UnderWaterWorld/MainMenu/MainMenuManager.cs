@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 public class MainMenuManager : MonoBehaviour
 {
-    public int playerId;
-    public GameObject[] panels;
-    public TMP_InputField[] inputFields;
-    public Button[] Buttons;
-    public string playerName;
-    public Slider loadingSlider;
-    public DataBaseLoaderScript database;
-    public PlayerDataScript playerDataScript;
+    [HideInInspector] public int playerId;
+    [HideInInspector] public GameObject[] panels;
+    [HideInInspector] public TMP_InputField[] inputFields;
+    [HideInInspector] public Button[] Buttons;
+    [HideInInspector] public Slider loadingSlider;
+    [HideInInspector] public DataBaseLoaderScript database;
+    [HideInInspector] public PlayerDataScript playerDataScript;
 
     void Start()
     {

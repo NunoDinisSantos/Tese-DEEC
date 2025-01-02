@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Polly;
 using System.Text;
 using TeseAPIs.Data;
 using TeseAPIs.Services;

@@ -18,15 +18,17 @@
            
             <Button Text="Search" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
         </Grid>
+        
         <Grid Padding="5" BackgroundColor="DarkGray" WidthRequest="500" HorizontalOptions="Start">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="120" />
             </Grid.ColumnDefinitions>
 
             <Label Text="Student ID" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
-            <Label Text="Total credits" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Start"/>
+            <Label Text="Total credits" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Center"/>
         </Grid>
+        
         <ScrollView VerticalScrollBarVisibility="Always">
             <CollectionView ItemsSource="{Binding Students}"
                         SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"

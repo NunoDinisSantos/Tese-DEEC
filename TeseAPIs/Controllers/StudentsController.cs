@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Polly.Registry;
 using TeseAPIs.Models.ProgressResponse;
 using TeseAPIs.Services;
 
 namespace TeseAPIs.Controllers
 {
     [ApiController]
-    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService) : ControllerBase
+    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider) : ControllerBase
     {
+
         [HttpPost(ApiEndpoints.Tese.Create)]
         public async Task<IActionResult> Create([FromBody]string studentId)
         {
-            var created = await studentRepository.CreateAsync(studentId);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+
+            var created = await pipeline.ExecuteAsync(async ct => await studentRepository.CreateAsync(studentId));
             if (string.Equals(created.PlayerId,"ERROR"))
             {
                 return Conflict("User already registered.");
@@ -23,8 +27,10 @@ namespace TeseAPIs.Controllers
         [HttpGet(ApiEndpoints.Tese.Get)]
         public async Task<IActionResult> Get([FromRoute] string id)
         {
-            var studentProgress = await studentProgressService.GetByIdAsync(id);
-            if(studentProgress == null)
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var studentProgress = await pipeline.ExecuteAsync( async ct => await studentProgressService.GetByIdAsync(id));
+
+            if (studentProgress == null)
             {
                 return NotFound();
             }
@@ -36,7 +42,10 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.UpdateCredits)]
         public async Task<IActionResult> UpdateCredits([FromRoute] string id, [FromBody] int credits)
         {
-            var updatedProgress = await studentProgressService.UpdateCreditsByIdAsync(id, credits);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var updatedProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.UpdateCreditsByIdAsync(id, credits));
+            
+            
             if(updatedProgress == null)
             {
                 return Conflict("User does not exist.");
@@ -48,7 +57,8 @@ namespace TeseAPIs.Controllers
         [HttpGet(ApiEndpoints.Tese.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            var studentsProgress = await studentProgressService.GetAllAsync();
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var studentsProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.GetAllAsync());
 
             if (studentsProgress == null)
             {
@@ -63,7 +73,8 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.UpdateTutorial)]
         public async Task<IActionResult> UpdateTutorial([FromBody] string id)
         {
-            var updatedProgress = await studentProgressService.UpdateTutorialByIdAsync(id);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var updatedProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.UpdateTutorialByIdAsync(id));
 
             if (updatedProgress == null)
             {
@@ -77,7 +88,8 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.UpdateDay)]
         public async Task<IActionResult> UpdateDayProgress([FromRoute] string id,[FromBody] DayResponse dayDto)
         {
-            var updatedProgress = await studentProgressService.UpdateDayByIdAsync(id, dayDto);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var updatedProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.UpdateDayByIdAsync(id, dayDto));
 
             if (updatedProgress == null)
             {
@@ -91,7 +103,8 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.UpdateModules)]
         public async Task<IActionResult> UpdateModulesProgress([FromRoute] string id, [FromBody] ModuleResponse moduleDto)
         {
-            var updatedProgress = await studentProgressService.UpdateModulesByIdAsync(id, moduleDto);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var updatedProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.UpdateModulesByIdAsync(id, moduleDto));
 
             if (updatedProgress == null)
             {
@@ -105,7 +118,8 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.UpdateAchievements)]
         public async Task<IActionResult> UpdateAchievementsProgress([FromRoute] string id, [FromBody] AchievementResponse achievDto)
         {
-            var updatedProgress = await studentProgressService.UpdateAchievementsByIdAsync(id, achievDto);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var updatedProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.UpdateAchievementsByIdAsync(id, achievDto));
 
             if (updatedProgress == null)
             {
@@ -119,7 +133,8 @@ namespace TeseAPIs.Controllers
         [HttpPut(ApiEndpoints.Tese.UpdateDayStreak)]
         public async Task<IActionResult> UpdateDayStreakProgress([FromRoute] string id, [FromBody] DayStreakResponse dayStreakDto)
         {
-            var updatedProgress = await studentProgressService.UpdateDayStreakByIdAsync(id, dayStreakDto);
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var updatedProgress = await pipeline.ExecuteAsync(async ct => await studentProgressService.UpdateDayStreakByIdAsync(id, dayStreakDto));
 
             if (updatedProgress == null)
             {

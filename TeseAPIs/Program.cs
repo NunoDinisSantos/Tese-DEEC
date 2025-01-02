@@ -41,6 +41,17 @@ builder.Services.AddSingleton<IRegistrationValidations, RegistrationValidations>
 builder.Services.AddSingleton<IStudentProgressService, StudentProgressService>();
 builder.Services.AddSingleton<IStudentService, StudentService>();
 
+builder.Services.AddResiliencePipeline("default", x =>
+{
+    x.AddRetry(new Polly.Retry.RetryStrategyOptions
+    {
+        ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+        Delay = TimeSpan.FromSeconds(2),
+        MaxRetryAttempts = 2,
+        BackoffType = DelayBackoffType.Exponential,
+        UseJitter = true
+    });
+});
 
 builder.WebHost.ConfigureKestrel(options =>
 {

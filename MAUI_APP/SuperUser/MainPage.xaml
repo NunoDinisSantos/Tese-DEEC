@@ -8,7 +8,7 @@
                            Color="Purple" VerticalOptions="Center" HorizontalOptions="Center"
                             />
         <Button Text="Refresh data" Command="{Binding RefreshData}" HorizontalOptions="Start" Margin="0,0,0,20"/>
-        <Label Text="Pesquisar por número estudante:" FontSize="12" FontAttributes="None" Margin="0,0,0,2"/>
+        <Label Text="Search by student number:" FontSize="12" FontAttributes="None" Margin="0,0,0,2"/>
         <Grid VerticalOptions="Start" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150"/>
@@ -16,7 +16,7 @@
             </Grid.ColumnDefinitions>
             <Entry Text="{Binding StudentNumberToSearch}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
            
-            <Button Text="Procurar" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
+            <Button Text="Search" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
         </Grid>
         <Grid Padding="5" BackgroundColor="DarkGray" WidthRequest="500" HorizontalOptions="Start">
             <Grid.ColumnDefinitions>
@@ -24,8 +24,8 @@
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
 
-            <Label Text="Id Estudante" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
-            <Label Text="Créditos Totais" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Start"/>
+            <Label Text="Student ID" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
+            <Label Text="Total credits" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Start"/>
         </Grid>
         <ScrollView VerticalScrollBarVisibility="Always">
             <CollectionView ItemsSource="{Binding Students}"

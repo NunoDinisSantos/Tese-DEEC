@@ -1,19 +1,18 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class FishWaypoints : MonoBehaviour
 {
-    public Transform SpawnParent;
-    [SerializeField] private bool goingToWaypoint = false;
-    [SerializeField] private float arrivedWaypointThreshold = 0.5f;
-    [SerializeField][Range(100,300)] private float speed;
-    [SerializeField] private float rotationSpeed = 19;
-    [SerializeField] private int waterLevel = 100;
+    [HideInInspector]public Transform SpawnParent;
+    [HideInInspector][SerializeField] private bool goingToWaypoint = false;
+    [HideInInspector][SerializeField] private float arrivedWaypointThreshold = 0.5f;
+    [HideInInspector][SerializeField][Range(100,300)] private float speed;
+    [HideInInspector][SerializeField] private float rotationSpeed = 19;
+    [HideInInspector][SerializeField] private int waterLevel = 100;
 
-    [SerializeField] private Transform[] Boundaries;
-    [SerializeField] private Vector3 Target;
-    public Vector3 spawnedPosition;
+    [HideInInspector][SerializeField] private Transform[] Boundaries;
+    [HideInInspector][SerializeField] private Vector3 Target;
+    [HideInInspector] public Vector3 spawnedPosition;
 
     float maxX;
     float maxZ;
@@ -28,6 +27,11 @@ public class FishWaypoints : MonoBehaviour
     {
         if (spawned)
             return;
+
+        if(SpawnParent == null)
+        {
+            SpawnParent = transform.parent.parent;
+        }
 
         spawned = true;
         minY = SpawnParent.GetChild(1).transform.position.y;

@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class ZonesScript : MonoBehaviour
 {
-    public bool HotZone = false;
-    public bool ColdZone = false;
-    public bool DarkZone = false;
-    public bool GreenZone = false;
-    public bool SafeZone = false;
-    public bool Temple = false;
-    public bool Base = false;
+    [HideInInspector] public bool HotZone = false;
+    [HideInInspector] public bool ColdZone = false;
+    [HideInInspector] public bool DarkZone = false;
+    [HideInInspector] public bool GreenZone = false;
+    [HideInInspector] public bool SafeZone = false;
+    [HideInInspector] public bool Temple = false;
+    [HideInInspector] public bool Base = false;
 
-    public GameObject SafeZoneObject;
-    public GameObject GreenZoneObject;
-    public GameObject DarkZoneObject;
-    public GameObject TempleZoneObject;
-    public GameObject HotZoneObject;
-    public GameObject BaseZoneObject;
-    public GameObject ColdZoneObject;
+    [HideInInspector] public GameObject SafeZoneObject;
+    [HideInInspector] public GameObject GreenZoneObject;
+    [HideInInspector] public GameObject DarkZoneObject;
+    [HideInInspector] public GameObject TempleZoneObject;
+    [HideInInspector] public GameObject HotZoneObject;
+    [HideInInspector] public GameObject BaseZoneObject;
+    [HideInInspector] public GameObject ColdZoneObject;
 
-    public PlayerHealth PlayerHealth;
-    [SerializeField] FishControllerScript fishControllerScript;
-    [SerializeField] private PlayerVisionController playerVisionController;
+    [HideInInspector] public PlayerHealth PlayerHealth;
+    [HideInInspector][SerializeField] FishControllerScript fishControllerScript;
+    [HideInInspector][SerializeField] private PlayerVisionController playerVisionController;
 
     public void OnTriggerEnter(Collider other)
     {
@@ -31,14 +31,6 @@ public class ZonesScript : MonoBehaviour
             fishControllerScript.ActivateSpawner("Hot");
             playerVisionController.ChangeColorView(8);
             playerVisionController.ChangeColorViewWater(4);
-            /*
-            SafeZoneObject.SetActive(false);
-            GreenZoneObject.SetActive(false);
-            ColdZoneObject.SetActive(false);
-            BaseZoneObject.SetActive(false);
-            DarkZoneObject.SetActive(false);
-            TempleZoneObject.SetActive(false);
-            HotZoneObject.SetActive(true);*/
             ColdZoneObject.SetActive(true);
             TempleZoneObject.SetActive(false);
 
@@ -53,12 +45,6 @@ public class ZonesScript : MonoBehaviour
             playerVisionController.ChangeColorView(5);
             playerVisionController.ChangeColorViewWater(3);
             TempleZoneObject.SetActive(false);
-            /*SafeZoneObject.SetActive(false);
-            GreenZoneObject.SetActive(false);
-            ColdZoneObject.SetActive(false);
-            BaseZoneObject.SetActive(false);
-            DarkZoneObject.SetActive(false);
-            HotZoneObject.SetActive(false);*/
             return;
         }
 
@@ -68,14 +54,6 @@ public class ZonesScript : MonoBehaviour
             playerVisionController.ChangeColorView(4);
             fishControllerScript.ActivateSpawner("Deep");
             playerVisionController.ChangeColorViewWater(2);
-            //other.GetComponent<VisionController>().EnterDarkZone();
-            /*TempleZoneObject.SetActive(false);
-            SafeZoneObject.SetActive(false);
-            GreenZoneObject.SetActive(false);
-            ColdZoneObject.SetActive(false);
-            BaseZoneObject.SetActive(false);
-            DarkZoneObject.SetActive(true);
-            HotZoneObject.SetActive(false);*/
             return;
         }
 
@@ -85,13 +63,6 @@ public class ZonesScript : MonoBehaviour
             playerVisionController.ChangeColorView(1);
             playerVisionController.ChangeColorViewWater(1);
             fishControllerScript.ActivateSpawner("Green");
-            /*TempleZoneObject.SetActive(false);
-            SafeZoneObject.SetActive(false);
-            GreenZoneObject.SetActive(true);
-            ColdZoneObject.SetActive(false);
-            BaseZoneObject.SetActive(false);
-            DarkZoneObject.SetActive(false);
-            HotZoneObject.SetActive(false);*/
             return;
         }
 
@@ -100,17 +71,7 @@ public class ZonesScript : MonoBehaviour
             Debug.Log("Entered safe zone...");
             fishControllerScript.ActivateSpawner("Safe");
             playerVisionController.ChangeColorView(0);
-
             playerVisionController.ChangeColorViewWater(0);
-            //playerVisionController.ChangeColorViewWater(3);
-            //other.GetComponent<VisionController>().EnterDarkZone();
-            /* TempleZoneObject.SetActive(false);
-             SafeZoneObject.SetActive(true);
-             GreenZoneObject.SetActive(false);
-             ColdZoneObject.SetActive(false);
-             BaseZoneObject.SetActive(false);
-             DarkZoneObject.SetActive(false);
-             HotZoneObject.SetActive(false);*/
             return;
         }
 
@@ -118,7 +79,6 @@ public class ZonesScript : MonoBehaviour
         {
             Debug.Log("Entered temple zone...");
             fishControllerScript.ActivateSpawner("Temple");
-            //other.GetComponent<VisionController>().EnterDarkZone();
             playerVisionController.ChangeColorView(6);
             TempleZoneObject.SetActive(true);
             ColdZoneObject.SetActive(false);
@@ -128,18 +88,10 @@ public class ZonesScript : MonoBehaviour
 
         if (Base)
         {
-            /*TempleZoneObject.SetActive(false);
-            SafeZoneObject.SetActive(true);
-            GreenZoneObject.SetActive(true);
-            ColdZoneObject.SetActive(false);
-            BaseZoneObject.SetActive(true);
-            DarkZoneObject.SetActive(false);
-            HotZoneObject.SetActive(false);*/
             Debug.Log("Entered base zone...");
             fishControllerScript.ActivateSpawner("Base");
             playerVisionController.ChangeColorView(7);
             playerVisionController.ChangeColorViewWater(0);
-            //other.GetComponent<VisionController>().EnterDarkZone();
             return;
         }
     }
@@ -161,7 +113,6 @@ public class ZonesScript : MonoBehaviour
         if (DarkZone)
         {
             Debug.Log("Left dark zone...");
-            //other.GetComponent<VisionController>().LeaveDarkZone();
             return;
         }
     }

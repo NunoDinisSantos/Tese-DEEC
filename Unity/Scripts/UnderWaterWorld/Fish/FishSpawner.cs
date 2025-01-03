@@ -6,15 +6,15 @@ public class FishSpawner : MonoBehaviour
 {
     [HideInInspector][SerializeField] private FishControllerScript fishControllerScript;
     [HideInInspector] public bool currentSpawning = false;
-    [SerializeField] private Transform FishPool;
+    [HideInInspector][SerializeField] private Transform FishPool;
     int fishIndexPool = 0;
     int maxFishIndexPool;
     int maxFishScene = 0;
     [SerializeField] private List<Transform> Areas = new();
-    //[SerializeField] private GameObject[] validPoolFishInZone;
 
     [HideInInspector][SerializeField] private string zone;
 
+    [Header("ONLY FOR INFORMATION")]
     [SerializeField] private int sumOfFishInZone;
     [HideInInspector] public int currentFish = 0;
 

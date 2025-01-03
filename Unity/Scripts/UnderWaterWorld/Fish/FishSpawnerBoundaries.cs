@@ -4,8 +4,8 @@ using UnityEngine;
 public class FishSpawnerBoundaries : MonoBehaviour
 {
     public int maxNumberOfFishInBoundary = 10;
-    public int currentNumberOfFishInBoundary = 0;
-    [SerializeField] private List<Transform> Boundaries = new();
+    [HideInInspector] public int currentNumberOfFishInBoundary = 0;
+    [HideInInspector] [SerializeField] private List<Transform> Boundaries = new();
     [SerializeField] private Transform[] fishSpawns;
 
     private void Start()

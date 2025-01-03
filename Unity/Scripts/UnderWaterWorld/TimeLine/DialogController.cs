@@ -159,6 +159,11 @@ public class DialogController : MonoBehaviour
         }
     }
 
+    public void SkipTutorial()
+    {
+        FinishTutorial();
+    }
+
     private void CheckAnimStop()
     {
         if(stop)

@@ -12,7 +12,6 @@ public class DataBaseLoaderScript : MonoBehaviour
     //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
     private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
     [HideInInspector] public PlayerData playerData;
-    [HideInInspector] public PlayerDataScript playerDataScript;
     [HideInInspector] public bool loaded = false;
     public int maxDayStreak = 3;
     [HideInInspector] public bool errorGettingPlayer = false;
@@ -40,26 +39,26 @@ public class DataBaseLoaderScript : MonoBehaviour
         else 
         {
             playerData = JsonUtility.FromJson<PlayerData>(jsonResponse);
-            playerDataScript.PlayerId = playerData.playerId;
-            playerDataScript.Coins = playerData.coins;
-            playerDataScript.TimePlayed = playerData.timePlayed;
-            playerDataScript.FishCaught = playerData.fishCaught;
-            playerDataScript.Tutorial = playerData.tutorial;
-            playerDataScript.Flashlight = playerData.flashlight;
-            playerDataScript.DepthModule = playerData.depthModule;
-            playerDataScript.StorageModule = playerData.storageModule;
-            playerDataScript.ReelModule = playerData.reelModule;
-            playerDataScript.TempModule = playerData.tempModule;
-            playerDataScript.Days = playerData.days;
-            playerDataScript.Credits = playerData.credits;
-            playerDataScript.LastLogin = DateTime.Parse(playerData.lastLogin);
+            PlayerDataScript.playerDataInstance.PlayerId = playerData.playerId;
+            PlayerDataScript.playerDataInstance.Coins = playerData.coins;
+            PlayerDataScript.playerDataInstance.TimePlayed = playerData.timePlayed;
+            PlayerDataScript.playerDataInstance.FishCaught = playerData.fishCaught;
+            PlayerDataScript.playerDataInstance.Tutorial = playerData.tutorial;
+            PlayerDataScript.playerDataInstance.Flashlight = playerData.flashlight;
+            PlayerDataScript.playerDataInstance.DepthModule = playerData.depthModule;
+            PlayerDataScript.playerDataInstance.StorageModule = playerData.storageModule;
+            PlayerDataScript.playerDataInstance.ReelModule = playerData.reelModule;
+            PlayerDataScript.playerDataInstance.TempModule = playerData.tempModule;
+            PlayerDataScript.playerDataInstance.Days = playerData.days;
+            PlayerDataScript.playerDataInstance.Credits = playerData.credits;
+            PlayerDataScript.playerDataInstance.LastLogin = DateTime.Parse(playerData.lastLogin);
 
-            playerDataScript.Treasure = playerData.treasure;
-            playerDataScript.AncientCoral = playerData.ancientCoral;
-            playerDataScript.LostResearch = playerData.lostResearch;
-            playerDataScript.BoatJewel = playerData.boatJewel;
-            playerDataScript.TempleJewel = playerData.templeJewel;
-            playerDataScript.OldIce = playerData.oldIce;
+            PlayerDataScript.playerDataInstance.Treasure = playerData.treasure;
+            PlayerDataScript.playerDataInstance.AncientCoral = playerData.ancientCoral;
+            PlayerDataScript.playerDataInstance.LostResearch = playerData.lostResearch;
+            PlayerDataScript.playerDataInstance.BoatJewel = playerData.boatJewel;
+            PlayerDataScript.playerDataInstance.TempleJewel = playerData.templeJewel;
+            PlayerDataScript.playerDataInstance.OldIce = playerData.oldIce;
 
             HandleDayStreak();
         }
@@ -262,33 +261,33 @@ public class DataBaseLoaderScript : MonoBehaviour
 
     private void HandleDayStreak()
     {
-        if(DateTime.Now.Day - playerDataScript.LastLogin.Day == 1 &&
-            DateTime.Now.Month - playerDataScript.LastLogin.Month == 0 &&
-            DateTime.Now.Year - playerDataScript.LastLogin.Year == 0)
+        if(DateTime.Now.Day - PlayerDataScript.playerDataInstance.LastLogin.Day == 1 &&
+            DateTime.Now.Month - PlayerDataScript.playerDataInstance.LastLogin.Month == 0 &&
+            DateTime.Now.Year - PlayerDataScript.playerDataInstance.LastLogin.Year == 0)
         {
-            if (playerDataScript.DayStreak >= 3)
+            if (PlayerDataScript.playerDataInstance.DayStreak >= 3)
             {
-                playerDataScript.LastLogin = DateTime.Now;
-                StartCoroutine(UpdateDayStreakFromApi(playerDataScript.PlayerId, playerDataScript.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+                PlayerDataScript.playerDataInstance.LastLogin = DateTime.Now;
+                StartCoroutine(UpdateDayStreakFromApi(PlayerDataScript.playerDataInstance.PlayerId, PlayerDataScript.playerDataInstance.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
                 return;
             }
 
             else
             {
-                playerDataScript.LastLogin = DateTime.Now;
-                playerDataScript.DayStreak++;
-                StartCoroutine(UpdateDayStreakFromApi(playerDataScript.PlayerId, playerDataScript.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+                PlayerDataScript.playerDataInstance.LastLogin = DateTime.Now;
+                PlayerDataScript.playerDataInstance.DayStreak++;
+                StartCoroutine(UpdateDayStreakFromApi(PlayerDataScript.playerDataInstance.PlayerId, PlayerDataScript.playerDataInstance.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
             }
         }
 
         else
         {
-            if (DateTime.Now.Year - playerDataScript.LastLogin.Year > 0 || DateTime.Now.Month - playerDataScript.LastLogin.Month > 0 || DateTime.Now.Day - playerDataScript.LastLogin.Day > 1)
+            if (DateTime.Now.Year - PlayerDataScript.playerDataInstance.LastLogin.Year > 0 || DateTime.Now.Month - PlayerDataScript.playerDataInstance.LastLogin.Month > 0 || DateTime.Now.Day - PlayerDataScript.playerDataInstance.LastLogin.Day > 1)
             {
-                playerDataScript.DayStreak = 0;
+                PlayerDataScript.playerDataInstance.DayStreak = 0;
             }
 
-            StartCoroutine(UpdateDayStreakFromApi(playerDataScript.PlayerId, playerDataScript.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+            StartCoroutine(UpdateDayStreakFromApi(PlayerDataScript.playerDataInstance.PlayerId, PlayerDataScript.playerDataInstance.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
         }
     }
 
@@ -315,26 +314,26 @@ public class DataBaseLoaderScript : MonoBehaviour
         else
         {
             playerData = JsonUtility.FromJson<PlayerData>(jsonResponse);
-            playerDataScript.PlayerId = playerData.playerId;
-            playerDataScript.Coins = playerData.coins;
-            playerDataScript.TimePlayed = playerData.timePlayed;
-            playerDataScript.FishCaught = playerData.fishCaught;
-            playerDataScript.Tutorial = playerData.tutorial;
-            playerDataScript.Flashlight = playerData.flashlight;
-            playerDataScript.DepthModule = playerData.depthModule;
-            playerDataScript.StorageModule = playerData.storageModule;
-            playerDataScript.ReelModule = playerData.reelModule;
-            playerDataScript.TempModule = playerData.tempModule;
-            playerDataScript.Days = playerData.days;
-            playerDataScript.Credits = playerData.credits;
-            playerDataScript.LastLogin = DateTime.Parse(playerData.lastLogin);
+            PlayerDataScript.playerDataInstance.PlayerId = playerData.playerId;
+            PlayerDataScript.playerDataInstance.Coins = playerData.coins;
+            PlayerDataScript.playerDataInstance.TimePlayed = playerData.timePlayed;
+            PlayerDataScript.playerDataInstance.FishCaught = playerData.fishCaught;
+            PlayerDataScript.playerDataInstance.Tutorial = playerData.tutorial;
+            PlayerDataScript.playerDataInstance.Flashlight = playerData.flashlight;
+            PlayerDataScript.playerDataInstance.DepthModule = playerData.depthModule;
+            PlayerDataScript.playerDataInstance.StorageModule = playerData.storageModule;
+            PlayerDataScript.playerDataInstance.ReelModule = playerData.reelModule;
+            PlayerDataScript.playerDataInstance.TempModule = playerData.tempModule;
+            PlayerDataScript.playerDataInstance.Days = playerData.days;
+            PlayerDataScript.playerDataInstance.Credits = playerData.credits;
+            PlayerDataScript.playerDataInstance.LastLogin = DateTime.Parse(playerData.lastLogin);
 
-            playerDataScript.Treasure = playerData.treasure;
-            playerDataScript.AncientCoral = playerData.ancientCoral;
-            playerDataScript.LostResearch = playerData.lostResearch;
-            playerDataScript.BoatJewel = playerData.boatJewel;
-            playerDataScript.TempleJewel = playerData.templeJewel;
-            playerDataScript.OldIce = playerData.oldIce;
+            PlayerDataScript.playerDataInstance.Treasure = playerData.treasure;
+            PlayerDataScript.playerDataInstance.AncientCoral = playerData.ancientCoral;
+            PlayerDataScript.playerDataInstance.LostResearch = playerData.lostResearch;
+            PlayerDataScript.playerDataInstance.BoatJewel = playerData.boatJewel;
+            PlayerDataScript.playerDataInstance.TempleJewel = playerData.templeJewel;
+            PlayerDataScript.playerDataInstance.OldIce = playerData.oldIce;
 
             HandleDayStreak();
         }

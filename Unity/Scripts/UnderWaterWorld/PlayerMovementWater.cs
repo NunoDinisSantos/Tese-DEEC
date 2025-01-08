@@ -4,8 +4,6 @@ public class PlayerMovementWater : MonoBehaviour
 {
     [Header("UNITY TESTING")]
     public bool unityEditor = true;
-    [SerializeField]
-    bool EasyControls = true;
 
     [Header("Misc")]
     [HideInInspector][SerializeField] private Material skyboxMat;
@@ -214,7 +212,7 @@ public class PlayerMovementWater : MonoBehaviour
 
     public void PlayerMovement(float h, float v)
     {
-        if (EasyControls)
+        if (unityEditor)
         {
             horizontalInput = Input.GetAxisRaw("Horizontal");
             verticalInput = Input.GetAxisRaw("Vertical")*-1;

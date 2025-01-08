@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerDataScript : MonoBehaviour
 {
     public static PlayerDataScript playerDataInstance;
-    public PlayerData playerData;
+
     private void Awake()
     {
         if (playerDataInstance != null && playerDataInstance != this)

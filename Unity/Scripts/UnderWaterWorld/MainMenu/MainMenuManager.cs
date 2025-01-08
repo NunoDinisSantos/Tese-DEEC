@@ -14,7 +14,6 @@ public class MainMenuManager : MonoBehaviour
     [HideInInspector] public Button[] Buttons;
     [HideInInspector] public Slider loadingSlider;
     [HideInInspector] public DataBaseLoaderScript database;
-    [HideInInspector] public PlayerDataScript playerDataScript;
 
     void Start()
     {
@@ -68,7 +67,7 @@ public class MainMenuManager : MonoBehaviour
             return;
         }
 
-        if(playerDataScript.Tutorial == 0) 
+        if(PlayerDataScript.playerDataInstance.Tutorial == 0) 
         {
             level = 1;
         }

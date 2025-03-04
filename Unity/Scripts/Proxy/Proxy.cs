@@ -7,24 +7,32 @@ using UnityEngine;
 
 public class Proxy : MonoBehaviour
 {
-    Thread thread;
-    public int Port = 25001;
+    public bool inTutorialScene = false;
+    public bool inMenuScene = false;
+    public bool inGameScene = false;
+    public Thread thread;
+    [HideInInspector] public int Port = 25001;
     TcpListener server;
-    TcpClient client;
+    public TcpClient client;
     [SerializeField] bool listening;
 
-    [SerializeField] PlayerMovementWater playerMovement;
-    [SerializeField] HarpoonTrigger harpoonTrigger;
+    [HideInInspector] [SerializeField] PlayerMovementWater playerMovement;
+    [HideInInspector] [SerializeField] HarpoonTrigger harpoonTrigger;
+    [SerializeField] private ShopProxyScript shopProxy;
+    [SerializeField] private PlayerLookSimpleEDITOR playerMovementTutorial;
+    [SerializeField] private DialogController dialogController;
+    public StoreColliderScript storeColliderScript;
 
-    public float horizontal = 0;
-    public float vertical = 0;
-    public float horizontalLook = 0;
-    public float verticalLook = 0;
-    public bool isReeling = false;
-    public bool inShop = false;
-    public int Fired = 0;
-    public bool harpoonMode = false;
-    private ShopProxyScript shopProxy;
+    [HideInInspector] public float horizontal = 0;
+    [HideInInspector] public float vertical = 0;
+    [HideInInspector] public float horizontalLook = 0;
+    [HideInInspector] public float verticalLook = 0;
+    [HideInInspector] public bool isReeling = false;
+    [HideInInspector] public bool inShop = false;
+    [HideInInspector] public int Fire = 0;
+    [HideInInspector] public bool harpoonMode = false;
+
+    private bool foundTutMovement = false;
 
     void Start()
     {
@@ -34,16 +42,28 @@ public class Proxy : MonoBehaviour
         thread.Start();
     }
 
+    public void StopServer()
+    {
+        if (client != null)
+        {
+            client.Close();
+        }
+
+        if (server != null)
+        {
+            server.Stop();
+        }
+
+        if(thread != null && thread.IsAlive)
+        {
+            thread.Abort();
+        }
+    }
+
     private void GetData()
     {
-
-        //server = new TcpListener(IPAddress.Any, Port); // <- funciona para qualquer dispositivo!
-        server = new TcpListener(IPAddress.Parse("127.0.0.1"), Port); // local (funciona)
-        //server = new TcpListener(IPAddress.Parse("192.168.1.9"), Port); // IP DO PC não funciona n sei pq
+        server = new TcpListener(IPAddress.Parse("127.0.0.1"), Port); 
         server.Start();
-
-        //client = server.AcceptTcpClient();
-        //listening = true;
 
         while (listening)
         {
@@ -57,40 +77,18 @@ public class Proxy : MonoBehaviour
                 }
                 else
                 {
-                Debug.Log(client.Available);
-                Connection();
+                    Debug.Log("CLIENT CONNECTED: "+client);
+                    Connection();
                 }
             }
 
             catch (Exception e) 
             {
+                //client.Close();
+                StopServer();
                 Debug.LogError(e.Message+" Error in connection... Not listening");
-                listening = false;
                 Thread.Sleep(1000);
-            }
-        }
-
-        server.Stop();
-        client?.Close();
-
-        // NOT WORKING... Ao menos n crasha...
-        while (!listening)
-        {
-            try
-            {
-                server = new TcpListener(IPAddress.Parse("127.0.0.1"), Port); // local (funciona)
-                server.Start();
-                Thread.Sleep(1000);
-                Debug.Log("Trying to reconnect...");
                 thread.Start();
-                listening = true;
-            }
-
-            catch
-            {
-                server.Stop();
-                client?.Close();
-                Debug.Log("Something went wrong");
             }
         }
     }
@@ -105,83 +103,138 @@ public class Proxy : MonoBehaviour
 
         if(bytesRead == 0)
         {
-            listening = false;
+            client.Close();
+            Debug.Log("Client disconnected...");
             return;
         }
 
         listening = true;
 
+        byte[] response = Encoding.UTF8.GetBytes("PONG");
+        stream.Write(response, 0, response.Length);
+
         data.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+
         ProcessBuffer(data);
-
-
-        /* string dataReceived = Encoding.UTF8.GetString(buffer,0,bytesRead);
-
-        if (!string.IsNullOrEmpty(dataReceived))
-        {
-            DEECDataParser(dataReceived);
-        }*/
     }
 
     private void DEECDataParser(string data)
     {
         DecodeDataDEEC(data);
-        HandleHarpoonMode();
 
-        if (!harpoonMode) // Normal mode -> Navegar pelo mundo
+        if (inMenuScene)
         {
-            if (inShop)
+            shopProxy.inStore = true;
+
+            if (shopProxy != null)
             {
-                shopProxy.firedButton = true;
+                shopProxy.MoveCursorProxy(horizontalLook, verticalLook);
+
+                if (Fire == 1 && shopProxy.canFire)
+                {
+                    shopProxy.firedButton = true;
+                    Fire = 0;
+                }
+            }
+
+            return;
+        }
+
+        if (inTutorialScene)
+        {
+            if (!foundTutMovement)
+            {
+                playerMovementTutorial = ProxyHelper.instance.FindMyGameObject("tutMovement").GetComponent<PlayerLookSimpleEDITOR>();
+                dialogController = playerMovementTutorial.GetComponentInParent<DialogController>();
+            }
+
+            if (playerMovementTutorial != null)
+            {
+                foundTutMovement = true;
+                playerMovementTutorial.ProxyPlayerLook(horizontalLook, verticalLook); // either this or the previous!?
+
+                if (Fire == 1)
+                {
+                    if (dialogController != null)
+                    {
+                        dialogController.ClickedButtonProxy();
+                    }
+                }
+
+                return;
+            }
+        }
+
+        if (inGameScene)
+        {
+            if (storeColliderScript != null && storeColliderScript.inStore)
+            {
+                shopProxy.inStore = true;
+                shopProxy.MoveCursorProxy(horizontalLook, verticalLook);
+
+
+                if (Fire == 1 && shopProxy.canFire)
+                {
+                    shopProxy.firedButton = true;
+                    Fire = 0;
+                }
+
                 return;
             }
 
-            else
+            shopProxy.inStore = false;
+
+            HandleHarpoonMode();
+
+            if (!harpoonMode) // Normal mode -> Navegar pelo mundo
             {
                 MovePlayer();
                 PlayerCameraLookMovement();
             }
-        }
 
-        if (harpoonMode)
-        {
-            HandleFire();
-            LockPlayerInPlace();
-            harpoonTrigger.isReeling = isReeling;
-            if (!isReeling) // Se estiver a reel, bloqueamos o camera look
+            if (harpoonMode)
             {
-                PlayerCameraLookMovement();
+                HandleFire();
+                LockPlayerInPlace();
+                harpoonTrigger.isReeling = isReeling;
+                if (!isReeling && !harpoonTrigger.grabbedFish) // Se estiver a reel ou com peixe, bloqueamos o camera look
+                {
+                    PlayerCameraLookMovement();
+                }
+                else
+                {
+                    horizontalLook = 0;
+                    verticalLook = 0;
+                    playerMovement.ProxyPlayerLook(horizontalLook, verticalLook);
+                }
             }
         }
     }
 
     private void DecodeDataDEEC(string data)
     {
-        // Recebe json com info do programa python
-        //var reader = new StringReader(data); // Estamos a receber demasiada data (linhas). Asssim lemos só a primeira.
-        //data = reader.ReadLine();
-
         var convertedData = JsonUtility.FromJson<SocketData>(data);
         horizontal = convertedData.horizontal;
         vertical = convertedData.vertical;
         horizontalLook = convertedData.horizontalLook;
         verticalLook = convertedData.verticalLook;
-        isReeling = convertedData.ReelingIndexExercise != 0;
-        harpoonMode = convertedData.HarpoonMode == 1;
-        Fired = Convert.ToInt32(convertedData.Fire);
+        isReeling = convertedData.isReeling != 0;
+        harpoonMode = convertedData.harpoonMode == 1;
+        Fire = convertedData.fire;
     }
 
     private void HandleFire()
     {
-        if (Fired == 1)
+        if (Fire == 1)
         {
             if (!harpoonTrigger.canFire) // Se disparou recentemente ou está reeling, então bloqueia o disparo
             {
-                Fired = 0;
+                Fire = 0;
             }
 
             else
             {
+                Debug.Log("Fired from proxy");
                 harpoonTrigger.FiredFromProxy = true;
             }
         }
@@ -191,14 +244,19 @@ public class Proxy : MonoBehaviour
     {
         if (!harpoonMode)
         {
-            harpoonTrigger.stopAimCalled = true;
-            playerMovement.aiming = false;
+            if (harpoonTrigger.CheckIfIsFiring())
+            {
+                harpoonTrigger.stopAimCalled = true;
+                playerMovement.aiming = false;
+                harpoonTrigger.aiming = false;
+            }
         }
 
         else
         {
             playerMovement.aiming = true;
             harpoonTrigger.stopAimCalled = false;
+            harpoonTrigger.aiming = true;
         }
     }
 
@@ -218,7 +276,7 @@ public class Proxy : MonoBehaviour
         playerMovement.ProxyPlayerLook(horizontalLook, verticalLook); // either this or the previous!?
     }
 
-    private void ProcessBuffer(StringBuilder data) // Estavamos a receber demasiadas linhas e, por vezes, a primeira vinha partida. Assim resolvemos
+    private void ProcessBuffer(StringBuilder data) // We were receiving too many lines and, sometimes, the first was split. This solves it
     {
         if(data.Length > 0) 
         {
@@ -455,7 +513,8 @@ public class SocketData
     public float verticalLook;
     public bool FireState;
     public bool Defire;
-    public bool Fire;
+    public int fire;
     public int ReelingIndexExercise;
-    public int HarpoonMode;
+    public int harpoonMode;
+    public int isReeling;
 }

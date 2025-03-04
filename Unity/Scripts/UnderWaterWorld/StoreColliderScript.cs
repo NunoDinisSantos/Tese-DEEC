@@ -21,7 +21,6 @@ public class StoreColliderScript : MonoBehaviour
     [HideInInspector][SerializeField] private GameObject miscStoreObjects;
 
     [HideInInspector] public GameObject ConfirmBackToMenu;
-
     private void OnTriggerEnter(Collider other)
     {
         if(!inStore)
@@ -88,6 +87,7 @@ public class StoreColliderScript : MonoBehaviour
         {
             ConfirmBackToMenu.SetActive(false);
             SceneManager.LoadScene(0);
+            proxy.StopServer();
         }
     }
 

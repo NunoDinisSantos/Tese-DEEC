@@ -61,6 +61,16 @@ public class DialogController : MonoBehaviour
         }
     }
 
+    public void ClickedButtonProxy()
+    {
+        if (canPressAgain)
+        {
+            canPressAgain = false;
+            ButaoCutscene.SetActive(false);
+            NextLine();
+        }
+    }
+
     void NextLine()
     {
         if (index < DialogStrings.Count-1)

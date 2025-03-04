@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class PlayerLookSimpleEDITOR : MonoBehaviour
@@ -8,11 +9,39 @@ public class PlayerLookSimpleEDITOR : MonoBehaviour
     float yRotation;
     public Transform orientation;
 
+    private float verticalLook;
+    private float horizontalLook;
+
+    [SerializeField] private bool UnityEditor = true;
+
     // Update is called once per frame
     void Update()
     {
-        PlayerLook();
+        if (UnityEditor)
+        {
+            PlayerLook();
+            return;
+        }
 
+        PlayerLookProxy();
+    }
+
+    public void ProxyPlayerLook(float h, float v)
+    {
+        horizontalLook = h;
+        verticalLook = v;
+    }
+
+    private void PlayerLookProxy()
+    {
+        float mouseX = horizontalLook;
+        float mouseY = verticalLook;
+
+        yRotation += mouseX;
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        transform.rotation = Quaternion.Euler(-xRotation, yRotation, 0);
     }
 
     private void PlayerLook()

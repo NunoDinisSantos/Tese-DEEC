@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HarpoonTrigger : MonoBehaviour
 {
-    public bool isReeling = false;
+    [HideInInspector] public bool isReeling = false;
 
     [HideInInspector] private int HarpoonLength = 25;
     [HideInInspector] private float HarpoonSpeed;
@@ -25,7 +25,10 @@ public class HarpoonTrigger : MonoBehaviour
     [HideInInspector] Vector2 aim = Vector2.zero;
     [HideInInspector][SerializeField] private bool retractingHarpoon = false;
 
-    private bool grabbedFish = false;
+    private float fishEscapeTimerMin = 5;
+    private float fishEscapeTimerMax = 10;
+    private float ExerciseReelingSpeed = 10f;
+    [HideInInspector] public bool grabbedFish = false;
     [HideInInspector][SerializeField] private int fishStrength = 1;
     [HideInInspector][SerializeField] private Transform GrabbedFishTransform;
     [HideInInspector] public float handOffset = 0.8f;
@@ -71,7 +74,7 @@ public class HarpoonTrigger : MonoBehaviour
     private bool doingCircle = false;
     */
     #endregion
-    private float fishEscapeTimer = 3f;
+    private float fishEscapeTimer = 8f;
     [HideInInspector][SerializeField] private Collider harpoonCollider;
 
     private float vertical;
@@ -89,17 +92,17 @@ public class HarpoonTrigger : MonoBehaviour
             case 0:
                 HarpoonLength = 35;
                 HarpoonSpeed = 20;
-                HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
+                HarpoonRetractSpeed = 25;
                 break;
             case 1:
                 HarpoonLength = 45;
                 HarpoonSpeed = 27;
-                HarpoonRetractSpeed = HarpoonSpeed * 1.5f; 
+                HarpoonRetractSpeed = 25f; 
                 break;
             case 2:
                 HarpoonLength = 55;
                 HarpoonSpeed = 32;
-                HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
+                HarpoonRetractSpeed = 25f;
                 break;
         }
 
@@ -114,17 +117,17 @@ public class HarpoonTrigger : MonoBehaviour
             case 0:
                 HarpoonLength = 35;
                 HarpoonSpeed = 20;
-                HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
+                HarpoonRetractSpeed = 25f;
                 break;
             case 1:
                 HarpoonLength = 45;
                 HarpoonSpeed = 27;
-                HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
+                HarpoonRetractSpeed = 25f;
                 break;
             case 2:
                 HarpoonLength = 55;
                 HarpoonSpeed = 32;
-                HarpoonRetractSpeed = HarpoonSpeed * 1.5f;
+                HarpoonRetractSpeed = 25f;
                 break;
         }
     }
@@ -149,7 +152,7 @@ public class HarpoonTrigger : MonoBehaviour
         }
 
         else {
-
+            Debug.Log("Aiming");
             Aiming(); 
 
             if (FiredFromProxy && canFire || Input.GetKeyUp(KeyCode.F))
@@ -261,7 +264,7 @@ public class HarpoonTrigger : MonoBehaviour
         if (fishEscapeTimer < 0 || (HarpoonHandModel.transform.localPosition - HarpoonSpawnPoint).magnitude >= HarpoonLength)
         {
             grabbedFish = false;
-            fishEscapeTimer = UnityEngine.Random.Range(3f, 5f);
+            fishEscapeTimer = UnityEngine.Random.Range(fishEscapeTimerMin, fishEscapeTimerMax);
             harpoonCollider.enabled = false;
             retractingHarpoon = true;
             return;
@@ -283,7 +286,7 @@ public class HarpoonTrigger : MonoBehaviour
             return;
         }
 
-        HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -2.3f), HarpoonRetractSpeed * 0.01f);
+        HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -2.3f), ExerciseReelingSpeed * 0.01f);
         GrabbedFishTransform.position = HarpoonHandModel.transform.position;
 
         creditTimer -= Time.deltaTime;
@@ -433,6 +436,11 @@ public class HarpoonTrigger : MonoBehaviour
         HarpoonHandModel.transform.localPosition = new Vector3(0, -1.6f, -2.3f);
 
         canFire = true;
+    }
+
+    public bool CheckIfIsFiring()
+    {
+        return canFire;
     }
 
     #region OBSOLETE_VR

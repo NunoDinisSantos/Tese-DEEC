@@ -204,6 +204,9 @@ def calculate_pose(sock):
             #region Calibrate
 
             if calibrated == False:
+                cv2.putText(image, str("Not Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
+                            cv2.LINE_AA)
+
                 try:
                     landmarks = results.pose_landmarks.landmark
                     head = landmarks[mp_pose.PoseLandmark.NOSE.value].y
@@ -258,6 +261,8 @@ def calculate_pose(sock):
             #endregion
 
             if calibrated:
+                cv2.putText(image, str("Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 50), 2,
+                            cv2.LINE_AA)
                 try:
                     #region Body landmarks
                     landmarks = results.pose_landmarks.landmark
@@ -287,7 +292,6 @@ def calculate_pose(sock):
                     right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
                                  landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
                     #endregion
-
                     #Detect if player posture is correct. If not, do nothing
 
                     #region New Calibration

@@ -149,6 +149,36 @@ public class PlayerHealth : MonoBehaviour
         healthText.text = Health.ToString();
     }
 
+    public void CallDEECPickUp()
+    {
+        StartCoroutine("RespawnPickUp");
+    }
+
+    private IEnumerator RespawnPickUp()
+    {
+        PlayerMessageScript.SetActive(true);
+        string line = "Boleia a caminho! Vrum vrum!";
+        PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage(line);
+
+        hotAudioSource.enabled = false;
+        hotWarningText.SetActive(false);
+        coldAudioSource.enabled = false;
+        coldWarningText.SetActive(false);
+        _animation.Play("FadeIn");
+        GetComponent<PlayerMovementWater>().enabled = false;
+        yield return new WaitForSeconds(1.5f);
+        transform.position = respawnPoint.position;
+        _playerVision.SetWaterOriginalColor();
+        yield return new WaitForSeconds(3);
+        _animation.Play("FadeOut");
+        GetComponent<PlayerMovementWater>().enabled = true;
+        Health = 100;
+        healthText.text = Health.ToString();
+        forceNoDamage = false;
+        playerMovementWater.speed = 10.0f;
+        StopCoroutine("RespawnPickUp");
+    }
+
     private IEnumerator Respawn()
     {
         hotAudioSource.enabled = false;

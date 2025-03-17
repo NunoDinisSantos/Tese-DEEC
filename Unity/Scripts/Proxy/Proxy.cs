@@ -22,6 +22,7 @@ public class Proxy : MonoBehaviour
     [SerializeField] private PlayerLookSimpleEDITOR playerMovementTutorial;
     [SerializeField] private DialogController dialogController;
     public StoreColliderScript storeColliderScript;
+    public CallDEECSupportScript callDEECSupport;
 
     [HideInInspector] public float horizontal = 0;
     [HideInInspector] public float vertical = 0;
@@ -190,6 +191,16 @@ public class Proxy : MonoBehaviour
             {
                 MovePlayer();
                 PlayerCameraLookMovement();
+
+                // TENTATIVA DE CHAMAR DEEC RIDE
+                if(isReeling)
+                {
+                    callDEECSupport.callingSupport = true;
+                }
+                else
+                {
+                    callDEECSupport.callingSupport = false;
+                }
             }
 
             if (harpoonMode)

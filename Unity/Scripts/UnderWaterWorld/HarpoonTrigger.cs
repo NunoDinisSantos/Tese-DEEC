@@ -48,7 +48,8 @@ public class HarpoonTrigger : MonoBehaviour
     [HideInInspector][SerializeField] private AudioCuesManagerScript cuesManagerScript;
     private AudioSource audioSource;
     [HideInInspector][SerializeField] private AudioSource audioSourceReel;
-    [HideInInspector][SerializeField] private AudioClip[] audioClips;
+    //[HideInInspector]
+    [SerializeField] private AudioClip[] audioClips;
     private bool reelFishSound = false;
     private bool reelSound = false;
     [HideInInspector] public GameObject FireParticles;

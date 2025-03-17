@@ -47,6 +47,7 @@ public class HarpoonTrigger : MonoBehaviour
     [HideInInspector][SerializeField] private GameObject PlayerMessageScript;
     [HideInInspector][SerializeField] private AudioCuesManagerScript cuesManagerScript;
     private AudioSource audioSource;
+    [HideInInspector][SerializeField] private AudioSource audioSourceReel;
     [HideInInspector][SerializeField] private AudioClip[] audioClips;
     private bool reelFishSound = false;
     private bool reelSound = false;
@@ -152,7 +153,6 @@ public class HarpoonTrigger : MonoBehaviour
         }
 
         else {
-            Debug.Log("Aiming");
             Aiming(); 
 
             if (FiredFromProxy && canFire || Input.GetKeyUp(KeyCode.F))
@@ -187,6 +187,7 @@ public class HarpoonTrigger : MonoBehaviour
                         locked = false;
                         reelSound = false;
                         harpoonCollider.enabled = true;
+                        audioSourceReel.volume = 0.0f;
                     }
                 }
 
@@ -283,6 +284,7 @@ public class HarpoonTrigger : MonoBehaviour
     {
         if(!isReeling)
         {
+            audioSourceReel.volume = 0.0f;
             return;
         }
 
@@ -297,10 +299,10 @@ public class HarpoonTrigger : MonoBehaviour
             _playerProgress.UpdateCredits(1);
         }
 
-        if (reelFishSound)
+        if (!reelFishSound)
         {
             reelFishSound = true;
-            ReelingSoundAndParticles();
+            RetractingSoundAndParticles();
         }
 
         if (HarpoonHandModel.transform.localPosition.z - HarpoonSpawnPoint.z - handOffset >= 0)
@@ -333,6 +335,7 @@ public class HarpoonTrigger : MonoBehaviour
 
     private void SendFishToInventory(Fish fish)
     {
+        audioSourceReel.volume = 0.0f;
         CatchFishSoundAndParticles();
         inventory.ControlStorageSpace(fish);
         fishInventoryAnimation.Play("CatchFish");
@@ -340,6 +343,7 @@ public class HarpoonTrigger : MonoBehaviour
 
     private void SendAchievObjectToInvetory(AchievementObject achievementObject)
     {
+        audioSourceReel.volume = 0.0f;
         CatchFishSoundAndParticles();
         inventory.ControlStorageSpaceAchiev(achievementObject);
     }
@@ -404,7 +408,8 @@ public class HarpoonTrigger : MonoBehaviour
 
     private void RetractingSoundAndParticles()
     {
-        audioSource.PlayOneShot(audioClips[1]);
+        audioSourceReel.volume = 0.4f;
+        //audioSourceReel.PlayOneShot(audioClips[1]);
     }
 
     private void ReelingSoundAndParticles()

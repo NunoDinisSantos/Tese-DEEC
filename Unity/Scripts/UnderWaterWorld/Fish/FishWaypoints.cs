@@ -6,13 +6,16 @@ public class FishWaypoints : MonoBehaviour
     [HideInInspector]public Transform SpawnParent;
     [HideInInspector][SerializeField] private bool goingToWaypoint = false;
     [HideInInspector][SerializeField] private float arrivedWaypointThreshold = 0.5f;
-    [HideInInspector][SerializeField][Range(100,300)] private float speed;
+    [HideInInspector][Range(100,200)] private float speed;
     [HideInInspector][SerializeField] private float rotationSpeed = 19;
     [HideInInspector][SerializeField] private int waterLevel = 100;
 
     [HideInInspector][SerializeField] private Transform[] Boundaries;
     [HideInInspector][SerializeField] private Vector3 Target;
     [HideInInspector] public Vector3 spawnedPosition;
+
+    [SerializeField] private float maxFishSpeed = 200;
+    [SerializeField] private float minFishSpeed = 100;
 
     float maxX;
     float maxZ;
@@ -40,7 +43,6 @@ public class FishWaypoints : MonoBehaviour
         minX = SpawnParent.GetChild(4).transform.position.x;
         maxZ = SpawnParent.GetChild(5).transform.position.z;
         minZ = SpawnParent.GetChild(4).transform.position.z;
-
 
         SetRandomInitialPosition();
         StartCoroutine(MoveFish());
@@ -93,7 +95,7 @@ public class FishWaypoints : MonoBehaviour
         
         Target = newWaypoint;
         goingToWaypoint = true;
-        speed = Random.Range(100, 300);
+        speed = Random.Range(minFishSpeed, maxFishSpeed);
     }
 
     private void RotateFish()

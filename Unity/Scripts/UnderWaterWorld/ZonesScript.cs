@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class ZonesScript : MonoBehaviour
 {
-    [HideInInspector] public bool HotZone = false;
-    [HideInInspector] public bool ColdZone = false;
-    [HideInInspector] public bool DarkZone = false;
-    [HideInInspector] public bool GreenZone = false;
-    [HideInInspector] public bool SafeZone = false;
-    [HideInInspector] public bool Temple = false;
-    [HideInInspector] public bool Base = false;
+    public bool HotZone = false;
+    public bool ColdZone = false;
+    public bool DarkZone = false;
+    public bool GreenZone = false;
+    public bool SafeZone = false;
+    public bool Temple = false;
+    public bool Base = false;
 
     [HideInInspector] public GameObject SafeZoneObject;
     [HideInInspector] public GameObject GreenZoneObject;

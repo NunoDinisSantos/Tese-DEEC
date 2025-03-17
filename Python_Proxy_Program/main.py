@@ -11,7 +11,7 @@ mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 
 # Start video capture from the webcam
-cap = cv2.VideoCapture("https://192.168.1.124:8080/video")
+cap = cv2.VideoCapture("https://192.168.1.175:8080/video")
 
 #Variables
 SquatStage = "up"
@@ -33,7 +33,7 @@ left_knee_initial = None
 right_knee_initial = None
 
 calibrated = False   # Flag to check if calibration is done
-
+calibratedDirection = False
 #UNITY#######################################
 host = "127.0.0.1"# localhost
 port = 25001
@@ -46,6 +46,16 @@ Fire = 0
 ReelingIndexExercise = 0
 harpoonMode = 0
 futureTimerModeSwitch = 0
+VerticalSpeed = 0.15
+HorizontalSpeed = 0.1
+isReeling = 0
+firedTimer = 0
+
+
+## THESE VALUES CALCULATED IN THE CALIBRATION ##
+restingPointHand = 0
+hipDistanceThreshold = 0.035
+hipDistanceThresholdFire = 0.15
 horizontalLookThresholdLeft = 0.085
 horizontalLookThresholdRight= 0.040
 horizontalLookThresholdLeft = 0.05
@@ -53,13 +63,11 @@ switchModeHandThreshold = 0.1
 playerLookHandThreshold = 0.1
 playerLookHandThresholdVerticalUp = 0.3
 playerLookHandThresholdVerticalDown = 0.4
-VerticalSpeed = 0.15
-HorizontalSpeed = 0.1
-hipDistanceThreshold = 0.035
-isReeling = 0
-firedTimer = 0
-hipDistanceThresholdFire = 0.15
 
+thresholdDistance = 0
+
+##########################################################
+bypassMode = "0"
 connectionLost = False
 
 data = {
@@ -104,6 +112,12 @@ def calculate_distance(a,b):
 
     return math.fabs(a-b)
 
+def calculate_distanceVec(a,b):
+    a = np.array(a)
+    b = np.array(b)
+
+    return np.linalg.norm(a - b)
+
 def connect_to_server():
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -129,10 +143,16 @@ def reconnect_to_server():
 def send_data(sock):
     global data
     global connectionLost
+    global bypassMode
+
     try:
         gameData = f"<START>{json.dumps(data)}<END>"
         sock.settimeout(1)
         sock.sendall(gameData.encode("utf-8"))
+
+        bypassMode = int(sock.recv(1024).decode("utf-8").strip()) # whenever in store or tutorial, we bypass the harpoon mode so we can use fire. This value comes from Unity
+        #print(bypassMode)
+
     except Exception as e:
         print(f"⚠️ Connection lost: {e}. Reconnecting...")
         connectionLost = True
@@ -140,6 +160,8 @@ def send_data(sock):
 def calculate_pose(sock):
     #region variables
     global calibrated
+    global calibratedDirection
+    global restingPointHand
     global image
     global canSwitchMode
     global futureTimerModeSwitch
@@ -161,7 +183,8 @@ def calculate_pose(sock):
     global firedTimer
     global hipDistanceThresholdFire
     global connectionLost
-
+    global thresholdDistance
+    global bypassMode
     frame_count = 0
 
     PROCESS_EVERY_N_FRAMES = 2
@@ -183,13 +206,11 @@ def calculate_pose(sock):
                 continue
 
             # RGB to send to mediapipe
-            #image.flags.writeable = False
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             # Make detection
             if frame_count % PROCESS_EVERY_N_FRAMES == 0:
                 results = pose.process(image)
-            #results = pose.process(image)
 
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -203,9 +224,16 @@ def calculate_pose(sock):
 
             #region Calibrate
 
-            if calibrated == False:
-                cv2.putText(image, str("Not Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
+            if calibrated == False or calibratedDirection == False:
+
+                if calibrated == False:
+                    cv2.putText(image, str("Not Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
                             cv2.LINE_AA)
+
+                if calibratedDirection == False and calibrated == True:
+                    cv2.putText(image, str("Arm not calibrated Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2,
+                                cv2.LINE_AA)
+
 
                 try:
                     landmarks = results.pose_landmarks.landmark
@@ -243,6 +271,8 @@ def calculate_pose(sock):
                     ankleDistance = calculate_distance(right_ankle[0], left_ankle[0])  # 0.08 max
                     kneeDistance = calculate_distance(right_knee[0], left_knee[0])  # 0.25 max
 
+
+
                     if leftDownAngle > 90 and leftDownAngle < 110 and leftUpAngle > 170 and leftUpAngle < 180 and rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 170 and rightUpAngle < 180 and ankleDistance < 0.08 and kneeDistance < 0.25:
                         if not calibrated:  # Save initial positions once
                             calibrated = True
@@ -255,12 +285,23 @@ def calculate_pose(sock):
                             left_knee_initial = left_knee
                             right_knee_initial = right_knee
 
-                            print("✅ T-Pose detected! Calibration complete.")
+                            thresholdDistance = calculate_distance(left_hip[1], left_shoulder[1])
+                            #print(thresholdDistance)
+                            print("✅ T-Pose detected! Initial calibration complete.")
+
+                    if calibrated and calibratedDirection == False:
+                        if right_wrist[1] < head_initial:
+                            restingPointHand = left_wrist
+                            print("✅ Saving resting point of direction.")
+                            calibratedDirection = True
+
+
                 except:
                     pass
             #endregion
 
-            if calibrated:
+            #if calibrated:
+            if calibratedDirection:
                 cv2.putText(image, str("Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 50), 2,
                             cv2.LINE_AA)
                 try:
@@ -292,17 +333,19 @@ def calculate_pose(sock):
                     right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
                                  landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
                     #endregion
-                    #Detect if player posture is correct. If not, do nothing
 
                     #region New Calibration
-                    if calculate_distance(left_wrist[0],right_wrist[0]) < 0.05 and left_wrist[1] < left_wrist_initial[1]-0.2:
-                        print(f"⚠️ Recalibration in progress. Do T-Pose...")
+                    #if calculate_distance(left_wrist[0],right_wrist[0]) < 0.05 and left_wrist[1] < left_wrist_initial[1]-0.2:
+                    if calculate_distance(left_wrist[0],right_wrist[0]) < thresholdDistance * 0.05 and left_wrist[1] < left_wrist_initial[1]-thresholdDistance*0.75:
+                        print(f"⚠️ Recalibration in progress. Do T-Pose and arm direction pose...")
                         calibrated = False
+                        calibratedDirection = False
                     #endregion
 
                     #region Moving in Water
 
-                    if(data["harpoonMode"] == 0):
+
+                    if(data["harpoonMode"] == 0 and bypassMode == 0):
                         #region MoveForward
                         if SquatStage == "down":
                             data["vertical"] = 0
@@ -355,6 +398,7 @@ def calculate_pose(sock):
                         #print("got back up")
                         if time.time() < SquatTimer:
                             data["isReeling"] = 1
+                            isReeling = 1
                             #print("reeling 1")
                             SquatTimer = time.time() + 1.5
                             #print("Squat successfull. Next timer is in 1.5 sec")
@@ -362,61 +406,39 @@ def calculate_pose(sock):
                     if time.time() > SquatTimer:
                         #print("reeling 0")
                         data["isReeling"] = 0
+                        isReeling = 0
 
                     #endregion
 
                     #region PlayerLook
-                    if SquatStage == "up":
-                        #if (left_wrist[1] < left_wrist_initial[1] + playerLookHandThreshold):  # é a mao direita n sei pq
-                        if left_wrist[0] - left_elbow[0] > horizontalLookThresholdRight:
+                    print(isReeling)
+                    if SquatStage == "up" and isReeling == 0:
 
-                            #print(calculate_distance(left_wrist[0], left_elbow[0])*10)
-                            multiplier = calculate_distance(left_wrist[0], left_elbow[0])*10
-                            if multiplier > 1:
-                                data["horizontalLook"] = multiplier*0.2
-                            else:
-                            #print("going right")
-                                data["horizontalLook"] = HorizontalSpeed
-                        if left_wrist[0] - left_elbow[0] < -horizontalLookThresholdLeft:
-                            multiplier = calculate_distance(left_wrist[0], left_elbow[0])*10
-                            #print("going left")
-                            if multiplier > 1:
-                                data["horizontalLook"] = -multiplier*0.2
-                            else:
-                                data["horizontalLook"] = -HorizontalSpeed
-                        if -horizontalLookThresholdRight < left_wrist[0] - left_elbow[0] < horizontalLookThresholdLeft:
-                            data["horizontalLook"] = 0.0
-                            #print("Stop horizontal")
-
-
-                        #print(calculate_angle(left_wrist,left_elbow,left_shoulder))
-
-                        if calculate_distance(left_wrist[1],left_hip[1]) > hipDistanceThreshold:
-                            if left_wrist[1] > playerLookHandThresholdVerticalDown:
-                                data["verticalLook"] = VerticalSpeed
-                                #print("going down")
-                            if left_wrist[1] < playerLookHandThresholdVerticalUp:
-                                data["verticalLook"] = -VerticalSpeed
-                                #print("going up")
-                            if left_wrist[1] > playerLookHandThresholdVerticalUp and left_wrist[1] < playerLookHandThresholdVerticalDown:
-                                data["verticalLook"] = 0
-                                #print("stop vertical mid point")
-                        else:
-                            #playerLookHandThresholdVerticalUp < left_wrist[1] > playerLookHandThresholdVerticalDown:
+                    #print(calculate_distanceVec(left_wrist, left_hip))
+                    #resting pose
+                        if left_wrist[1] > left_hip[1]:
+                            data["horizontalLook"] = 0
                             data["verticalLook"] = 0
-                            #print("stop vertical hip close")
+                        else:
+                            dirX = left_wrist[0] - restingPointHand[0]
+                            dirY = left_wrist[1] - restingPointHand[1]
+
+                            multiplier = 1
+
+                            data["horizontalLook"] = dirX * multiplier
+                            data["verticalLook"] = dirY * multiplier
                     else:
-                        data["verticalLook"] = 0.0
-                        data["horizontalLook"] = 0.0
-
+                        data["horizontalLook"] = 0
+                        data["verticalLook"] = 0
                     #endregion
-
 
                     if connectionLost:
                         sock = reconnect_to_server()
                     else:
                         send_data(sock)
 
+                    #bypassMode = sock.recv(1024)
+                    #print(bypassMode)
 
                 except:
                     pass

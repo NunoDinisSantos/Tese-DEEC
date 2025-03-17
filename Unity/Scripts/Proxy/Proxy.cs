@@ -35,6 +35,8 @@ public class Proxy : MonoBehaviour
 
     private bool foundTutMovement = false;
 
+    private string mode = "0";
+
     void Start()
     {
         shopProxy = GetComponent<ShopProxyScript>();
@@ -111,7 +113,7 @@ public class Proxy : MonoBehaviour
 
         listening = true;
 
-        byte[] response = Encoding.UTF8.GetBytes("PONG");
+        byte[] response = Encoding.UTF8.GetBytes(mode);
         stream.Write(response, 0, response.Length);
 
         data.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
@@ -143,6 +145,7 @@ public class Proxy : MonoBehaviour
 
         if (inTutorialScene)
         {
+            mode = "1";
             if (!foundTutMovement)
             {
                 playerMovementTutorial = ProxyHelper.instance.FindMyGameObject("tutMovement").GetComponent<PlayerLookSimpleEDITOR>();
@@ -170,6 +173,7 @@ public class Proxy : MonoBehaviour
         {
             if (storeColliderScript != null && storeColliderScript.inStore)
             {
+                mode = "1";
                 shopProxy.inStore = true;
                 shopProxy.MoveCursorProxy(horizontalLook, verticalLook);
 
@@ -183,6 +187,7 @@ public class Proxy : MonoBehaviour
                 return;
             }
 
+            mode = "0";
             shopProxy.inStore = false;
 
             HandleHarpoonMode();

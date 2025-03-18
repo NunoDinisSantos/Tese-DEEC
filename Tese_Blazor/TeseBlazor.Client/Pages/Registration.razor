@@ -32,29 +32,25 @@
         <button class="btn btn-primary" @onclick="Registar">Create account</button>
         <label>@ErrorMessage</label>
     </div>
+
+    <div class="student-number-QRcode">
+        <label for="nEstudanteQrCode">Lost QR code? Enter your student number:</label>
+        <InputText id="nEstudanteQrCode" @bind-Value="NumeroEstudanteQRCode" />
+        <button class="btn btn-primary" @onclick="GenerateQRCode">Create your QR code!</button>
+        <label>@ErrorMessageQrCode</label>
+    </div>
+
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
 @code {
     private string NumeroEstudante { get; set; } = string.Empty;
+    private string NumeroEstudanteQRCode { get; set; } = string.Empty;
+
     private string ErrorMessage { get; set; } = string.Empty;
+    private string ErrorMessageQrCode { get; set; } = string.Empty;
 
     private async Task Registar()
     {       
@@ -92,5 +88,23 @@
         {
             ErrorMessage = e.Message;
         }
+    }
+
+    private void GenerateQRCode()
+    {
+        if (!System.Text.RegularExpressions.Regex.IsMatch(NumeroEstudanteQRCode, @"^\d*$"))
+        {
+            ErrorMessageQrCode = "Error: Only numbers allowed.";
+            return;
+        }
+
+        if (NumeroEstudanteQRCode.Length != 10)
+        {
+            ErrorMessageQrCode = "Error: Student number has 10 digits.";
+            return;
+        }
+
+        string navigate = "/qrcode/" + NumeroEstudanteQRCode;
+        NavigationManager.NavigateTo(navigate);
     }
 }

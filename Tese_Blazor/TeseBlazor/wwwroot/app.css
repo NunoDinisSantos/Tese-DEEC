@@ -93,6 +93,13 @@ h1:focus {
     flex-direction: column;
 }
 
+.student-number-QRcode {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
 .center-rectangle {
     background: linear-gradient(0, #202c9f, #0eacf0);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -108,51 +115,58 @@ h1:focus {
     padding-bottom: 2%;
 }
 
-    .center-rectangle h1 {
-        color: white;
-        text-align: center;
-        padding-bottom: 10%;
-        padding-top: 10%;
-        position: center;
+
+.header-div-successful {
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.center-rectangle h1 {
+    color: white;
+    text-align: center;
+    padding-bottom: 10%;
+    padding-top: 10%;
+    position: center;
+}
+
+.center-rectangle input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+.center-rectangle button {
+    background: #0072ff;
+    color: white;
+    border: medium;
+    cursor: pointer;
+    width: 95%;
+    height: 50px;
+}
+
+.center-rectangle desc-label {
+    color: white;
+    text-align: center;
+    position: center;
+    padding-bottom: 5%;
+    padding-right: 8%;
+    padding-left: 8%;
     }
 
-        .center-rectangle input {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 5px;
-            outline: none;
-        }
+.center-rectangle label {
+    color: white;
+    text-align: center;
+    position: center;
+    padding-bottom: 2%;
+}
 
-    .center-rectangle button {
-        background: #0072ff;
-        color: white;
-        border: medium;
-        cursor: pointer;
-        width: 95%;
-        height: 50px;
-    }
-
-    .center-rectangle desc-label {
-        color: white;
-        text-align: center;
-        position: center;
-        padding-bottom: 5%;
-        padding-right: 8%;
-        padding-left: 8%;
-    }
-
-        .center-rectangle label {
-            color: white;
-            text-align: center;
-            position: center;
-            padding-bottom: 2%;
-        }
-
-        .center-rectangle button:hover {
-            background: #005bb5;
-        }
+.center-rectangle button:hover {
+    background: #005bb5;
+}
 
 
 

@@ -14,11 +14,23 @@ public class MainMenuManager : MonoBehaviour
     [HideInInspector] public Button[] Buttons;
     [HideInInspector] public Slider loadingSlider;
     [HideInInspector] public DataBaseLoaderScript database;
+    private bool startScene = false;
 
     void Start()
     {
+        startScene = false;
         Buttons[0].interactable = false;
         Buttons[1].interactable = false;
+        Application.targetFrameRate = 60;
+    }
+
+    private void Update()
+    {
+        if (startScene)
+        {
+            startScene = false;
+            StartGame();
+        }
     }
 
     public void OpenPanels(int x)
@@ -57,12 +69,21 @@ public class MainMenuManager : MonoBehaviour
         StartGame();
     }
 
+    public void CallStartGameFromProxy(string id)
+    {
+        playerId = (int)Convert.ToInt64(id);
+        startScene = true;
+        //StartGame();
+    }
+
     public async Task StartGame()
     {
+        startScene = false;
         int level;
         await database.CallData(playerId.ToString());
+        Debug.Log("Passou");
 
-        if(database.errorGettingPlayer == true)
+        if (database.errorGettingPlayer == true)
         {
             return;
         }

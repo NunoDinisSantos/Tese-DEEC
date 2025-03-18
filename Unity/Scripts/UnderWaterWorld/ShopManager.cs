@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,6 +60,7 @@ public class ShopManager : MonoBehaviour
     [HideInInspector][SerializeField] private DayManager dayManager;
     int moneyGained;
     int creditsGained;
+    private bool newDayWaiting = false;
     TimeSpan timePlayed;
     [HideInInspector] public DateTime dateNow;
 
@@ -351,6 +353,13 @@ public class ShopManager : MonoBehaviour
 
     public void SellFish()
     {
+        if (newDayWaiting)
+        {
+            return;
+        }
+        
+        newDayWaiting = true;
+        StartCoroutine("WaitNewDay"); // prevents users from spamming button
         _PlayerProgress.TimePlayed = timePlayed;
         _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
         inventory.fishDayCatched = 0;
@@ -374,5 +383,11 @@ public class ShopManager : MonoBehaviour
         timePlayed = TimeSpan.Zero;
         underwaterInventory.ClearList();
         dayManager.TerminateDay();
+    }
+
+    private IEnumerator WaitNewDay()
+    {
+        yield return new WaitForSeconds(5);
+        newDayWaiting = false;
     }
 }

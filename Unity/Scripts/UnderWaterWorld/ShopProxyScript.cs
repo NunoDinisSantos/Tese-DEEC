@@ -100,7 +100,7 @@ public class ShopProxyScript : MonoBehaviour
 
     IEnumerator HandleButtonClick()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
         canFire = true;
     }
 }

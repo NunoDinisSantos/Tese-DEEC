@@ -67,6 +67,8 @@ public class PlayerMovementWater : MonoBehaviour
     
     void Start()
     {
+        Application.targetFrameRate = 60;
+
         thisCamera = GetComponent<Camera>();
         ZonesToDeActivate[1].SetActive(false);
         underWaterSound.enabled = false;

@@ -3,7 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Proxy : MonoBehaviour
 {
@@ -33,6 +35,9 @@ public class Proxy : MonoBehaviour
     [HideInInspector] public int Fire = 0;
     [HideInInspector] public bool harpoonMode = false;
 
+    [SerializeField] private TMP_InputField playerID;
+    [SerializeField] private MainMenuManager menuManager;
+    
     private bool foundTutMovement = false;
 
     private string mode = "0";
@@ -123,10 +128,24 @@ public class Proxy : MonoBehaviour
 
     private void DEECDataParser(string data)
     {
+        Debug.Log(inMenuScene && data.Length == 13 && data.StartsWith("ID:"));
+        if (inMenuScene && data.Length == 13 && data.StartsWith("ID:"))
+        {
+            //playerID.text = data.Substring(3);
+            menuManager.CallStartGameFromProxy(data.Substring(3));
+        }
+
         DecodeDataDEEC(data);
 
         if (inMenuScene)
         {
+            Debug.Log(data.Length);
+
+            if (data.Length == 10)
+            {
+                playerID.text = data.ToString();
+            }
+
             shopProxy.inStore = true;
 
             if (shopProxy != null)

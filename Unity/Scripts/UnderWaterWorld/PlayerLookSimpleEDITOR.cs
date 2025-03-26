@@ -7,7 +7,6 @@ public class PlayerLookSimpleEDITOR : MonoBehaviour
     [SerializeField] float sensibilidadeY = 70f;
     float xRotation;
     float yRotation;
-    public Transform orientation;
 
     private float verticalLook;
     private float horizontalLook;

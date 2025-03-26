@@ -22,6 +22,24 @@ public class ShopProxyScript : MonoBehaviour
 
     private bool foundButton = false;
 
+    RectTransform rectTransform;
+    float halfWidth;
+    float halfHeight;
+
+    float screenWidth;
+    float screenHeight;
+
+    private void Start()
+    {
+        rectTransform = PickCollider.GetComponent<RectTransform>();
+        halfWidth = rectTransform.rect.width / 2;
+        halfHeight = rectTransform.rect.height / 2;
+
+        screenWidth = Screen.width / 2;
+        screenHeight = Screen.height / 2;
+
+    }
+
     private void Update()
     {
         if(!inStore)
@@ -62,10 +80,18 @@ public class ShopProxyScript : MonoBehaviour
 
     public void MoveCursor()
     {
-        PickCollider.position = new Vector2(PickCollider.position.x + horizontalLook* multiplier, PickCollider.position.y + verticalLook*multiplier);
+
+        float xValue = Mathf.Clamp(PickCollider.localPosition.x + horizontalLook * multiplier, -screenWidth + halfWidth, screenWidth - halfWidth);
+        float yValue = Mathf.Clamp(PickCollider.localPosition.y + verticalLook * multiplier, -screenHeight + halfHeight, screenHeight - halfHeight);
+
+
+        //PickCollider.position = new Vector2(PickCollider.position.x + horizontalLook* multiplier, PickCollider.position.y + verticalLook*multiplier);
+        PickCollider.localPosition = new Vector2(xValue, yValue); // not working!!!!!!!!!!!!!
 
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(PickCollider.position.x, PickCollider.position.y);
+
+
         var results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         if (results.Count > 0)
@@ -91,7 +117,6 @@ public class ShopProxyScript : MonoBehaviour
 
         if(!foundButton && previousButton != null)
         {
-            Debug.Log("Entrou");
             previousButton.gameObject.GetComponent<Image>().color = new Color(0.065f,0.515f,0.811f,1);
             //foundButton = false;
         }

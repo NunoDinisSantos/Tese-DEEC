@@ -6,18 +6,29 @@ import socket
 import json
 import time
 
+
+HOST = "127.0.0.1"
+PORT = 25001
+
+server_socket = None
+client = None
+
+
 # Initialize MediaPipe Pose and Drawing utilities
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 
 # Start video capture from the webcam
-#cap = cv2.VideoCapture("http://10.231.215.47:8080/video")
-cap = cv2.VideoCapture(0)
-image_width = 640
-image_height = 480
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
+cap = cv2.VideoCapture("http://192.168.1.188:8080/video")
+#cap = cv2.VideoCapture(0)
+
+
+image_width = 480
+image_height = 640
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, image_width)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, image_height)
+target_aspect_ratio = 9 / 16
 
 #Variables
 SquatStage = "up"
@@ -86,7 +97,10 @@ data = {
     "fire": Fire,
     "ReelingIndexExercise": ReelingIndexExercise,
     "harpoonMode": harpoonMode,
-    "isReeling": isReeling
+    "isReeling": isReeling,
+    "tPose": calibrated,
+    "armDir": calibratedDirection,
+    "calibrated": calibrated and calibratedDirection
 }
 
 '''
@@ -147,24 +161,47 @@ def reconnect_to_server():
         print(f"❌ Reconnection failed: {e}. Retrying in 1 second...")
         time.sleep(1)  # Wait before retrying
 
-def send_data(sock):
+def send_data():
     global data
     global connectionLost
     global bypassMode
+    global server_socket
+    global client
+    global calibrated
+    global calibratedDirection
+    global isReeling
 
     try:
         gameData = f"<START>{json.dumps(data)}<END>"
-        sock.settimeout(1)
-        sock.sendall(gameData.encode("utf-8"))
+        #sock.settimeout(1)
+        #sock.sendall(gameData.encode("utf-8"))
+        client.sendall(gameData.encode())  # Send response back
+        bypassMode = int(client.recv(1024).decode("utf-8").strip())
 
-        bypassMode = int(sock.recv(1024).decode("utf-8").strip()) # whenever in store or tutorial, we bypass the harpoon mode so we can use fire. This value comes from Unity
+        #bypassMode = int(sock.recv(1024).decode("utf-8").strip()) # whenever in store or tutorial, we bypass the harpoon mode so we can use fire. This value comes from Unity
         #print(bypassMode)
 
     except Exception as e:
         print(f"⚠️ Connection lost: {e}. Reconnecting...")
         connectionLost = True
-        sock.close()
-def calculate_pose(sock):
+        client.close()
+        client=None
+        calibrated = False
+        calibratedDirection = False
+        data["horizontalLook"] = 0
+        data["verticalLook"] = 0
+        data["vertical"] = 0
+        data["fire"] = 0
+        data["harpoonMode"] = 0
+        SquatStage == "up"
+        data["isReeling"] = 0
+        data["tPose"] = 0
+        data["armDir"] = 0
+        data["calibrated"] = 0
+        isReeling = 0
+
+
+def calculate_pose():
     #region variables
     global calibrated
     global calibratedDirection
@@ -193,12 +230,13 @@ def calculate_pose(sock):
     global normalizor
     global bypassMode
     global PlayerId
+    global client
+
     frame_count = 0
     scanned = False
 
     PROCESS_EVERY_N_FRAMES = 2
     #endregion
-
     # Initialize MediaPipe Pose
     with mp_pose.Pose(
             min_detection_confidence=0.5,
@@ -207,14 +245,38 @@ def calculate_pose(sock):
 
         while cap.isOpened():
             #region Image Processing
+            try:
+                client.send(b"ping")
+            except Exception as e:
+                print("Client disconnected:", e)
+                connectionLost = True
+                client = None
+                calibrated = False
+                data["tPose"] = 0
+                data["armDir"] = 0
+                data["calibrated"] = 0
+                calibratedDirection = False
+                data["horizontalLook"] = 0
+                data["verticalLook"] = 0
+                data["vertical"] = 0
+                data["fire"] = 0
+                data["harpoonMode"] = 0
+                SquatStage = "up"
+                data["isReeling"] = 0
+                isReeling = 0
 
             success, frame = cap.read()
+
+            #######################CHANGE ASPECT RATIO???
 
             frame_count += 1
 
             if frame_count % PROCESS_EVERY_N_FRAMES != 0:
                 continue
 
+            #Tentar rodar camara para jogador ficar mais perto
+            ##PARA CAMARA QUE VAI SER USADA. USAR ISTO:
+            #frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
             # RGB to send to mediapipe
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -226,37 +288,45 @@ def calculate_pose(sock):
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-            if frame_count % 5 == 0:  # Draw every 5 frames
-                mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            #if frame_count % 5 == 0:  # Draw every 5 frames
+            #    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-
-
-            #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
             # Display the image
             #endregion
 
             #region Calibrate
 
+            if client is None:
+                print("Server ready, waiting for connection...")
+                client, addr = server_socket.accept()
+                print(f"Connection from {addr}")
+
             if calibrated == False or calibratedDirection == False:
-                detector = cv2.QRCodeDetector()
-                decodedText, points, _ = detector.detectAndDecode(image)
+                if scanned == False:
+                    try:
+                        detector = cv2.QRCodeDetector()
+                        decodedText, points, _ = detector.detectAndDecode(image)
 
 
-                if decodedText != "":
-                    scanningPlayerId = int(decodedText)
-                    if scanningPlayerId != PlayerId:
-                        scanned = False
+                        if decodedText != "":
+                            scanningPlayerId = int(decodedText)
+                            if scanningPlayerId != PlayerId:
+                                scanned = False
 
-                    if scanned == False:
-                        PlayerId = scanningPlayerId
-                        print(f"✅ PlayerId scanned: {PlayerId}")
-                        try:
-                            myData = f"<START>ID:{PlayerId}<END>"
-                            sock.sendall(myData.encode("utf-8"))
-                            print("Data send")
-                            scanned = True
-                        except Exception as e:
-                            print(f"⚠️ Failed to send data: {e}")  # ✅ Print error for debugging
+                            if scanned == False:
+                                PlayerId = scanningPlayerId
+                                print(f"✅ PlayerId scanned: {PlayerId}")
+                                try:
+                                    myData = f"<START>ID:{PlayerId}<END>"
+                                    client.sendall(myData.encode("utf-8"))
+                                    print("Data send")
+                                    scanned = True
+                                except Exception as e:
+                                    print(f"⚠️ Failed to send data: {e}")  # ✅ Print error for debugging
+
+                    except:
+                        pass
 
                 if calibrated == False:
                     cv2.putText(image, str("Not Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
@@ -338,30 +408,22 @@ def calculate_pose(sock):
                     ankleDistance = calculate_distance(right_ankle[0], left_ankle[0])  # 0.08 max
                     kneeDistance = calculate_distance(right_knee[0], left_knee[0])  # 0.25 max
 
-
-                    #print(leftDownAngle > 85 and leftDownAngle < 110 and leftUpAngle > 170 and leftUpAngle < 180)
-                    #print(f"{leftDownAngle}x{leftUpAngle}")
-                    #print(rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 170 and rightUpAngle < 180)
                     normalizor = calculate_distance(left_hip[1], left_shoulder[1])
-
-                    #cv2.putText(image, str("O"), tuple(np.multiply(head+normalizor*0.45,[640,480]).astype(int)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2,
-                    #            cv2.LINE_AA)
-                    #print(f"{head},{head+normalizor*0.6}")
-
-                    #cv2.putText(image, str("YOOO"), (head, head-normalizor*0.6), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                    #            (0, 0, 255), 1,cv2.LINE_AA)
 
                     if leftDownAngle > 90 and leftDownAngle < 110 and leftUpAngle > 145 and leftUpAngle < 180 and rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 145 and rightUpAngle < 180 and ankleDistance < 0.08 and kneeDistance < 0.25:
                         if not calibrated:  # Save initial positions once
                             calibrated = True
-
+                            data["tPose"] = True
+                            send_data()
                             head_initial = head
                             right_wrist_initial = right_wrist
-                            left_wrist_initial = left_wrist
                             left_knee_initial = left_knee
                             right_knee_initial = right_knee
+                            left_ankle_initial = left_ankle
+                            right_ankle_initial = right_ankle
 
-                            #print(thresholdDistance)
+
+
                             print("✅ T-Pose detected! Initial calibration complete.")
 
                     if calibrated and calibratedDirection == False:
@@ -369,17 +431,22 @@ def calculate_pose(sock):
                             restingPointHand = left_wrist
                             print("✅ Saving resting point of direction.")
                             calibratedDirection = True
+                            data["armDir"] = True
+                            send_data()
+
+
 
 
                 except:
                     pass
             #endregion
 
-            #if calibrated:
             if calibratedDirection:
                 cv2.putText(image, str("Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (5, 255, 50), 2,
                             cv2.LINE_AA)
                 try:
+                    scanned = False
+
                     #region Body landmarks
                     landmarks = results.pose_landmarks.landmark
                     head = landmarks[mp_pose.PoseLandmark.NOSE.value].y
@@ -444,9 +511,8 @@ def calculate_pose(sock):
                         if SquatStage == "down":
                             data["vertical"] = 0
                         else:
-                            #if(math.fabs(right_knee[1]-right_knee_initial[1])>normalizor*0.1 or math.fabs(left_knee[1]-left_knee_initial[1])>normalizor*0.1):
-                            # print(f"{calculate_distance(right_knee[1], right_knee_initial[1]) > normalizor * 0.2} -- {calculate_distance(left_knee[1], left_knee_initial[1]) > normalizor * 0.2}")
-                            if calculate_distance(right_knee[1], right_knee_initial[1]) > normalizor * 0.1 or calculate_distance(left_knee[1], left_knee_initial[1]) > normalizor * 0.1:
+                            #print(f"{calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1}")
+                            if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
                                 data["vertical"] = -1
                             else:
                                 data["vertical"] = 0
@@ -458,8 +524,8 @@ def calculate_pose(sock):
                         ##########################################
                         ##########################################
                         ##########################################
-                        #print(f"{20 < calculate_angle(right_wrist,right_shoulder,right_hip) < 75} ---- {calculate_distance(right_wrist[0], right_hip[0]) > normalizor*0.1}")
-                        if 20 < calculate_angle(right_wrist,right_shoulder,right_hip) < 75 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor*0.25:
+                        #print(f"{calculate_angle(right_wrist,right_shoulder,right_hip)} ---- {calculate_distance(right_wrist[0], right_hip[0])}")
+                        if 60 < calculate_angle(right_elbow,right_shoulder, right_hip) < 90 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor*0.65:
                             if time.time() > firedTimer:
                                 data["fire"] = 1
                                 firedTimer = time.time()+1
@@ -514,17 +580,17 @@ def calculate_pose(sock):
 
                     #print(calculate_distanceVec(left_wrist, left_hip))
                     #resting pose
-                        if left_wrist[1] > left_hip[1]:
-                            data["horizontalLook"] = 0
-                            data["verticalLook"] = 0
-                        else:
-                            dirX = left_wrist[0] - restingPointHand[0]
-                            dirY = left_wrist[1] - restingPointHand[1]
+                        #if left_wrist[1] > left_hip[1]:
+                        #    data["horizontalLook"] = 0
+                        #    data["verticalLook"] = 0
+                        #else:
+                        dirX = left_wrist[0] - restingPointHand[0]
+                        dirY = left_wrist[1] - restingPointHand[1]
 
-                            multiplier = 3
+                        multiplier = 3
 
-                            data["horizontalLook"] = dirX * -multiplier
-                            data["verticalLook"] = dirY * multiplier
+                        data["horizontalLook"] = dirX * -multiplier
+                        data["verticalLook"] = dirY * multiplier
                     else:
                         data["horizontalLook"] = 0
                         data["verticalLook"] = 0
@@ -543,24 +609,38 @@ def calculate_pose(sock):
                         data["vertical"] = 0
                         data["fire"] = 0
                         data["harpoonMode"] = 0
-                        SquatStage == "up"
+                        SquatStage = "up"
                         data["isReeling"] = 0
                         isReeling = 0
+                        data["tPose"] = False
+                        data["armDir"] = False
+                        data["calibrated"] = False
+                        scanned = False
+                        send_data()
 
 
                     #endregion
 
-                    if connectionLost:
-                        sock = reconnect_to_server()
-                    else:
-                        send_data(sock)
+                    #if connectionLost:
+                    #    sock = reconnect_to_server()
+                    #else:
+                    #    send_data(sock)
 
-                    #bypassMode = sock.recv(1024)
-                    #print(bypassMode)
+                    send_data()
+
+                    #if connectionLost == False:
+                    #    send_data(client)
+                    #else:
+                        #client.close()
+                        #client, addr = server_socket.accept()
+                    #    connectionLost = True
 
                 except:
                     pass
             #Show video. To be commented
+
+
+            #image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
             cv2.imshow("MediaPipe Pose", image)
             if cv2.waitKey(5) & 0xFF == ord('q'):
                 break
@@ -569,9 +649,19 @@ def calculate_pose(sock):
     cap.release()
     cv2.destroyAllWindows()
 
+def start_server():
+    global server_socket
+    global client
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen(1)  # Allow only one client at a time
+    print("✅ Server started. Waiting for a connection...")
+
 def main():
-    sock = connect_to_server()
-    calculate_pose(sock)
+    #connect_to_server()
+    start_server()
+    calculate_pose()
 
 if __name__ == "__main__":
     main()

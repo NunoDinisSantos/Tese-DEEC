@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
@@ -60,6 +61,7 @@ public class HarpoonTrigger : MonoBehaviour
     private bool checkedWhatIs = false;
     [HideInInspector][SerializeField] private Animation fishInventoryAnimation;
     private GetPatientCircleData patientCircleData;
+    [SerializeField] private GameObject DomeFishCaught;
 
     //#################################################################################
     #region OBSOLETE_VR
@@ -87,24 +89,32 @@ public class HarpoonTrigger : MonoBehaviour
     private float creditTimer;
     //#################################################################################
 
+    [SerializeField] private GameObject harpoonModeText;
+    [SerializeField] private GameObject exerciseText;
+
+    private List<Transform> fishToActivateList = new();
+
     private void Start()
     {
         switch(_playerProgress.shipReelStrenghtModule)
         {
             case 0:
                 HarpoonLength = 35;
-                HarpoonSpeed = 20;
-                HarpoonRetractSpeed = 25;
+                HarpoonSpeed = 50;
+                HarpoonRetractSpeed = HarpoonSpeed;
+                ExerciseReelingSpeed = HarpoonSpeed*0.30f;
                 break;
             case 1:
                 HarpoonLength = 45;
-                HarpoonSpeed = 27;
-                HarpoonRetractSpeed = 25f; 
+                HarpoonSpeed = 70;
+                HarpoonRetractSpeed = HarpoonSpeed;
+                ExerciseReelingSpeed = HarpoonSpeed * 0.21f;
                 break;
             case 2:
                 HarpoonLength = 55;
-                HarpoonSpeed = 32;
-                HarpoonRetractSpeed = 25f;
+                HarpoonSpeed = 85;
+                HarpoonRetractSpeed = HarpoonSpeed;
+                ExerciseReelingSpeed = HarpoonSpeed * 0.22f;               
                 break;
         }
 
@@ -118,18 +128,21 @@ public class HarpoonTrigger : MonoBehaviour
         {
             case 0:
                 HarpoonLength = 35;
-                HarpoonSpeed = 20;
-                HarpoonRetractSpeed = 25f;
+                HarpoonSpeed = 50;
+                HarpoonRetractSpeed = HarpoonSpeed;
+                ExerciseReelingSpeed = HarpoonSpeed * 0.30f;
                 break;
             case 1:
                 HarpoonLength = 45;
-                HarpoonSpeed = 27;
-                HarpoonRetractSpeed = 25f;
+                HarpoonSpeed = 70;
+                HarpoonRetractSpeed = HarpoonSpeed;
+                ExerciseReelingSpeed = HarpoonSpeed * 0.21f;
                 break;
             case 2:
                 HarpoonLength = 55;
-                HarpoonSpeed = 32;
-                HarpoonRetractSpeed = 25f;
+                HarpoonSpeed = 85;
+                HarpoonRetractSpeed = HarpoonSpeed;
+                ExerciseReelingSpeed = HarpoonSpeed * 0.22f;
                 break;
         }
     }
@@ -140,9 +153,10 @@ public class HarpoonTrigger : MonoBehaviour
         {
             StopAiming();
             stopAimCalled = false;
+            harpoonModeText.SetActive(false);
         }
 
-        if(!aiming)
+        if (!aiming)
         {
             return;
         }
@@ -154,7 +168,9 @@ public class HarpoonTrigger : MonoBehaviour
         }
 
         else {
-            Aiming(); 
+            Aiming();
+
+            harpoonModeText.SetActive(true);
 
             if (FiredFromProxy && canFire || Input.GetKeyUp(KeyCode.F))
             {
@@ -179,7 +195,7 @@ public class HarpoonTrigger : MonoBehaviour
                         reelSound = true;
                     }
 
-                    HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -2.3f), HarpoonRetractSpeed * 0.01f);
+                    HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -1.5f), HarpoonRetractSpeed * 0.01f);
                     if (HarpoonHandModel.transform.localPosition.z - HarpoonSpawnPoint.z - handOffset >= 0)
                     {
                         canFire = true;
@@ -244,13 +260,17 @@ public class HarpoonTrigger : MonoBehaviour
     {
         if (!checkedWhatIs)
         {
+            exerciseText.SetActive(true);
             checkedWhatIs = true;
+            DomeFishCaught.SetActive(true);
             CatchSomething();
             aiming = true;
             HarpoonHandModel.transform.position = GrabbedFishTransform.position;
             if (HarpoonSpawnPoint.z - HarpoonHandModel.transform.localPosition.z >= HarpoonLength)
             {
                 grabbedFish = false;
+                exerciseText.SetActive(false);
+                DomeFishCaught.SetActive(false);
                 retractingHarpoon = true;
             }
 
@@ -266,6 +286,8 @@ public class HarpoonTrigger : MonoBehaviour
         if (fishEscapeTimer < 0 || (HarpoonHandModel.transform.localPosition - HarpoonSpawnPoint).magnitude >= HarpoonLength)
         {
             grabbedFish = false;
+            exerciseText.SetActive(false);
+            DomeFishCaught.SetActive(false);
             fishEscapeTimer = UnityEngine.Random.Range(fishEscapeTimerMin, fishEscapeTimerMax);
             harpoonCollider.enabled = false;
             retractingHarpoon = true;
@@ -289,7 +311,9 @@ public class HarpoonTrigger : MonoBehaviour
             return;
         }
 
-        HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -2.3f), ExerciseReelingSpeed * 0.01f);
+        exerciseText.SetActive(true);
+        DomeFishCaught.SetActive(true);
+        HarpoonHandModel.transform.localPosition = Vector3.MoveTowards(HarpoonHandModel.transform.localPosition, new Vector3(0, -1.6f, -1.5f), ExerciseReelingSpeed * 0.01f);
         GrabbedFishTransform.position = HarpoonHandModel.transform.position;
 
         creditTimer -= Time.deltaTime;
@@ -308,13 +332,14 @@ public class HarpoonTrigger : MonoBehaviour
 
         if (HarpoonHandModel.transform.localPosition.z - HarpoonSpawnPoint.z - handOffset >= 0)
         {
+            fishToActivateList.Add(GrabbedFishTransform.gameObject.transform);
             GrabbedFishTransform.gameObject.SetActive(false);
 
             if (!grabbedAchievObject)
             {
                 SendFishToInventory(GrabbedFishTransform.gameObject.GetComponent<Fish>());
                 ResetStatus();
-                StartCoroutine(ActivateFishAfterTime());
+                StartCoroutine("ActivateFishAfterTime");
             }
             else
             {
@@ -322,24 +347,33 @@ public class HarpoonTrigger : MonoBehaviour
                 ResetStatus();
             }
 
+
             //ResetStatus();
         }
     }
 
     private IEnumerator ActivateFishAfterTime()
     {
-        float activateWaitingTimer = Random.Range(10, 30);
+        float activateWaitingTimer = Random.Range(10, 15);
+
         yield return new WaitForSeconds(activateWaitingTimer);
-        GrabbedFishTransform.gameObject.transform.position = GrabbedFishTransform.GetComponent<FishWaypoints>().spawnedPosition;
-        GrabbedFishTransform.gameObject.SetActive(true);
+
+        if(fishToActivateList.Count>0)
+        {
+            fishToActivateList[0].gameObject.transform.position = fishToActivateList[0].gameObject.GetComponent<FishWaypoints>().spawnedPosition;
+            fishToActivateList[0].gameObject.SetActive(true);
+            fishToActivateList.RemoveAt(0);
+        }
     }
 
     private void SendFishToInventory(Fish fish)
     {
+        fishEscapeTimer = UnityEngine.Random.Range(fishEscapeTimerMin, fishEscapeTimerMax);
         audioSourceReel.volume = 0.0f;
         CatchFishSoundAndParticles();
         inventory.ControlStorageSpace(fish);
         fishInventoryAnimation.Play("CatchFish");
+        fish.gameObject.SetActive(false);
     }
 
     private void SendAchievObjectToInvetory(AchievementObject achievementObject)
@@ -381,6 +415,7 @@ public class HarpoonTrigger : MonoBehaviour
         if (!locked && wantsToStopAim)
         {
             aiming = false;
+            harpoonModeText.SetActive(false);
             aim = Vector2.zero;
             HarpoonHandTarget.SetActive(false);
             HarpoonHandModel.SetActive(false);
@@ -433,13 +468,15 @@ public class HarpoonTrigger : MonoBehaviour
         checkedWhatIs = false;
         grabbedAchievObject = false;
         grabbedFish = false;
+        exerciseText.SetActive(false);
+        DomeFishCaught.SetActive(false);
         fired = false;
         retractingHarpoon = false;
         aiming = true;
         locked = false;
         reelFishSound = false;
         reelSound = false;
-        HarpoonHandModel.transform.localPosition = new Vector3(0, -1.6f, -2.3f);
+        HarpoonHandModel.transform.localPosition = new Vector3(0, -1.6f, -3.5f);
 
         canFire = true;
     }

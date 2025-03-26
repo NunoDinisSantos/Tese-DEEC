@@ -5,10 +5,10 @@ public class PlayerProgress : MonoBehaviour
 {
     [HideInInspector] public DataBaseLoaderScript database;
     [Header("Creditos & Divisor")]
-    [HideInInspector] public int Creditos;
-    [HideInInspector] public int CreditosGained;
-    [Header("Divisor = 200 ==> 200 coins = 1 credit")]
-    [SerializeField] private int Divisor = 200; // 200 coins = 1 credit
+    public int Creditos;
+    public int CreditosGainedDay;
+    [Header("Valor convertido de moedas convertidas a créditos. 0.05 => 5%")]
+    [SerializeField] private float convertor = 0.05f; // 5%
     [HideInInspector] public float MultiplierStreak = 1.0f;
 
     [HideInInspector] public int Money;
@@ -241,16 +241,22 @@ public class PlayerProgress : MonoBehaviour
         Money += money;
         if (money > 0)
         {
-            Creditos += Mathf.RoundToInt(money / Divisor);
+            Creditos += Mathf.RoundToInt(money * convertor);
         }
 
         PlayerDataScript.playerDataInstance.Coins = Money;
     }
 
+    public int CheckCreditsGainedFromMoney(int money)
+    {
+        return Mathf.RoundToInt(money * convertor);
+    }
+
     public void UpdateCredits(int credits)
     {
         credits = Mathf.RoundToInt(credits);
-        Creditos = Mathf.RoundToInt((Creditos + credits * MultiplierStreak));
+        Creditos = Mathf.RoundToInt(Creditos + credits * MultiplierStreak);
+        CreditosGainedDay += credits;
         PlayerDataScript.playerDataInstance.Credits = Creditos;
     }
 

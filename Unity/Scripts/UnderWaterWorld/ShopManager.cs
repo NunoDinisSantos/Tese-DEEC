@@ -248,6 +248,8 @@ public class ShopManager : MonoBehaviour
         moneyGained += showInventoryStore.HandleStoreInventory(inventory);
         creditsGained = showInventoryStore.HandleAchievCreditsStore(inventory);
         creditsGained += showInventoryStore.HandleAchievCreditsStore(underwaterInventory);
+        creditsGained += _PlayerProgress.CheckCreditsGainedFromMoney(moneyGained);
+        creditsGained += _PlayerProgress.CreditosGainedDay;
 
         string message = CreateFunnyMessages(moneyGained);
         ShowMesssageStore.text = message;
@@ -277,6 +279,8 @@ public class ShopManager : MonoBehaviour
 
         creditsGained = showInventoryStore.HandleAchievCreditsStore(inventory);
         creditsGained += showInventoryStore.HandleAchievCreditsStore(underwaterInventory);
+        creditsGained += _PlayerProgress.CheckCreditsGainedFromMoney(moneyGained);
+        creditsGained += _PlayerProgress.CreditosGainedDay;
 
         string message = CreateFunnyMessages(moneyGained);
         ShowMesssageStore.text = message;
@@ -285,7 +289,7 @@ public class ShopManager : MonoBehaviour
         int achievCount = inventory.achievListMoneyWorth.Count + underwaterInventory.achievListMoneyWorth.Count;
         timePlayed = DateTime.Now - dateNow;
 
-        string statsString = "- Apanhou " + fishCount + " peixes!\n\n";
+        string statsString = "- Até agora apanhou " + fishCount + " peixes!\n\n";
         if (timePlayed.Minutes == 0)
         {
             statsString += "- Este dia durou " + timePlayed.Seconds + " segundos!\n\n";
@@ -294,7 +298,10 @@ public class ShopManager : MonoBehaviour
         {
             statsString += "- Este dia durou " + timePlayed.Minutes + " minutos!\n\n";
         }
+        statsString += "- Até agora tem " + moneyGained + " moedas em peixe!\n\n";
+        statsString += "- Até agora conseguiu " + creditsGained + " créditos!\n\n"; //CREDITOS DOS PEIXES (OS QUE CONTAM) N APARECEM AQUI. OS 1K DO ACHIEV NÃO SÃO DADOS!!!!
         statsString += "- Apanhou " + achievCount + " objectos raros!";
+
         stats.text = statsString;
     }
 
@@ -358,10 +365,12 @@ public class ShopManager : MonoBehaviour
             return;
         }
         
+        dateNow = DateTime.Now;
         newDayWaiting = true;
         StartCoroutine("WaitNewDay"); // prevents users from spamming button
         _PlayerProgress.TimePlayed = timePlayed;
         _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
+        _PlayerProgress.UpdateCredits(creditsGained);
         inventory.fishDayCatched = 0;
         inventory.fishListMoneyWorth.Clear();
         inventory.achievListMoneyWorth.Clear();
@@ -375,7 +384,6 @@ public class ShopManager : MonoBehaviour
         GainSpentMoneyText.text = "+" + moneyGained;
         GainSpentMoneyText.color = Color.green;
         _PlayerProgress.UpdateMoney(moneyGained);
-
         playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
         playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
         animationStore.Play("CoinAnim");
@@ -383,6 +391,7 @@ public class ShopManager : MonoBehaviour
         timePlayed = TimeSpan.Zero;
         underwaterInventory.ClearList();
         dayManager.TerminateDay();
+        _PlayerProgress.CreditosGainedDay = 0;
     }
 
     private IEnumerator WaitNewDay()

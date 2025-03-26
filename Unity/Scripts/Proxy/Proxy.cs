@@ -18,8 +18,8 @@ public class Proxy : MonoBehaviour
     public TcpClient client;
     [SerializeField] bool listening;
 
-    [HideInInspector] [SerializeField] PlayerMovementWater playerMovement;
-    [HideInInspector] [SerializeField] HarpoonTrigger harpoonTrigger;
+    [SerializeField] PlayerMovementWater playerMovement;
+    [SerializeField] HarpoonTrigger harpoonTrigger;
     [SerializeField] private ShopProxyScript shopProxy;
     [SerializeField] private PlayerLookSimpleEDITOR playerMovementTutorial;
     [SerializeField] private DialogController dialogController;
@@ -139,8 +139,6 @@ public class Proxy : MonoBehaviour
 
         if (inMenuScene)
         {
-            Debug.Log(data.Length);
-
             if (data.Length == 10)
             {
                 playerID.text = data.ToString();
@@ -186,6 +184,8 @@ public class Proxy : MonoBehaviour
 
                 return;
             }
+
+            return;
         }
 
         if (inGameScene)
@@ -552,4 +552,7 @@ public class SocketData
     public int ReelingIndexExercise;
     public int harpoonMode;
     public int isReeling;
+    public bool tPose;
+    public bool armDir;
+    public bool calibrated;
 }

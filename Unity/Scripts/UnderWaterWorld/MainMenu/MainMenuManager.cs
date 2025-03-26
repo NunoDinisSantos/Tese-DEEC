@@ -81,7 +81,6 @@ public class MainMenuManager : MonoBehaviour
         startScene = false;
         int level;
         await database.CallData(playerId.ToString());
-        Debug.Log("Passou");
 
         if (database.errorGettingPlayer == true)
         {

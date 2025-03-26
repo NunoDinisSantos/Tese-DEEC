@@ -38,7 +38,7 @@ public class DayManager : MonoBehaviour
     private void RandomWeather()
     {
         int i = Random.Range(0, 100);
-        if (i <= 55)
+        if (!isDay)
         {
             isDay = true;
             playerVisionController.SetAmbientColorsTerminateDay(isDay);
@@ -132,8 +132,8 @@ public class DayManager : MonoBehaviour
         playerMovementWater.gameObject.GetComponent<Rigidbody>().freezeRotation = false;
         playerMovementWater.enabled = true;
 
-        int i = Random.Range(0, 100);
-        if (i <= 70)
+        /*int i = Random.Range(0, 100);
+        if (!isDay)
         {
             isDay = true;
             waterDayNight[0].SetActive(true);
@@ -181,7 +181,8 @@ public class DayManager : MonoBehaviour
                 typeOfDay[5].SetActive(true);
                 yield return null;
             }
-        }
+        }*/
+        RandomWeather();
     }
 
     private void SetSceneColor(int index)

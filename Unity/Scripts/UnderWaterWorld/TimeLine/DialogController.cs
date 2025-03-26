@@ -34,6 +34,7 @@ public class DialogController : MonoBehaviour
     [SerializeField] private Color startColorBot;
     public Color dayColor;
     public DataBaseLoaderScript database;
+    private bool clickedEvent = false;
 
     void Start()
     {
@@ -59,16 +60,26 @@ public class DialogController : MonoBehaviour
             ButaoCutscene.SetActive(false);
             NextLine();
         }
-    }
 
-    public void ClickedButtonProxy()
-    {
-        if (canPressAgain)
+        if (clickedEvent && canPressAgain)
         {
+            clickedEvent = false;
             canPressAgain = false;
             ButaoCutscene.SetActive(false);
             NextLine();
         }
+    }
+
+    public void ClickedButtonProxy()
+    {
+        clickedEvent = true;
+
+        /*if (canPressAgain)
+        {
+            canPressAgain = false;
+            ButaoCutscene.SetActive(false);
+            NextLine();
+        }*/
     }
 
     void NextLine()

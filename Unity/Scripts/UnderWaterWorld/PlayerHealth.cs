@@ -175,7 +175,7 @@ public class PlayerHealth : MonoBehaviour
         Health = 100;
         healthText.text = Health.ToString();
         forceNoDamage = false;
-        playerMovementWater.speed = 10.0f;
+        playerMovementWater.speed = 13.0f;
         StopCoroutine("RespawnPickUp");
     }
 
@@ -196,7 +196,7 @@ public class PlayerHealth : MonoBehaviour
         Health = 100;
         healthText.text = Health.ToString();
         forceNoDamage = false;
-        playerMovementWater.speed = 10.0f; 
+        playerMovementWater.speed = 13.0f; 
         StopCoroutine("Respawn");
     }
 

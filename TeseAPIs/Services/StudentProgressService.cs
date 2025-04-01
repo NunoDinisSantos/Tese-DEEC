@@ -14,6 +14,7 @@ namespace TeseAPIs.Services
 
             var query = $"SELECT " +
                 $"ma.player_id AS PlayerId," +
+                $"ma.nick_name AS StudentNick," +
                 $"ma.time_played AS TimePlayed," +
                 $"ma.tutorial AS Tutorial," +
                 $"ma.coins AS Coins," +

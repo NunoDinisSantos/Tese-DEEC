@@ -4,19 +4,18 @@ using UnityEngine;
 
 public class FishSpawner : MonoBehaviour
 {
-    [HideInInspector][SerializeField] private FishControllerScript fishControllerScript;
-    [HideInInspector] public bool currentSpawning = false;
+    [SerializeField] private FishControllerScript fishControllerScript;
+    public bool currentSpawning = true;
     [HideInInspector][SerializeField] private Transform FishPool;
     int fishIndexPool = 0;
     int maxFishIndexPool;
-    int maxFishScene = 0;
-    [SerializeField] private List<Transform> Areas = new();
+    private List<Transform> Areas = new();
 
     [HideInInspector][SerializeField] private string zone;
 
     [Header("ONLY FOR INFORMATION")]
     [SerializeField] private int sumOfFishInZone;
-    [HideInInspector] public int currentFish = 0;
+    public int currentFish = 0;
 
     private void OnDisable()
     {
@@ -36,12 +35,6 @@ public class FishSpawner : MonoBehaviour
             sumOfFishInZone += Areas[i].GetComponent<FishSpawnerBoundaries>().maxNumberOfFishInBoundary;
         }
 
-
-        if(fishControllerScript != null)
-        {
-            maxFishScene = fishControllerScript.maxFishScene;
-        }
-
         if (FishPool != null)
         {
             maxFishIndexPool = FishPool.transform.childCount;
@@ -49,179 +42,55 @@ public class FishSpawner : MonoBehaviour
 
         if (currentSpawning)
         {
-            StartCoroutine(CheckCurrentFish());
+            StartCoroutine("CheckCurrentFish");
         }
+
+        StartSpawningZone();
     }
 
-    IEnumerator CheckCurrentFish()
+IEnumerator CheckCurrentFish()
     {
-        if(!currentSpawning)
+        if (currentFish < sumOfFishInZone)
         {
-            yield return new();
-        }
+            float timer = 0.001f;
 
-
-        if (fishIndexPool > maxFishIndexPool)
-        {
-            fishIndexPool = 0;
-        }
-
-        float timer = 5;
-
-
-        if (fishControllerScript.currentFishScene < maxFishScene && fishIndexPool < maxFishIndexPool && currentFish < sumOfFishInZone) // Atencao que o index++ não é solution porque o player pode apanhar um peixe de uma posição random!
-        {
-            int randomPool = Random.Range(0, 100);
-
-            GameObject fish = FishPool.transform.GetChild(fishIndexPool).gameObject; // ...
-
-            switch (zone)
+            if (fishIndexPool < maxFishIndexPool)
             {
-                case "safe":
-                    if (randomPool > 30)
-                    {
-                        //fish = validPoolFishInZone[0].transform.GetChild(fishIndexPool).gameObject;
+                int randomPool = Random.Range(0, 100);
 
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
+                GameObject fish = FishPool.transform.GetChild(fishIndexPool).gameObject; // ...
 
-                case "coral":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if(randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
+                int areaChosenIndex = Random.Range(0, Areas.Count);
+                Transform chosenArea = Areas[areaChosenIndex];
+                var spawned = chosenArea.GetComponent<FishSpawnerBoundaries>().WillSpawnFish();
+                if (spawned)
+                {
+                    int randomSpawnOfChosenAreaIndex = Random.Range(0, chosenArea.GetChild(0).childCount);
+                    var fishSpawnPoint = chosenArea.GetChild(0).GetChild(randomSpawnOfChosenAreaIndex).position;
+                    fish.GetComponent<FishWaypoints>().spawnedPosition = new Vector3(fishSpawnPoint.x, fishSpawnPoint.y, fishSpawnPoint.z);
+                    fish.GetComponent<FishWaypoints>().SpawnParent = chosenArea;
+                    fish.SetActive(true);
 
-                case "hot":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if (randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
+                    fishIndexPool++;
+                    fishControllerScript.currentFishScene++;
+                    currentFish++;
+                }
+                else
+                {
+                    Areas.RemoveAt(areaChosenIndex); // no longer accepting fish
+                }
 
-                case "ice":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if (randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
 
-                case "temple":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if (randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
 
-                case "color":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if (randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
-
-                case "deep":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if (randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
-
-                case "base":
-                    if (randomPool > 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    if (randomPool > 20 && randomPool <= 60)
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    else
-                    {
-                        fish = FishPool.GetChild(fishIndexPool).gameObject;
-                    }
-                    break;
+                yield return new WaitForSeconds(timer);
+                StartCoroutine("CheckCurrentFish");
             }
 
-            int areaChosenIndex = Random.Range(0, Areas.Count);
-            Transform chosenArea = Areas[areaChosenIndex];
-            var spawned = chosenArea.GetComponent<FishSpawnerBoundaries>().WillSpawnFish();
-            if (spawned)
-            {
-                int randomSpawnOfChosenAreaIndex = Random.Range(0, chosenArea.GetChild(0).childCount);
-                var fishSpawnPoint = chosenArea.GetChild(0).GetChild(randomSpawnOfChosenAreaIndex).position;
-                fish.GetComponent<FishWaypoints>().spawnedPosition = new Vector3(fishSpawnPoint.x, fishSpawnPoint.y, fishSpawnPoint.z);
-                fish.GetComponent<FishWaypoints>().SpawnParent = chosenArea;
-                fish.SetActive(true);
-
-                fishIndexPool++;
-                fishControllerScript.currentFishScene++;
-                currentFish++;
-            }
             else
             {
-                Areas.RemoveAt(areaChosenIndex); // no longer accepting fish
+                currentSpawning = false;
             }
-
-            timer = 0.02f;
         }
-
-        yield return new WaitForSeconds(timer);
-
-        StartCoroutine(CheckCurrentFish());
     }
 
     public void StartSpawningZone()

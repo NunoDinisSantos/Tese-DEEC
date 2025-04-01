@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HarpoonTrigger : MonoBehaviour
 {
-    [HideInInspector] public bool isReeling = false;
+    public bool isReeling = false;
 
     [HideInInspector] private int HarpoonLength = 25;
     [HideInInspector] private float HarpoonSpeed;
@@ -15,8 +15,8 @@ public class HarpoonTrigger : MonoBehaviour
     [HideInInspector][SerializeField] private Vector3 HarpoonSpawnPoint;
     [HideInInspector][SerializeField] private GameObject HarpoonHandTarget;
     [HideInInspector][SerializeField] private GameObject HarpoonHandModel;
-    [HideInInspector] public bool canFire = true;
-    [HideInInspector][SerializeField] bool fired = false;
+    public bool canFire = true;
+    [SerializeField] bool fired = false;
     [HideInInspector] public bool aiming = false;
     [HideInInspector] private bool wantsToStopAim = false;
     [HideInInspector][SerializeField] public bool locked = false;
@@ -24,7 +24,7 @@ public class HarpoonTrigger : MonoBehaviour
     [HideInInspector] public float multiplyer = 1;
     [HideInInspector] public float timerMax = 4;
     [HideInInspector] Vector2 aim = Vector2.zero;
-    [HideInInspector][SerializeField] private bool retractingHarpoon = false;
+    [SerializeField] private bool retractingHarpoon = false;
 
     private float fishEscapeTimerMin = 5;
     private float fishEscapeTimerMax = 10;
@@ -79,13 +79,13 @@ public class HarpoonTrigger : MonoBehaviour
     */
     #endregion
     private float fishEscapeTimer = 8f;
-    [HideInInspector][SerializeField] private Collider harpoonCollider;
+    [SerializeField] private Collider harpoonCollider;
 
     private float vertical;
     private float horizontal;
 
     [Description("Dá créditos enquanto está reeling de X em X segundos")]
-    public const float GiveCreditTimer = 0.25f;
+    public const float GiveCreditTimer = 1f;
     private float creditTimer;
     //#################################################################################
 
@@ -176,6 +176,8 @@ public class HarpoonTrigger : MonoBehaviour
             {
                 FireSoundAndParticles();
                 canFire = false;
+                harpoonCollider.enabled = true;
+
                 HarpoonHandModel.SetActive(true);
                 HarpoonHandTarget.SetActive(false);
                 fired = true;
@@ -187,6 +189,7 @@ public class HarpoonTrigger : MonoBehaviour
                 FiredFromProxy = false;
                 HarpoonHandTarget.transform.localPosition = new Vector3(0, 0.45f, -HarpoonLength);
                 Vector3 aimedPosition = HarpoonHandTarget.transform.localPosition;
+
                 if (retractingHarpoon)
                 {
                     if (!reelSound)
@@ -203,8 +206,8 @@ public class HarpoonTrigger : MonoBehaviour
                         retractingHarpoon = false;
                         locked = false;
                         reelSound = false;
-                        harpoonCollider.enabled = true;
                         audioSourceReel.volume = 0.0f;
+                        HarpoonHandModel.transform.localPosition = new Vector3(0, -1.6f, -3.5f);
                     }
                 }
 
@@ -291,6 +294,18 @@ public class HarpoonTrigger : MonoBehaviour
             fishEscapeTimer = UnityEngine.Random.Range(fishEscapeTimerMin, fishEscapeTimerMax);
             harpoonCollider.enabled = false;
             retractingHarpoon = true;
+            checkedWhatIs = false;
+            harpoonCollider.enabled = false;
+            reelSound = false;
+
+
+            grabbedAchievObject = false;
+            //fired = false;
+            //aiming = true;
+            reelFishSound = false;
+            reelSound = false;
+            harpoonCollider.enabled = false;
+
             return;
         }
 
@@ -445,12 +460,6 @@ public class HarpoonTrigger : MonoBehaviour
     private void RetractingSoundAndParticles()
     {
         audioSourceReel.volume = 0.4f;
-        //audioSourceReel.PlayOneShot(audioClips[1]);
-    }
-
-    private void ReelingSoundAndParticles()
-    {
-        audioSource.PlayOneShot(audioClips[2]);
     }
 
     private void CatchFishSoundAndParticles()
@@ -477,99 +486,12 @@ public class HarpoonTrigger : MonoBehaviour
         reelFishSound = false;
         reelSound = false;
         HarpoonHandModel.transform.localPosition = new Vector3(0, -1.6f, -3.5f);
-
+        harpoonCollider.enabled = false;
         canFire = true;
     }
 
     public bool CheckIfIsFiring()
     {
-        return canFire;
+        return canFire == true && grabbedFish == false && retractingHarpoon == false;
     }
-
-    #region OBSOLETE_VR
-    /*
-    public void CheckCircularMovement(float x, float y)
-    {
-        GrabbedFishTransform.position = HarpoonHandModel.transform.position;
-        TrackCircleSegment(new Vector2(vertical, horizontal));
-
-        return;      
-    } 
-     
-    private bool AllSegmentsCompleted()
-    {
-        foreach (bool segmentCompleted in segmentsCompleted)
-        {
-            if (!segmentCompleted) return false;
-        }
-        return true;
-    }
-
-    // Reset when the player completes a full circle
-    private void CompleteCircle()
-    {
-        Debug.Log("Full circle completed, resetting segments for next circle!");
-
-        // Reset segment tracking for the next circle
-        segmentsCompleted = new bool[numSegments];
-
-        // Optionally reset progress, or accumulate it across multiple circles
-        totalReelProgress = 0f;
-    }
-
-    // Track the player's progress through circle segments
-    private void TrackCircleSegment(Vector2 playerPosition)
-    {
-        if(!doingCircle)
-        {
-            startPoint = playerPosition;
-            doingCircle = true;
-        }
-
-        // Calculate the angle between the player's current position and the circle center
-        float angle = CalculateAngleFromCenter(playerPosition);
-
-        // Determine which segment the player is currently in
-        int currentSegment = Mathf.FloorToInt(angle / segmentAngle);
-
-        // If the segment hasn't been completed, mark it and reel the fish in
-        if (!segmentsCompleted[currentSegment])
-        {
-            segmentsCompleted[currentSegment] = true;
-            ReelFish(currentSegment);
-        }
-
-        // If all segments are completed, reset for a new circle
-        if (AllSegmentsCompleted())
-        {
-            CompleteCircle();
-            doingCircle = false;
-        }
-    }
-
-    // Calculate the angle between the player position and the circle center
-    private float CalculateAngleFromCenter(Vector2 position)
-    {
-        Vector2 direction = position - circleCenter;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg; // Convert radians to degrees
-        if (angle < 0) angle += 360f; // Ensure angle is in range [0, 360]
-        return angle;
-    }
-
-    float CalculateCircularityError(List<Vector2> positions, float expectedRadius)
-    {
-        float circularityError = 0f;
-        Vector2 center = startPoint;  
-
-        foreach (Vector2 pos in positions)
-        {
-            float currentRadius = Vector2.Distance(center, pos);
-            float error = Mathf.Abs(currentRadius - expectedRadius);
-            circularityError += error;
-        }
-
-        // Average circularity error across the entire movement
-        return circularityError / positions.Count;
-    }*/
-    #endregion
 }

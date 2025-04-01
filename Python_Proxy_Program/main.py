@@ -20,8 +20,8 @@ mp_drawing = mp.solutions.drawing_utils
 
 # Start video capture from the webcam
 
-cap = cv2.VideoCapture("http://192.168.1.188:8080/video")
-#cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture("http://192.168.1.197:8080/video")
+cap = cv2.VideoCapture(0)
 
 
 image_width = 480
@@ -103,20 +103,6 @@ data = {
     "calibrated": calibrated and calibratedDirection
 }
 
-'''
-def confirm_receive(sock):
-    global data
-    try:
-        #while True:
-        sock.settimeout(0.5)  # Ensure recv() doesn't hang forever
-        sock.sendall(b"Ping")
-        result = sock.recv(1024)
-        print(result)
-    except socket.timeout:
-        print("❌ No response from Unity. Retrying...")
-        sock.close()
-        sock = reconnect_to_server()
-'''
 def calculate_angle(a,b,c):
     a = np.array(a)
     b = np.array(b)
@@ -173,13 +159,9 @@ def send_data():
 
     try:
         gameData = f"<START>{json.dumps(data)}<END>"
-        #sock.settimeout(1)
-        #sock.sendall(gameData.encode("utf-8"))
         client.sendall(gameData.encode())  # Send response back
         bypassMode = int(client.recv(1024).decode("utf-8").strip())
 
-        #bypassMode = int(sock.recv(1024).decode("utf-8").strip()) # whenever in store or tutorial, we bypass the harpoon mode so we can use fire. This value comes from Unity
-        #print(bypassMode)
 
     except Exception as e:
         print(f"⚠️ Connection lost: {e}. Reconnecting...")
@@ -234,6 +216,9 @@ def calculate_pose():
 
     frame_count = 0
     scanned = False
+    moving = False
+    movingTimer = 0.5
+
 
     PROCESS_EVERY_N_FRAMES = 2
     #endregion
@@ -276,7 +261,7 @@ def calculate_pose():
 
             #Tentar rodar camara para jogador ficar mais perto
             ##PARA CAMARA QUE VAI SER USADA. USAR ISTO:
-            #frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
             # RGB to send to mediapipe
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -285,13 +270,23 @@ def calculate_pose():
             if frame_count % PROCESS_EVERY_N_FRAMES == 0:
                 results = pose.process(image)
 
+
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+            if results.pose_landmarks:
+                nose = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE]
+                distance = nose.z  # Negative values mean closer to the camera
+
+                if distance > -1.5:  # Only track people within 1.5m
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
             #if frame_count % 5 == 0:  # Draw every 5 frames
             #    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+
             # Display the image
             #endregion
 
@@ -320,7 +315,6 @@ def calculate_pose():
                                 try:
                                     myData = f"<START>ID:{PlayerId}<END>"
                                     client.sendall(myData.encode("utf-8"))
-                                    print("Data send")
                                     scanned = True
                                 except Exception as e:
                                     print(f"⚠️ Failed to send data: {e}")  # ✅ Print error for debugging
@@ -426,8 +420,9 @@ def calculate_pose():
 
                             print("✅ T-Pose detected! Initial calibration complete.")
 
+
                     if calibrated and calibratedDirection == False:
-                        if right_wrist[1] < head_initial:
+                        if calculate_angle(right_elbow, right_shoulder, right_hip) > 120 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor * 0.65 and right_wrist_initial[1] > head_initial:
                             restingPointHand = left_wrist
                             print("✅ Saving resting point of direction.")
                             calibratedDirection = True
@@ -500,10 +495,15 @@ def calculate_pose():
                                   landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
                     left_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
                                  landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+                    right_foot = landmarks[mp_pose.PoseLandmark.RIGHT_FOOT_INDEX.value].y
+                    left_foot = landmarks[mp_pose.PoseLandmark.LEFT_FOOT_INDEX.value].y
+
+
                     #endregion
 
                     #Calculate normalizor
                     normalizor = calculate_distance(left_hip[1], left_shoulder[1])
+
 
                     #region Moving in Water
                     if(data["harpoonMode"] == 0 and bypassMode == 0):
@@ -511,11 +511,25 @@ def calculate_pose():
                         if SquatStage == "down":
                             data["vertical"] = 0
                         else:
-                            #print(f"{calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1}")
-                            if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
+                            #if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
+                            if right_foot > left_foot + normalizor * 0.1 or left_foot > right_foot + normalizor * 0.1:
+                                moving = True
+                                movingTimer = time.time() + 0.5
+
+                            else:
+                                if time.time() > movingTimer:
+                                    moving = False
+
+                            if moving == True:
                                 data["vertical"] = -1
                             else:
                                 data["vertical"] = 0
+                            #print(f"{calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1}")
+
+                            #if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
+                            #    data["vertical"] = -1
+                            #else:
+                            #    data["vertical"] = 0
                 #endregion
 
                     # region Fire
@@ -534,11 +548,12 @@ def calculate_pose():
                     #endregion
 
                     #region SwitchModes
-                    if (right_wrist[1] < right_wrist_initial[1]-switchModeHandThreshold and canSwitchMode):  # é a mao esquerda n sei pq
+                    if (right_wrist[1] < head_initial and calculate_distance(right_wrist[0], right_shoulder[0]) > normalizor*0.1) and canSwitchMode:  # é a mao esquerda n sei pq
                         canSwitchMode = False
                         if harpoonMode == 0:
                             harpoonMode = 1
                             data["harpoonMode"] = 1
+                            data["vertical"] = 0
                         else:
                             harpoonMode = 0
                             data["harpoonMode"] = 0
@@ -552,7 +567,6 @@ def calculate_pose():
 
                     #region DoSquat
 
-                    #if head > head_initial + SquatThreshold and SquatStage == "up":
                     if head > head_initial+normalizor*0.45 and SquatStage == "up":
                         SquatStage = "down"
                         SquatTimer = time.time() + 1.5
@@ -564,12 +578,9 @@ def calculate_pose():
                         if time.time() < SquatTimer:
                             data["isReeling"] = 1
                             isReeling = 1
-                            #print("reeling 1")
                             SquatTimer = time.time() + 1.5
-                            #print("Squat successfull. Next timer is in 1.5 sec")
 
                     if time.time() > SquatTimer:
-                        #print("reeling 0")
                         data["isReeling"] = 0
                         isReeling = 0
 
@@ -577,13 +588,6 @@ def calculate_pose():
 
                     #region PlayerLook
                     if SquatStage == "up" and isReeling == 0:
-
-                    #print(calculate_distanceVec(left_wrist, left_hip))
-                    #resting pose
-                        #if left_wrist[1] > left_hip[1]:
-                        #    data["horizontalLook"] = 0
-                        #    data["verticalLook"] = 0
-                        #else:
                         dirX = left_wrist[0] - restingPointHand[0]
                         dirY = left_wrist[1] - restingPointHand[1]
 
@@ -597,9 +601,6 @@ def calculate_pose():
                     #endregion
 
                     #region New Calibration
-                    #print(f"{calculate_distance(left_wrist[0], right_wrist[0]) < normalizor * 0.05} --- { left_wrist[1] < head_initial-normalizor*0.1}")
-                    #print(f"{calculate_distance(left_wrist[0], right_wrist[0])} ---- {normalizor * 0.05}")
-
                     if calculate_distance(left_wrist[0], right_wrist[0]) < normalizor * 0.1 and left_wrist[1] < head_initial-normalizor*0.1:
                         print(f"⚠️ Recalibration in progress. Do T-Pose and arm direction pose...")
                         calibrated = False

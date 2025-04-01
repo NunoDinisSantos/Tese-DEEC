@@ -10,13 +10,13 @@ public class PlayerInventory : MonoBehaviour
         switch(playerProgress.shipStorageModule)
         {
             case 0:
-                inventorySpace = 13;
+                inventorySpace = 10;
                 break;
             case 1:
-                inventorySpace = 25;
+                inventorySpace = 50;
                 break;
             case 2:
-                inventorySpace = 50;
+                inventorySpace = 150;
                 break;
         }
     }

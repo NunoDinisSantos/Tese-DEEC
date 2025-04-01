@@ -20,7 +20,6 @@ public class StoreColliderScript : MonoBehaviour
     [HideInInspector][SerializeField] private GameObject storeSub;
     [HideInInspector][SerializeField] private GameObject miscStoreObjects;
 
-    [HideInInspector] public GameObject ConfirmBackToMenu;
     private void OnTriggerEnter(Collider other)
     {
         if(!inStore)
@@ -69,26 +68,6 @@ public class StoreColliderScript : MonoBehaviour
         canvasStore.SetActive(true);
         storeSub.SetActive(true);
         miscStoreObjects.SetActive(true);
-    }
-
-    public void BackToMenu(int x)
-    {
-        if (x == 0)
-        {
-            ConfirmBackToMenu.SetActive(false);
-        }
-
-        if (x == 1)
-        {
-            ConfirmBackToMenu.SetActive(true);
-        }
-
-        if (x == 2)
-        {
-            ConfirmBackToMenu.SetActive(false);
-            SceneManager.LoadScene(0);
-            proxy.StopServer();
-        }
     }
 
     public void BackToWater()

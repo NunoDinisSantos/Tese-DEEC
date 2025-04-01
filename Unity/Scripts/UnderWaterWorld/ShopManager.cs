@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
@@ -70,6 +71,7 @@ public class ShopManager : MonoBehaviour
     [HideInInspector] public GameObject[] StorageModule;
     [HideInInspector] public GameObject FlashLight;
 
+    public GameObject ConfirmBackToMenu;
 
     private void Start()
     {
@@ -232,6 +234,12 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem()
     {
+
+        if (_PlayerProgress.Money - itemCost < 0)
+        {
+            return;
+        }
+
         _PlayerProgress.UpdateMoney(-itemCost);
         _PlayerProgress.BuyItemIndex(itemIndex);
         animationStore.Play("BuyItemAnimation");
@@ -358,6 +366,25 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    public void BackToMenu(int x)
+    {
+        if (x == 0)
+        {
+            ConfirmBackToMenu.SetActive(false);
+        }
+
+        if (x == 1)
+        {
+            ConfirmBackToMenu.SetActive(true);
+        }
+
+        if (x == 2)
+        {
+            SellFish();
+            ConfirmBackToMenu.SetActive(false);
+            SceneManager.LoadScene(0);
+        }
+    }
     public void SellFish()
     {
         if (newDayWaiting)

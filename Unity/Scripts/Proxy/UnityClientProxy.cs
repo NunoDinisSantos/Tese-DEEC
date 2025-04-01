@@ -29,6 +29,7 @@ public class UnityClientProxy : MonoBehaviour
     [HideInInspector] public bool inShop = false;
     [HideInInspector] public int Fire = 0;
     [HideInInspector] public bool harpoonMode = false;
+    private bool currentModeHarpoon = false;
     public bool tPose = false;
     public bool armDir = false;
     public bool calibrated = false;
@@ -241,7 +242,7 @@ public class UnityClientProxy : MonoBehaviour
 
             HandleHarpoonMode();
 
-            if (!harpoonMode) 
+            if (!currentModeHarpoon) 
             {
                 MovePlayer();
                 PlayerCameraLookMovement();
@@ -254,9 +255,10 @@ public class UnityClientProxy : MonoBehaviour
                 {
                     callDEECSupport.callingSupport = false;
                 }
+                return;
             }
 
-            if (harpoonMode)
+            if (currentModeHarpoon)
             {
                 HandleFire();
                 LockPlayerInPlace();
@@ -272,6 +274,34 @@ public class UnityClientProxy : MonoBehaviour
                     playerMovement.ProxyPlayerLook(horizontalLook, verticalLook);
                 }
             }
+        }
+    }
+
+    private void HandleHarpoonMode()
+    {
+        if (!AllowedToSwitchStates())
+        {
+            return;
+        }
+
+        currentModeHarpoon = harpoonMode;
+
+        if (!currentModeHarpoon)
+        {
+            if (harpoonTrigger.CheckIfIsFiring())
+            {
+                harpoonTrigger.stopAimCalled = true;
+                playerMovement.aiming = false;
+                harpoonTrigger.aiming = false;
+            }
+
+        }
+
+        else 
+        {
+            playerMovement.aiming = true;
+            harpoonTrigger.stopAimCalled = false;
+            harpoonTrigger.aiming = true;
         }
     }
 
@@ -292,24 +322,9 @@ public class UnityClientProxy : MonoBehaviour
         }
     }
 
-    private void HandleHarpoonMode()
+    private bool AllowedToSwitchStates()
     {
-        if (!harpoonMode)
-        {
-            if (harpoonTrigger.CheckIfIsFiring())
-            {
-                harpoonTrigger.stopAimCalled = true;
-                playerMovement.aiming = false;
-                harpoonTrigger.aiming = false;
-            }
-        }
-
-        else
-        {
-            playerMovement.aiming = true;
-            harpoonTrigger.stopAimCalled = false;
-            harpoonTrigger.aiming = true;
-        }
+        return harpoonTrigger.CheckIfIsFiring();
     }
 
     private void LockPlayerInPlace()

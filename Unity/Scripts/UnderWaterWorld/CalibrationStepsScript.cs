@@ -32,7 +32,7 @@ public class CalibrationStepsScript : MonoBehaviour
 
         if (!armDir)
         {
-            calibrateText.text = "Coloca o braço direito a apontar para a frente numa posição confortável. Quando achares que está bem, confirma levantando o braço esquerdo acima da cabeça.";
+            calibrateText.text = "Coloca o braço direito a apontar para a frente numa posição confortável. Quando achares que está bem, confirma levantando o braço esquerdo esticado acima da cabeça e para o lado.";
             calibrateText.color = Color.yellow;
             CalibrateImage.sprite = calibrateIcons[1];
         }

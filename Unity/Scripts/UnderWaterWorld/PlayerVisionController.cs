@@ -27,8 +27,6 @@ public class PlayerVisionController : MonoBehaviour
     private bool inDeep = false;
     [HideInInspector] [SerializeField] private GameObject needFlashlightWarning;
     [HideInInspector] [SerializeField] private AudioCuesManagerScript cuesManagerScript;
-    //0 - 0.35 - 0.57 - blue
-    //0.05 - 0.57 - 0.40 - Green
 
     private void Start()
     {
@@ -113,7 +111,7 @@ public class PlayerVisionController : MonoBehaviour
             skyboxMat.SetColor("_FogColor", Colors[0]);
             RenderSettings.fogColor = Colors[0];
             RenderSettings.ambientSkyColor = EnvironmentColors[0];
-            RenderSettings.ambientEquatorColor = EnvironmentColors[1];
+            RenderSettings.ambientEquatorColor = EnvironmentColors[1];        
         }
         else
         {
@@ -122,7 +120,6 @@ public class PlayerVisionController : MonoBehaviour
             skyboxMat.SetColor("_FogColor", ColorsNight[0]);
             RenderSettings.fogColor = ColorsNight[0];
             RenderSettings.ambientSkyColor = EnvironmentColors[2];
-            RenderSettings.ambientEquatorColor = EnvironmentColors[3];
         }
     }
 
@@ -136,7 +133,7 @@ public class PlayerVisionController : MonoBehaviour
         else
         {
             RenderSettings.ambientSkyColor = EnvironmentColors[2];
-            RenderSettings.ambientEquatorColor = EnvironmentColors[3];
+            RenderSettings.ambientEquatorColor = EnvironmentColors[1]; // Agora com baked lights, fica melhor -> USAR ESTE COM BAKED LIGHTS
         }
     }
 
@@ -155,7 +152,7 @@ public class PlayerVisionController : MonoBehaviour
             }
                
             RenderSettings.ambientSkyColor = EnvironmentColors[2];
-            RenderSettings.ambientEquatorColor = EnvironmentColors[3];
+            RenderSettings.ambientEquatorColor = EnvironmentColors[1]; // Agora com baked lights, fica melhor -> USAR ESTE COM BAKED LIGHTS
         }
     }
 

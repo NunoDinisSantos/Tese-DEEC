@@ -24,7 +24,7 @@ public class Inventory : MonoBehaviour
         switch(storageModule)
         {
             case 0:
-                StorageSize = 20;
+                StorageSize = 10;
                 break;
             case 1:
                 StorageSize = 50;
@@ -86,13 +86,13 @@ public class Inventory : MonoBehaviour
         switch (storageModule)
         {
             case 0:
-                StorageSize = 15;
+                StorageSize = 10;
                 break;
             case 1:
-                StorageSize = 30;
+                StorageSize = 50;
                 break;
             case 2:
-                StorageSize = 100;
+                StorageSize = 150;
                 break;
         }
 

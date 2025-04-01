@@ -129,8 +129,6 @@ public class PlayerMovementWater : MonoBehaviour
             inWater = true;
             ActivateSoundSurface(0.0f);
 
-            //playerVisionController.SetAmbientColors(false); //Checks if is night time to set colors straight. If is day, doesn't change!
-
             return inWater; 
         }
 
@@ -150,9 +148,6 @@ public class PlayerMovementWater : MonoBehaviour
             Fog.SetActive(false);
             skyboxMat.SetColor("_AlphaColor", Color.black);
             skyboxMat.SetFloat("_StarAmount", dayManager.starAmount);
-            //playerVisionController.SetAmbientColors(true);
-
-            //playerVisionController.SetAmbientColorAtSurface();
 
             waterDiveParticles[1].SetActive(true);
             waterDiveParticles[1].GetComponent<AudioSource>().Play();

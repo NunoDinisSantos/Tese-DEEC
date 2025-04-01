@@ -16,7 +16,7 @@ public class DayManager : MonoBehaviour
     [HideInInspector] public PlayerHealth playerHealth;
     [HideInInspector] public PlayerMovementWater playerMovementWater;
     [HideInInspector] public StoreColliderScript storeCol;
-    [HideInInspector] public bool isDay = true;
+    public bool isDay = false;
     [HideInInspector] public PlayerVisionController playerVisionController;
     [HideInInspector] public GameObject StorageGuys;
     [HideInInspector] public UnderWaterStoreFishScript underWaterStoreFish;
@@ -30,9 +30,40 @@ public class DayManager : MonoBehaviour
     [HideInInspector] [SerializeField] private AudioClip[] surfaceSounds;
     [HideInInspector] [SerializeField] private AudioSource surfaceAudioSource;
 
+    private LightmapData[] dayLightmaps;
+    private LightmapData[] nightLightmaps;
+
+    [SerializeField] private Texture2D[] dayLights;
+    [SerializeField] private Texture2D[] dayDir;
+    [SerializeField] private Texture2D[] nightLights;
+    [SerializeField] private Texture2D[] nightDir;
     private void Start()
     {
+        InitializeBakedLights();
         RandomWeather();
+    }
+
+    private void InitializeBakedLights()
+    {
+        dayLightmaps = LoadTexturesLights(dayLights, dayDir, "GameScene/Day/");
+        nightLightmaps = LoadTexturesLights(nightLights, nightDir, "GameScene/Night/");
+    }
+
+    private LightmapData[] LoadTexturesLights(Texture2D[] colorMaps, Texture2D[] dirMaps, string path)
+    {
+        int count = Mathf.Min(colorMaps.Length, dirMaps.Length);
+        LightmapData[] lightmaps = new LightmapData[count];
+
+        for (int i = 0; i < count; i++)
+        {         
+            lightmaps[i] = new LightmapData
+            {
+                lightmapColor = colorMaps[i],
+                lightmapDir = dirMaps[i]
+            };
+        }
+
+        return lightmaps;
     }
 
     private void RandomWeather()
@@ -41,6 +72,7 @@ public class DayManager : MonoBehaviour
         if (!isDay)
         {
             isDay = true;
+            LightmapSettings.lightmaps = dayLightmaps;
             playerVisionController.SetAmbientColorsTerminateDay(isDay);
             waterDayNight[0].SetActive(true);
             waterDayNight[1].SetActive(false);
@@ -73,6 +105,7 @@ public class DayManager : MonoBehaviour
         else
         {
             isDay = false;
+            LightmapSettings.lightmaps = nightLightmaps;
             playerVisionController.SetAmbientColorsTerminateDay(isDay);
             waterDayNight[0].SetActive(false);
             waterDayNight[1].SetActive(true);
@@ -118,7 +151,6 @@ public class DayManager : MonoBehaviour
     private IEnumerator TerminateDayWait()
     {
 
-
         yield return new WaitForSeconds(1f);
         shopCanvas.SetActive(false);
         shopCamera.SetActive(false);
@@ -131,57 +163,6 @@ public class DayManager : MonoBehaviour
         playerMovementWater.lookLocked = false;
         playerMovementWater.gameObject.GetComponent<Rigidbody>().freezeRotation = false;
         playerMovementWater.enabled = true;
-
-        /*int i = Random.Range(0, 100);
-        if (!isDay)
-        {
-            isDay = true;
-            waterDayNight[0].SetActive(true);
-            waterDayNight[1].SetActive(false);
-            SetSceneColor(0);
-            i = Random.Range(0, 100);
-            if (i <= 70)
-            {
-                typeOfDay[0].SetActive(true);
-                yield return null;
-            }
-
-            if (i > 70 && i < 90)
-            {
-                typeOfDay[1].SetActive(true);
-                yield return null;
-            }
-            else
-            {
-                typeOfDay[2].SetActive(true);
-                yield return null;
-            }
-        }
-
-        else
-        {
-            isDay = false;
-            waterDayNight[0].SetActive(false);
-            waterDayNight[1].SetActive(true);
-            SetSceneColor(1);
-            i = Random.Range(0, 100);
-            if (i <= 70)
-            {
-                typeOfDay[3].SetActive(true);
-                yield return null;
-            }
-
-            if (i > 70 && i < 90)
-            {
-                typeOfDay[4].SetActive(true);
-                yield return null;
-            }
-            else
-            {
-                typeOfDay[5].SetActive(true);
-                yield return null;
-            }
-        }*/
         RandomWeather();
     }
 

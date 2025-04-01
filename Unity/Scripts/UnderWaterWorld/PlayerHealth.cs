@@ -143,6 +143,12 @@ public class PlayerHealth : MonoBehaviour
                 break;
         }
 
+        i = Random.Range(0, 100);
+        if (i > 95)
+        {
+            line = "Ouvi dizer que existe um templo secreto por baixo da zona quente!";
+        }
+
         PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage(line);
         transform.position = respawnPoint.position;
         Health = 100;
@@ -202,7 +208,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void BackToGameAppear()
     {
-        _animation.Play("FadeOut");
+        _animation.Play("FadeOutFirst");
         GetComponent<PlayerMovementWater>().enabled = true;
     }
 

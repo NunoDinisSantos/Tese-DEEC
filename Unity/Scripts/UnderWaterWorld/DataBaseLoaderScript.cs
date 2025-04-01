@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -16,6 +19,51 @@ public class DataBaseLoaderScript : MonoBehaviour
     public int maxDayStreak = 3;
     [HideInInspector] public bool errorGettingPlayer = false;
     [HideInInspector] private HttpClient _client;
+
+    [SerializeField] private TMP_Text LBTexts;
+    [SerializeField] private bool menu = false;
+    private void Start()
+    {
+        if (menu)
+        {
+            StartCoroutine("GetPlayersForLB");
+        }
+    }
+
+    private IEnumerator GetPlayersForLB()
+    {
+        var playersLB = new List<PlayerData>();
+
+        string fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/";
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+        UnityWebRequest data = UnityWebRequest.Get(fullEndpoint);
+        yield return data.SendWebRequest();
+
+        string jsonResponse = data.downloadHandler.text;
+
+        if (data.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error fetching data: " + data.error);
+            errorGettingPlayer = true;
+        }
+        else
+        {
+            PlayerData[] playersArray = JsonHelper.FromJson<PlayerData>(jsonResponse);
+            playersLB = playersArray.ToList();
+            playersLB = playersLB.OrderByDescending(p => p.fishCaught).Take(10).ToList();
+            WriteLB(playersLB);
+        }
+    }
+
+    private void WriteLB(List<PlayerData> playersList)
+    {
+        LBTexts.text = string.Empty;
+        foreach (PlayerData playerData in playersList)
+        {
+            LBTexts.text += playerData.playerId + " - " + playerData.fishCaught + " peixes" + "\n";
+        }
+    }
 
     IEnumerator GetDataFromApi(string playerId)
     {
@@ -483,6 +531,12 @@ public class DataBaseLoaderScript : MonoBehaviour
     #endregion
 }
 
+[Serializable]
+public class PlayersData
+{
+    public List<PlayerData> playersData;
+}
+
 [System.Serializable] // torna visivel no inspector
 public class PlayerData
 {
@@ -543,4 +597,20 @@ public class ModuleData
     public int storageModule;
     public int reelModule;
     public int tempModule;
+}
+
+public static class JsonHelper
+{
+    public static T[] FromJson<T>(string json)
+    {
+        string wrappedJson = "{ \"items\": " + json + "}";
+        Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(wrappedJson);
+        return wrapper.items;
+    }
+
+    [System.Serializable]
+    private class Wrapper<T>
+    {
+        public T[] items;
+    }
 }

@@ -35,9 +35,9 @@ public class ShopProxyScript : MonoBehaviour
         halfWidth = rectTransform.rect.width / 2;
         halfHeight = rectTransform.rect.height / 2;
 
-        screenWidth = Screen.width / 2;
-        screenHeight = Screen.height / 2;
-
+        RectTransform canvasRect = PickCollider.GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+        screenWidth = canvasRect.rect.width / 2;
+        screenHeight = canvasRect.rect.height / 2;
     }
 
     private void Update()

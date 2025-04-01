@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FishWaypoints : MonoBehaviour
 {
-    [HideInInspector]public Transform SpawnParent;
+    public Transform SpawnParent;
     [HideInInspector][SerializeField] private bool goingToWaypoint = false;
     [HideInInspector][SerializeField] private float arrivedWaypointThreshold = 0.5f;
     [HideInInspector][Range(100,200)] private float speed;

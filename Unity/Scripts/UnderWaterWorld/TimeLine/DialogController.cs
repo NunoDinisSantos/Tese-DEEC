@@ -36,6 +36,9 @@ public class DialogController : MonoBehaviour
     public DataBaseLoaderScript database;
     private bool clickedEvent = false;
 
+    [SerializeField] private GameObject[] Helpers;
+
+
     void Start()
     {
         skyboxMat.SetColor("_BotColor", dayColor);
@@ -151,6 +154,58 @@ public class DialogController : MonoBehaviour
             StartManWalking();
         }
 
+        if(index == 31)
+        {
+            DeactivateHelpers();
+            Helpers[4].SetActive(true);
+            //recalibrar
+        }
+
+        if (index == 32)
+        {
+            DeactivateHelpers();
+            Helpers[0].SetActive(true);
+
+            //movimentos
+        }
+
+        if (index == 33)
+        {
+            DeactivateHelpers();
+            Helpers[5].SetActive(true);
+
+            //aim
+        }
+
+        if (index == 34)
+        {
+            DeactivateHelpers();
+            Helpers[1].SetActive(true);
+
+            //changemode
+        }
+
+        if (index == 35)
+        {
+            DeactivateHelpers();
+            Helpers[2].SetActive(true);
+
+            //fire
+        }
+
+        if (index == 36)
+        {
+            DeactivateHelpers();
+            Helpers[3].SetActive(true);
+
+            //agacha
+        }
+
+        if (index == 37)
+        {
+            DeactivateHelpers();
+        }
+
         foreach (char c in DialogStrings[index].ToCharArray())
         {
             textComponent.text += c;
@@ -242,5 +297,13 @@ public class DialogController : MonoBehaviour
     {
         _animatorManPresentor.SetBool("Stairs", false);
         _animatorManPresentor.SetBool("Walking", true);
+    }
+
+    private void DeactivateHelpers()
+    {
+        foreach(var helper in Helpers)
+        {
+            helper.SetActive(false);
+        }
     }
 }

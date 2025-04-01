@@ -61,7 +61,7 @@ public class DataBaseLoaderScript : MonoBehaviour
         LBTexts.text = string.Empty;
         foreach (PlayerData playerData in playersList)
         {
-            LBTexts.text += playerData.playerId + " - " + playerData.fishCaught + " peixes" + "\n";
+            LBTexts.text += playerData.studentNick + " - " + playerData.fishCaught + " peixes" + "\n";
         }
     }
 
@@ -78,7 +78,7 @@ public class DataBaseLoaderScript : MonoBehaviour
         yield return data.SendWebRequest();
 
         string jsonResponse = data.downloadHandler.text;
-
+        Debug.Log(jsonResponse);
         if (data.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError("Error fetching data: " + data.error);
@@ -88,6 +88,7 @@ public class DataBaseLoaderScript : MonoBehaviour
         {
             playerData = JsonUtility.FromJson<PlayerData>(jsonResponse);
             PlayerDataScript.playerDataInstance.PlayerId = playerData.playerId;
+            PlayerDataScript.playerDataInstance.StudentNick = playerData.studentNick;
             PlayerDataScript.playerDataInstance.Coins = playerData.coins;
             PlayerDataScript.playerDataInstance.TimePlayed = playerData.timePlayed;
             PlayerDataScript.playerDataInstance.FishCaught = playerData.fishCaught;
@@ -540,7 +541,8 @@ public class PlayersData
 [System.Serializable] // torna visivel no inspector
 public class PlayerData
 {
-    public string playerId;     
+    public string playerId;
+    public string studentNick;
     public int coins;            
     public int timePlayed;      
     public int fishCaught;      

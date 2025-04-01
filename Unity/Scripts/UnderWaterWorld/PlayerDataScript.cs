@@ -19,6 +19,7 @@ public class PlayerDataScript : MonoBehaviour
     }
     
     public string PlayerId;
+    public string StudentNick;
     public int Coins;
     public int TimePlayed;
     public int FishCaught;

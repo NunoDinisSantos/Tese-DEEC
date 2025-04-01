@@ -38,9 +38,11 @@ public class DialogController : MonoBehaviour
 
     [SerializeField] private GameObject[] Helpers;
 
+    [SerializeField] private bool lineEnded = false;
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         skyboxMat.SetColor("_BotColor", dayColor);
         skyboxMat.SetFloat("_StarAmount", 2);
         skyboxMat.SetColor("_AlphaColor", Color.black);
@@ -57,14 +59,14 @@ public class DialogController : MonoBehaviour
     void Update()
     {
         CheckAnimStop();
-        if (Input.GetMouseButton(0) && canPressAgain) // alterar para qualquer butao no joystick
+        /*if (Input.GetMouseButton(0) && canPressAgain) // alterar para qualquer butao no joystick
         {
             canPressAgain = false;
             ButaoCutscene.SetActive(false);
             NextLine();
-        }
+        }*/
 
-        if (clickedEvent && canPressAgain)
+        if (clickedEvent && canPressAgain && lineEnded)
         {
             clickedEvent = false;
             canPressAgain = false;
@@ -76,13 +78,6 @@ public class DialogController : MonoBehaviour
     public void ClickedButtonProxy()
     {
         clickedEvent = true;
-
-        /*if (canPressAgain)
-        {
-            canPressAgain = false;
-            ButaoCutscene.SetActive(false);
-            NextLine();
-        }*/
     }
 
     void NextLine()
@@ -90,7 +85,7 @@ public class DialogController : MonoBehaviour
         if (index < DialogStrings.Count-1)
         {
             textComponent.text = string.Empty;
-            StartCoroutine(TypeLine());
+            StartCoroutine("TypeLine");
         }
         else
         {
@@ -100,7 +95,7 @@ public class DialogController : MonoBehaviour
 
     private void FinishTutorial()
     {
-        StartCoroutine(FinishTutorialAndStartGame());
+        StartCoroutine("FinishTutorialAndStartGame");
     }
 
     IEnumerator FinishTutorialAndStartGame()
@@ -117,9 +112,10 @@ public class DialogController : MonoBehaviour
         }
     }
 
-
     IEnumerator TypeLine()
     {
+        lineEnded = false;
+
         if (index == 9)
         {
             _animatorManPresentor.Play("Jump");
@@ -211,11 +207,20 @@ public class DialogController : MonoBehaviour
             textComponent.text += c;
             yield return new WaitForSeconds(textSpeed);
         }
+
+
         index++;
+
+        if(lineEnded)
+        {
+            canPressAgain = true;
+        }
 
         if (!(index < currentLimit))
         {
             canPressAgain = true;
+            lineEnded = true;
+            clickedEvent = false;
             ButaoCutscene.SetActive(true);
         }
     }

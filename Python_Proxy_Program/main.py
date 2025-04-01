@@ -274,17 +274,22 @@ def calculate_pose():
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+            '''
             if results.pose_landmarks:
-                nose = results.pose_landmarks.landmark[mp_pose.PoseLandmark.NOSE]
+                nose = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP]
                 distance = nose.z  # Negative values mean closer to the camera
 
-                if distance > -1.5:  # Only track people within 1.5m
-                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
+                print(f"{distance}---{distance<=-0.5}")
+                if distance <= -0.5:  # Only track people closer than 1.5m
+                    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+                else:
+                    results.pose_landmarks = None  # Clear the pose to prevent tracking
+            '''
             #if frame_count % 5 == 0:  # Draw every 5 frames
             #    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-            #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
 
             # Display the image
@@ -524,7 +529,6 @@ def calculate_pose():
                                 data["vertical"] = -1
                             else:
                                 data["vertical"] = 0
-                            #print(f"{calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1}")
 
                             #if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
                             #    data["vertical"] = -1
@@ -538,7 +542,6 @@ def calculate_pose():
                         ##########################################
                         ##########################################
                         ##########################################
-                        #print(f"{calculate_angle(right_wrist,right_shoulder,right_hip)} ---- {calculate_distance(right_wrist[0], right_hip[0])}")
                         if 60 < calculate_angle(right_elbow,right_shoulder, right_hip) < 90 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor*0.65:
                             if time.time() > firedTimer:
                                 data["fire"] = 1
@@ -570,11 +573,9 @@ def calculate_pose():
                     if head > head_initial+normalizor*0.45 and SquatStage == "up":
                         SquatStage = "down"
                         SquatTimer = time.time() + 1.5
-                        #print("Started squat. Has 1 seconds to complete")
                     #if head < head_initial + SquatHeadTolerance and SquatStage == "down":
                     if head < head_initial+normalizor*0.45 and SquatStage == "down":
                         SquatStage = "up"
-                        #print("got back up")
                         if time.time() < SquatTimer:
                             data["isReeling"] = 1
                             isReeling = 1
@@ -601,7 +602,9 @@ def calculate_pose():
                     #endregion
 
                     #region New Calibration
-                    if calculate_distance(left_wrist[0], right_wrist[0]) < normalizor * 0.1 and left_wrist[1] < head_initial-normalizor*0.1:
+                    if calculate_distance(left_wrist[0], right_wrist[0]) < normalizor * 0.1 and left_wrist[
+                        1] < head_initial - normalizor * 0.1 and right_wrist[
+                        1] < head_initial - normalizor * 0.1:
                         print(f"⚠️ Recalibration in progress. Do T-Pose and arm direction pose...")
                         calibrated = False
                         calibratedDirection = False

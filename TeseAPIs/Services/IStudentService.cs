@@ -1,9 +1,10 @@
 ﻿using TeseAPIs.Mapping.PlayersProgress;
+using TeseAPIs.Models;
 
 namespace TeseAPIs.Services
 {
     public interface IStudentService
     {
-        Task<PlayerProgressResponse> CreateAsync(string studentId);
+        Task<PlayerProgressResponse> CreateAsync(RegistrationData studentId);
     }
 }

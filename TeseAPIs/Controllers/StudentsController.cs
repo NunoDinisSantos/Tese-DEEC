@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Polly.Registry;
+using TeseAPIs.Models;
 using TeseAPIs.Models.ProgressResponse;
 using TeseAPIs.Services;
 
@@ -11,11 +11,11 @@ namespace TeseAPIs.Controllers
     {
 
         [HttpPost(ApiEndpoints.Tese.Create)]
-        public async Task<IActionResult> Create([FromBody]string studentId)
-        {
+        public async Task<IActionResult> Create([FromBody]RegistrationData studentData)
+        {         
             var pipeline = _pipelineProvider.GetPipeline("default");
 
-            var created = await pipeline.ExecuteAsync(async ct => await studentRepository.CreateAsync(studentId));
+            var created = await pipeline.ExecuteAsync(async ct => await studentRepository.CreateAsync(studentData));
             if (string.Equals(created.PlayerId,"ERROR"))
             {
                 return Conflict("User already registered.");

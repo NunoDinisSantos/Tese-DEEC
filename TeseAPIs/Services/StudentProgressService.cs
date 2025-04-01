@@ -47,6 +47,7 @@ namespace TeseAPIs.Services
             using var connection = await connectionFactory.CreateConnectionAsync();
             var result = await connection.QuerySingleOrDefaultAsync<PlayerProgressResponse>(new CommandDefinition($"SELECT " +
                 $"ma.player_id AS PlayerId," +
+                $"ma.nick_name AS StudentNick," +
                 $"ma.time_played AS TimePlayed," +
                 $"ma.tutorial AS Tutorial," +
                 $"ma.coins AS Coins," +

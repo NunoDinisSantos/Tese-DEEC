@@ -21,7 +21,7 @@
 <div class="center-rectangle">
 
     <h1>Registration</h1>
-    
+
     <desc-label>
         Use your student number in your card as your ID to play the game.
     </desc-label>
@@ -29,6 +29,8 @@
     <div class="student-number-container">
         <label for="numeroEstudante">Insert student number:</label>
         <InputText id="numeroEstudante" @bind-Value="NumeroEstudante" />
+        <label for="nickName">Insert nickname:</label>
+        <InputText id="nickName" @bind-Value="NickEstudante" />
         <button class="btn btn-primary" @onclick="Registar">Create account</button>
         <label>@ErrorMessage</label>
     </div>
@@ -48,6 +50,7 @@
 @code {
     private string NumeroEstudante { get; set; } = string.Empty;
     private string NumeroEstudanteQRCode { get; set; } = string.Empty;
+    private string NickEstudante { get; set; } = string.Empty;
 
     private string ErrorMessage { get; set; } = string.Empty;
     private string ErrorMessageQrCode { get; set; } = string.Empty;
@@ -66,9 +69,27 @@
             return;
         }
 
+        if (NickEstudante.Length > 10)
+        {
+            ErrorMessage = "Nickname needs to be 10 character or less.";
+            return;
+        }
+
+        if (string.Equals(NickEstudante,string.Empty))
+        {
+            ErrorMessage = "Nickname field is required.";
+            return;
+        }
+
         try
         {
-            var response = await HttpClient.PostAsJsonAsync("api/misteriosaquaticos", NumeroEstudante);
+            var studentData = new
+            {
+                StudentNumber = NumeroEstudante,
+                StudentNick = NickEstudante
+            };
+
+            var response = await HttpClient.PostAsJsonAsync("api/misteriosaquaticos", studentData);
 
             if (response.IsSuccessStatusCode)
             {

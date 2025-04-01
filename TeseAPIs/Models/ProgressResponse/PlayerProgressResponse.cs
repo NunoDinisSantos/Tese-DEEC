@@ -3,6 +3,7 @@
     public class PlayerProgressResponse
     {
         public required string PlayerId { get; set; }
+        public required string StudentNick { get; set; }
         public int TimePlayed { get; set; }
         public int Coins { get; set; }
         public int FishCaught { get; set; }

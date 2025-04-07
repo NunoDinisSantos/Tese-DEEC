@@ -39,6 +39,7 @@ public class DialogController : MonoBehaviour
     [SerializeField] private GameObject[] Helpers;
 
     [SerializeField] private bool lineEnded = false;
+    private bool overrideFalse = false;
 
     void Start()
     {
@@ -115,42 +116,22 @@ public class DialogController : MonoBehaviour
     IEnumerator TypeLine()
     {
         lineEnded = false;
+        DeactivateHelpers();
 
-        if (index == 9)
+        foreach (char c in DialogStrings[index].ToCharArray())
         {
-            _animatorManPresentor.Play("Jump");
+            textComponent.text += c;
+            yield return new WaitForSeconds(textSpeed);
         }
 
-        if (index == 16)
+        if (index == 4)
         {
-            _animatorManPresentor.Play("Idle2");
-        }
-
-        if(index == 22)
-        {
-            _animator.SetBool("show",true);
+            _animator.SetBool("show", true);
             _animatorManPresentor.SetBool("Walking", true);
+            index = 27;
         }
 
-        if (index == 24)
-        {
-            ContinueMan();
-            StartManWalking();
-        }
-
-        if (index == 26)
-        {
-            ContinueMan();
-            StartManWalking();
-        }
-
-        if (index == 28)
-        {
-            ContinueMan();
-            StartManWalking();
-        }
-
-        if(index == 31)
+        if (index == 31)
         {
             DeactivateHelpers();
             Helpers[4].SetActive(true);
@@ -177,7 +158,6 @@ public class DialogController : MonoBehaviour
         {
             DeactivateHelpers();
             Helpers[1].SetActive(true);
-
             //changemode
         }
 
@@ -185,7 +165,6 @@ public class DialogController : MonoBehaviour
         {
             DeactivateHelpers();
             Helpers[2].SetActive(true);
-
             //fire
         }
 
@@ -193,7 +172,6 @@ public class DialogController : MonoBehaviour
         {
             DeactivateHelpers();
             Helpers[3].SetActive(true);
-
             //agacha
         }
 
@@ -202,12 +180,7 @@ public class DialogController : MonoBehaviour
             DeactivateHelpers();
         }
 
-        foreach (char c in DialogStrings[index].ToCharArray())
-        {
-            textComponent.text += c;
-            yield return new WaitForSeconds(textSpeed);
-        }
-
+        lineEnded = true;
 
         index++;
 
@@ -216,13 +189,18 @@ public class DialogController : MonoBehaviour
             canPressAgain = true;
         }
 
-        if (!(index < currentLimit))
+        if(overrideFalse)
+        {
+            canPressAgain = false;
+            ButaoCutscene.SetActive(false);
+        }
+        else
         {
             canPressAgain = true;
-            lineEnded = true;
-            clickedEvent = false;
             ButaoCutscene.SetActive(true);
         }
+
+        clickedEvent = false;
     }
 
     public void CheckIfAnimationShouldStop(int minLimit)
@@ -238,6 +216,16 @@ public class DialogController : MonoBehaviour
             ButaoCutscene.SetActive(true);
             currentMaxLimit = maxLimit;
         }
+    }
+
+    public void ForceNewLimit(int limit)
+    {
+        currentMaxLimit = limit;    
+    }
+
+    public void SetNewCurrentLimit(int currLimit)
+    {
+        currentLimit = currLimit;
     }
 
     public void SkipTutorial()
@@ -263,16 +251,25 @@ public class DialogController : MonoBehaviour
                 _animator.speed = animationSpeed;
         }
 
-        if (index == currentMaxLimit)
+        if (index == currentMaxLimit && !overrideFalse)
         {
             canPressAgain = false;
             ButaoCutscene.SetActive(false);
         }
     }
 
-    private void ContinueMan()
+    public void DisableButton()
     {
-        stop = false;
+        overrideFalse = true;
+        canPressAgain = false;
+        ButaoCutscene.SetActive(false);
+    }
+
+    public void EnableButton()
+    {
+        overrideFalse = false;
+        canPressAgain = true;
+        ButaoCutscene.SetActive(true);
     }
 
     public void StopMan(int x)

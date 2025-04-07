@@ -302,8 +302,13 @@ def calculate_pose():
                 client, addr = server_socket.accept()
                 print(f"Connection from {addr}")
 
+            try:
+                inMenu = client.recv(1024).decode("utf-8").strip()
+            except:
+                pass
+
             if calibrated == False or calibratedDirection == False:
-                if scanned == False:
+                if inMenu == "mm":  # meaning it is in menu
                     try:
                         detector = cv2.QRCodeDetector()
                         decodedText, points, _ = detector.detectAndDecode(image)
@@ -327,118 +332,119 @@ def calculate_pose():
                     except:
                         pass
 
-                if calibrated == False:
-                    cv2.putText(image, str("Not Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
+                else:
+                    if calibrated == False:
+                        cv2.putText(image, str("Not Calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
                             cv2.LINE_AA)
 
-                if calibratedDirection == False and calibrated == True:
-                    cv2.putText(image, str("Direction arm not calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1,
-                                cv2.LINE_AA)
+                    if calibratedDirection == False and calibrated == True:
+                        cv2.putText(image, str("Direction arm not calibrated"), (25, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1,
+                                    cv2.LINE_AA)
 
 
-                try:
+                    try:
 
-                    landmarks = results.pose_landmarks.landmark
+                        landmarks = results.pose_landmarks.landmark
 
-                    head = landmarks[mp_pose.PoseLandmark.NOSE.value].y
-
-
-                    #region normal
-                    '''                    
-                    left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                                     landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-                    left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
-                                  landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-                    left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
-                                  landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-                    right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
-                                      landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-                    right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-                    right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-                    left_ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
-                                  landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
-                    left_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
-                                 landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
-                    left_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
-                                landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
-                    right_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-                    right_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
-                                  landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-                    right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
-                                 landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
-                    
-                    '''
-                    #endregion
-                    #region Inverted
-                    right_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                                     landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-                    right_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
-                                  landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-                    right_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
-                                  landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-                    left_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
-                                      landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-                    left_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-                    left_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-                    right_ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
-                                  landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
-                    right_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
-                                 landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
-                    right_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
-                                landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
-                    left_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
-                                   landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
-                    left_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
-                                  landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
-                    left_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
-                                 landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
-                    #endregion
-
-                    leftDownAngle = calculate_angle(left_hip, left_shoulder, left_elbow)  # 90 a 110
-                    leftUpAngle = calculate_angle(left_shoulder, left_elbow, left_wrist)  # 170 a 180
-                    rightDownAngle = calculate_angle(right_hip, right_shoulder, right_elbow)  # 90 a 110
-                    rightUpAngle = calculate_angle(right_shoulder, right_elbow, right_wrist)  # 170 a 180
-
-                    ankleDistance = calculate_distance(right_ankle[0], left_ankle[0])  # 0.08 max
-                    kneeDistance = calculate_distance(right_knee[0], left_knee[0])  # 0.25 max
-
-                    normalizor = calculate_distance(left_hip[1], left_shoulder[1])
-
-                    if leftDownAngle > 90 and leftDownAngle < 110 and leftUpAngle > 145 and leftUpAngle < 180 and rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 145 and rightUpAngle < 180 and ankleDistance < 0.08 and kneeDistance < 0.25:
-                        if not calibrated:  # Save initial positions once
-                            calibrated = True
-                            data["tPose"] = True
-                            send_data()
-                            head_initial = head
-                            right_wrist_initial = right_wrist
-                            left_knee_initial = left_knee
-                            right_knee_initial = right_knee
-                            left_ankle_initial = left_ankle
-                            right_ankle_initial = right_ankle
+                        head = landmarks[mp_pose.PoseLandmark.NOSE.value].y
 
 
+                        #region normal
+                        '''                    
+                        left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                                         landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+                        left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
+                                      landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+                        left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
+                                      landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+                        right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+                                          landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+                        right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+                        right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+                        left_ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
+                                      landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+                        left_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+                                     landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
+                        left_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+                                    landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+                        right_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
+                        right_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
+                                      landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+                        right_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+                                     landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+                        
+                        '''
+                        #endregion
+                        #region Inverted
+                        right_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                                         landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+                        right_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
+                                      landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+                        right_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
+                                      landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+                        left_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
+                                          landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+                        left_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+                        left_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+                        right_ankle = [landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x,
+                                      landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y]
+                        right_knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x,
+                                     landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
+                        right_hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,
+                                    landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+                        left_ankle = [landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].x,
+                                       landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
+                        left_knee = [landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].x,
+                                      landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y]
+                        left_hip = [landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x,
+                                     landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y]
+                        #endregion
 
-                            print("✅ T-Pose detected! Initial calibration complete.")
+                        leftDownAngle = calculate_angle(left_hip, left_shoulder, left_elbow)  # 90 a 110
+                        leftUpAngle = calculate_angle(left_shoulder, left_elbow, left_wrist)  # 170 a 180
+                        rightDownAngle = calculate_angle(right_hip, right_shoulder, right_elbow)  # 90 a 110
+                        rightUpAngle = calculate_angle(right_shoulder, right_elbow, right_wrist)  # 170 a 180
 
+                        ankleDistance = calculate_distance(right_ankle[0], left_ankle[0])  # 0.08 max
+                        kneeDistance = calculate_distance(right_knee[0], left_knee[0])  # 0.25 max
 
-                    if calibrated and calibratedDirection == False:
-                        if calculate_angle(right_elbow, right_shoulder, right_hip) > 120 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor * 0.65 and right_wrist_initial[1] > head_initial:
-                            restingPointHand = left_wrist
-                            print("✅ Saving resting point of direction.")
-                            calibratedDirection = True
-                            data["armDir"] = True
-                            send_data()
+                        normalizor = calculate_distance(left_hip[1], left_shoulder[1])
+
+                        if leftDownAngle > 90 and leftDownAngle < 110 and leftUpAngle > 145 and leftUpAngle < 180 and rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 145 and rightUpAngle < 180 and ankleDistance < 0.08 and kneeDistance < 0.25:
+                            if not calibrated:  # Save initial positions once
+                                calibrated = True
+                                data["tPose"] = True
+                                send_data()
+                                head_initial = head
+                                right_wrist_initial = right_wrist
+                                left_knee_initial = left_knee
+                                right_knee_initial = right_knee
+                                left_ankle_initial = left_ankle
+                                right_ankle_initial = right_ankle
 
 
 
+                                print("✅ T-Pose detected! Initial calibration complete.")
 
-                except:
-                    pass
+
+                        if calibrated and calibratedDirection == False:
+                            if calculate_angle(right_elbow, right_shoulder, right_hip) > 120 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor * 0.65 and right_wrist_initial[1] > head_initial:
+                                restingPointHand = left_wrist
+                                print("✅ Saving resting point of direction.")
+                                calibratedDirection = True
+                                data["armDir"] = True
+                                send_data()
+
+
+
+
+                    except:
+                        pass
             #endregion
 
             if calibratedDirection:

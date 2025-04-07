@@ -39,7 +39,7 @@ public class UnityClientProxy : MonoBehaviour
     public bool inTutorialScene = false;
     public bool inMenuScene = false;
     public bool inGameScene = false;
-
+    
     private bool foundTutMovement = false;
 
     private bool triedChangeScene = false;
@@ -108,10 +108,19 @@ public class UnityClientProxy : MonoBehaviour
         stream = client.GetStream();
         StringBuilder data = new StringBuilder();
 
-        byte[] response = Encoding.UTF8.GetBytes(mode);
-        stream.Write(response, 0, response.Length);
+        if (inMenuScene)
+        {
+            byte[] response = Encoding.UTF8.GetBytes("m");
+            stream.Write(response, 0, response.Length);
+        }
 
-        byte[] received = new byte[client.ReceiveBufferSize];
+        else
+        {
+            byte[] response = Encoding.UTF8.GetBytes(mode);
+            stream.Write(response, 0, response.Length);
+        }
+
+            byte[] received = new byte[client.ReceiveBufferSize];
         int bytesRead = stream.Read(received, 0, received.Length);
         data.Append(Encoding.UTF8.GetString(received, 0, bytesRead));
         connected = true;

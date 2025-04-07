@@ -39,7 +39,7 @@ public class ShopManager : MonoBehaviour
     [HideInInspector][SerializeField] private Button[] Buttons;
 
     [HideInInspector][SerializeField] private int itemIndex;
-    [HideInInspector][SerializeField] int itemCost = 0;
+    [HideInInspector][SerializeField] int itemCost = 9999999;
     [HideInInspector][SerializeField] private TMP_Text descriptionText;
     [HideInInspector][SerializeField] private TMP_Text comprarCusto;
     [HideInInspector][SerializeField] private TMP_Text[] playerMoney;

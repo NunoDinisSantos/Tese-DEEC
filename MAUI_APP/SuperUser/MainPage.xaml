@@ -15,20 +15,23 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <Entry Text="{Binding StudentNumberToSearch}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
-           
+
             <Button Text="Search" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
         </Grid>
-        
+
         <Grid Padding="5" BackgroundColor="DarkGray" WidthRequest="500" HorizontalOptions="Start">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
             </Grid.ColumnDefinitions>
 
             <Label Text="Student ID" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
-            <Label Text="Total credits" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Center"/>
+            <Label Text="Nick name" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Center"/>
+            <Label Text="Total credits" FontSize="12" FontAttributes="Bold" Grid.Column="2" HorizontalTextAlignment="Center"/>
+
         </Grid>
-        
+
         <ScrollView VerticalScrollBarVisibility="Always">
             <CollectionView ItemsSource="{Binding Students}"
                         SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
@@ -51,36 +54,45 @@
                                 <Label Text="{Binding PlayerId}" 
                                FontSize="14" 
                                VerticalOptions="Center" 
-                               WidthRequest="150" />
+                               WidthRequest="130" />
+                                <Label Text="{Binding StudentNick}" 
+                               FontSize="14" 
+                               VerticalOptions="Center" 
+                               WidthRequest="150"/>
                                 <Label Text="{Binding Credits}" 
                                FontSize="14" 
-                               VerticalOptions="Center" />
+                               VerticalOptions="Center"
+                               WidthRequest="100"/>
                             </StackLayout>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </ScrollView>
-        
+
         <Grid WidthRequest="500" HorizontalOptions="Start">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
             <Label Text="Student ID" Margin="0,0,0,5" Grid.Column="0"/>
-            <Label Text="Credits" Margin="0,0,0,5" Grid.Column="1"/>
+            <Label Text="Nick Name" Margin="0,0,0,5" Grid.Column="1"/>
+            <Label Text="Credits" Margin="0,0,0,5" Grid.Column="2"/>
         </Grid>
-        
+
         <Grid WidthRequest="500" HorizontalOptions="Start" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
 
             <Entry Text="{Binding SelectedStudent.PlayerId}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="150" HorizontalOptions="Start" Grid.Column="0"/>
-            <Entry Text="{Binding SelectedStudent.Credits}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="1"/>
+            <Entry Text="{Binding SelectedStudent.StudentNick}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="1"/>
+            <Entry Text="{Binding SelectedStudent.Credits}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="2"/>
         </Grid>
-        
+
 
         <!-- Update Buttons -->
         <Label Text="Update credits" Margin="0,0,0,5" WidthRequest="250" HorizontalOptions="Start"/>

@@ -7,7 +7,7 @@ namespace SuperUser.Models
         [JsonPropertyName("playerId")]
         public string PlayerId { get; set; }
 
-        [JsonPropertyName("StudentNick")]
+        [JsonPropertyName("studentNick")]
         public string StudentNick { get; set; }
 
         [JsonPropertyName("timePlayed")]

@@ -183,12 +183,12 @@ namespace SuperUser
                 {
                     if (_customCreditsAmount < 0)
                     {
-                        message = "Subtracted " + (_customCreditsAmount * -1) + " credits to student " + SelectedStudent.PlayerId;
+                        message = "Subtracted " + (_customCreditsAmount * -1) + " credits to student " + SelectedStudent.PlayerId + " aka " + SelectedStudent.StudentNick;
                     }
 
-                    else 
+                    else
                     {
-                        message = "Added " + _customCreditsAmount + " credits to student " + SelectedStudent.PlayerId;
+                        message = "Added " + _customCreditsAmount + " credits to student " + SelectedStudent.PlayerId + " aka " + SelectedStudent.StudentNick;
                     }
 
                     _customCreditsAmount = 0;

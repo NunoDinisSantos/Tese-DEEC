@@ -1,7 +1,10 @@
 ﻿using SuperUser.Models;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
+//using System.Text.Json;
+//using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace SuperUser.Service
 {
@@ -13,12 +16,16 @@ namespace SuperUser.Service
             {
                 var response = await httpClient.GetAsync("api/misteriosaquaticos");
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<List<Student>>(json);
+                //Trace.WriteLine(json);
+                //var result = JsonSerializer.Deserialize<List<Student>>(json);
+                var result = JsonConvert.DeserializeObject<List<Student>>(json);
+
                 return result ?? new List<Student>();
             }
 
             catch (Exception ex)
             {
+                Trace.WriteLine($"GetStudentsAsync failed: {ex.Message}");
                 return new List<Student>();
             }
 
@@ -30,7 +37,8 @@ namespace SuperUser.Service
             {
                 var response = await httpClient.GetAsync($"api/misteriosaquaticos/{studentId}");
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<Student>(json);
+                //var result = JsonSerializer.Deserialize<Student>(json);
+                var result = JsonConvert.DeserializeObject<Student>(json);
 
                 return result ?? new Student() { PlayerId = "NOTFOUND" };
             }
@@ -42,7 +50,7 @@ namespace SuperUser.Service
         }
 
         public async Task<HttpStatusCode> UpdateStudentCreditsAsync(string studentId, int credits)
-        { 
+        {
             var response = await httpClient.PutAsJsonAsync($"api/misteriosaquaticos/{studentId}/credits", credits);
 
             return response.StatusCode;

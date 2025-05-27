@@ -41,6 +41,8 @@ public class DialogController : MonoBehaviour
     [SerializeField] private bool lineEnded = false;
     private bool overrideFalse = false;
 
+    [SerializeField] private GameObject ClickButtonHelper;
+
     void Start()
     {
         Application.targetFrameRate = 60;
@@ -60,12 +62,12 @@ public class DialogController : MonoBehaviour
     void Update()
     {
         CheckAnimStop();
-        /*if (Input.GetMouseButton(0) && canPressAgain) // alterar para qualquer butao no joystick
+        if (Input.GetMouseButton(0) && canPressAgain) // alterar para qualquer butao no joystick
         {
             canPressAgain = false;
             ButaoCutscene.SetActive(false);
             NextLine();
-        }*/
+        }
 
         if (clickedEvent && canPressAgain && lineEnded)
         {
@@ -129,6 +131,7 @@ public class DialogController : MonoBehaviour
             _animator.SetBool("show", true);
             _animatorManPresentor.SetBool("Walking", true);
             index = 27;
+            ClickButtonHelper.SetActive(false);
         }
 
         if (index == 31)

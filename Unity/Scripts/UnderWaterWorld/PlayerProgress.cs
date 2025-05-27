@@ -13,8 +13,6 @@ public class PlayerProgress : MonoBehaviour
 
     [HideInInspector] public int Money;
     [HideInInspector] public TimeSpan TimePlayed;
-    //[HideInInspector] public float PatientYHelp;
-    //[HideInInspector] public float PatientXHelp;
     [HideInInspector] public bool AutomaticReel;
     [HideInInspector] public int FishCaught;
     [HideInInspector] public int TreasuresCaught;
@@ -34,9 +32,9 @@ public class PlayerProgress : MonoBehaviour
     [HideInInspector] public PlayerHealth playerHealth;
 
     [SerializeField] private float multiPlierDay0 = 1.00f;
-    [SerializeField] private float multiPlierDay1 = 1.25f;
-    [SerializeField] private float multiPlierDay2 = 1.5f;
-    [SerializeField] private float multiPlierDay3 = 2.0f;
+    [SerializeField] private float multiPlierDay1 = 1.1f;
+    [SerializeField] private float multiPlierDay2 = 1.2f;
+    [SerializeField] private float multiPlierDay3 = 1.3f;
 
 
     void Awake()
@@ -239,10 +237,11 @@ public class PlayerProgress : MonoBehaviour
     public void UpdateMoney(int money)
     {
         Money += money;
+        /*
         if (money > 0)
         {
             Creditos += Mathf.RoundToInt(money * convertor);
-        }
+        }*/
 
         PlayerDataScript.playerDataInstance.Coins = Money;
     }
@@ -255,8 +254,14 @@ public class PlayerProgress : MonoBehaviour
     public void UpdateCredits(int credits)
     {
         credits = Mathf.RoundToInt(credits);
-        Creditos = Mathf.RoundToInt(Creditos + credits * MultiplierStreak);
+        //Creditos = Mathf.RoundToInt(Creditos + credits * MultiplierStreak);
         CreditosGainedDay += credits;
+        //PlayerDataScript.playerDataInstance.Credits = Creditos;
+    }
+
+    public void UpdateCreditsCombined(int credits)
+    {
+        Creditos = Mathf.RoundToInt(Creditos + credits * MultiplierStreak);
         PlayerDataScript.playerDataInstance.Credits = Creditos;
     }
 

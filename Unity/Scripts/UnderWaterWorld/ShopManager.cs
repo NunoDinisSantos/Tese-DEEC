@@ -307,7 +307,7 @@ public class ShopManager : MonoBehaviour
             statsString += "- Este dia durou " + timePlayed.Minutes + " minutos!\n\n";
         }
         statsString += "- Até agora tem " + moneyGained + " moedas em peixe!\n\n";
-        statsString += "- Até agora conseguiu " + creditsGained + " créditos!\n\n"; //CREDITOS DOS PEIXES (OS QUE CONTAM) N APARECEM AQUI. OS 1K DO ACHIEV NÃO SÃO DADOS!!!!
+        statsString += "- Até agora conseguiu " + creditsGained + " créditos!\n\n"; 
         statsString += "- Apanhou " + achievCount + " objectos raros!";
 
         stats.text = statsString;
@@ -397,7 +397,9 @@ public class ShopManager : MonoBehaviour
         StartCoroutine("WaitNewDay"); // prevents users from spamming button
         _PlayerProgress.TimePlayed = timePlayed;
         _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
-        _PlayerProgress.UpdateCredits(creditsGained);
+
+        _PlayerProgress.UpdateCreditsCombined(creditsGained);
+
         inventory.fishDayCatched = 0;
         inventory.fishListMoneyWorth.Clear();
         inventory.achievListMoneyWorth.Clear();
@@ -410,7 +412,10 @@ public class ShopManager : MonoBehaviour
 
         GainSpentMoneyText.text = "+" + moneyGained;
         GainSpentMoneyText.color = Color.green;
+
         _PlayerProgress.UpdateMoney(moneyGained);
+
+
         playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
         playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
         animationStore.Play("CoinAnim");

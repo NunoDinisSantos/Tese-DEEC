@@ -72,6 +72,8 @@ public class ZonesScript : MonoBehaviour
             fishControllerScript.ActivateSpawner("Safe");
             playerVisionController.ChangeColorView(0);
             playerVisionController.ChangeColorViewWater(0);
+            ColdZoneObject.SetActive(true);
+
             return;
         }
 

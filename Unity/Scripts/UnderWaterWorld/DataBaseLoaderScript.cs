@@ -11,7 +11,6 @@ using UnityEngine.Networking;
 public class DataBaseLoaderScript : MonoBehaviour
 {
     [HideInInspector] public string playerId;
-    //public string partialFileEndpoint = "http://88.198.115.159/"; // TO CHANGE
     //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
     private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
     [HideInInspector] public PlayerData playerData;
@@ -22,6 +21,11 @@ public class DataBaseLoaderScript : MonoBehaviour
 
     [SerializeField] private TMP_Text LBTexts;
     [SerializeField] private bool menu = false;
+
+    public TMP_Text[] RewardsNames;
+    public TMP_Text[] RewardsPrices;
+
+
     private void Start()
     {
         if (menu)
@@ -54,6 +58,38 @@ public class DataBaseLoaderScript : MonoBehaviour
             playersLB = playersLB.OrderByDescending(p => p.fishCaught).Take(10).ToList();
             WriteLB(playersLB);
         }
+
+        var rewards = new List<Reward>();
+
+        fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/rewards";
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+        data = UnityWebRequest.Get(fullEndpoint);
+        yield return data.SendWebRequest();
+
+        jsonResponse = data.downloadHandler.text;
+
+        if (data.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error fetching data: " + data.error);
+            errorGettingPlayer = true;
+        }
+        else
+        {
+            Reward[] rewardArray = JsonHelper.FromJson<Reward>(jsonResponse);
+            rewards = rewardArray.ToList();
+
+
+            for (int i = 0; i < rewards.Count; i++)
+            {
+                RewardsPrices[i].text = rewards[i].price.ToString();
+                RewardsNames[i].text = rewards[i].name;
+            }
+        }
+
+        yield return new WaitForSeconds(60);
+
+        StartCoroutine("GetPlayersForLB");
     }
 
     private void WriteLB(List<PlayerData> playersList)
@@ -564,6 +600,14 @@ public class PlayerData
     public bool templeJewel; 
     public bool boatJewel;      
     public bool oldIce;          
+}
+
+[System.Serializable] // torna visivel no inspector
+public class Reward
+{
+    public int id;
+    public string name;
+    public int price;
 }
 
 public class AchievementData

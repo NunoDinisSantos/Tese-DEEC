@@ -16,6 +16,8 @@
             public const string UpdateDay = $"{Base}/{{id:int}}/day";
             public const string UpdateModules = $"{Base}/{{id:int}}/modules";
             public const string UpdateDayStreak = $"{Base}/{{id:int}}/daystreak";
+            public const string Rewards = $"{Base}/rewards";
+            public const string UpdateReward = $"{Base}/rewards/{{id:int}}";
 
             public const string GetAll = Base;
         }

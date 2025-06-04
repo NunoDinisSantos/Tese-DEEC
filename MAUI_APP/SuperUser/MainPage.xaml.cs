@@ -20,8 +20,13 @@ namespace SuperUser
     public partial class MainViewModel : INotifyPropertyChanged
     {
         private readonly StudentService _studentService;
+
         public ObservableCollection<Student> Students { get; set; } = [];
+        public ObservableCollection<Reward> Rewards { get; set; } = [];
+
         private Student _currentStudent;
+
+        private Reward _currentReward;
 
         public Student SelectedStudent
         {
@@ -32,11 +37,23 @@ namespace SuperUser
                 OnPropertyChanged(nameof(SelectedStudent));
             }
         }
+
+        public Reward SelectedReward
+        {
+            get => _currentReward;
+            set
+            {
+                _currentReward = value;
+                OnPropertyChanged(nameof(SelectedReward));
+            }
+        }
         public ICommand UpdateCustomCreditCommand { get; }
+        public ICommand UpdateRewardCommand { get; }
         public ICommand GetStudentByIdAsync { get; }
         public ICommand RefreshData { get; }
 
         private int _customCreditsAmount;
+
         public int CustomCreditsAmount
         {
             get => _customCreditsAmount;
@@ -69,6 +86,17 @@ namespace SuperUser
             }
         }
 
+        private string _updateRewardMessage;
+        public string UpdateRewardMessage
+        {
+            get => _updateRewardMessage;
+            set
+            {
+                _updateRewardMessage = value;
+                OnPropertyChanged(nameof(UpdateRewardMessage));
+            }
+        }
+
         private string _studentNumberToSearch;
 
         public string StudentNumberToSearch
@@ -96,11 +124,16 @@ namespace SuperUser
         public MainViewModel(StudentService studentService)
         {
             _studentService = studentService;
+
             UpdateCustomCreditCommand = new Command(async () => await UpdateCredits(CustomCreditsAmount));
             GetStudentByIdAsync = new Command(async () => await GetStudentById(StudentNumberToSearch));
             RefreshData = new Command(() => Refresh());
 
+            UpdateRewardCommand = new Command(async () => await UpdateReward());
+
+
             LoadStudents();
+            LoadRewards();
         }
 
         private async void LoadStudents()
@@ -136,6 +169,7 @@ namespace SuperUser
         private void Refresh()
         {
             LoadStudents();
+            LoadRewards();
         }
 
         private async Task GetStudentById(string studentId)
@@ -202,6 +236,67 @@ namespace SuperUser
                 Waiting = false;
             }
         }
+
+        private async void LoadRewards()
+        {
+            _updateRewardMessage = string.Empty;
+            OnPropertyChanged(nameof(ShowErrorMessage));
+
+            Waiting = true;
+
+            var response = await _studentService.GetRewardsAsync();
+
+            if (response.Count > 0)
+            {
+                _updateRewardMessage = string.Empty;
+                OnPropertyChanged(nameof(ShowErrorMessage));
+                Rewards.Clear();
+                foreach (var reward in response)
+                {
+                    Rewards.Add(reward);
+                }
+            }
+
+            else
+            {
+                Students.Clear();
+                _updateRewardMessage = "Failed finding rewards.";
+                OnPropertyChanged(nameof(ShowErrorMessage));
+            }
+
+            Waiting = false;
+        }
+
+        private async Task UpdateReward()
+        {
+
+            Waiting = true;
+
+            string message = string.Empty;
+
+            var result = await _studentService.UpdateReward(SelectedReward.Id, SelectedReward.Name, SelectedReward.Price);
+            if (result != HttpStatusCode.OK)
+            {
+                message = "Something failed while trying to update rewards.";
+                _updateRewardMessage = message;
+                Application.Current.MainPage.Dispatcher.Dispatch(() => UpdateRewardMessage = _updateRewardMessage);
+                OnPropertyChanged(nameof(CustomCreditsAmount));
+            }
+
+            else
+            {
+                message = "Reward Updated!";
+
+                _updateRewardMessage = message;
+                OnPropertyChanged(nameof(SelectedReward));
+                Refresh();
+                Application.Current.MainPage.Dispatcher.Dispatch(() => UpdateRewardMessage = _updateRewardMessage);
+            }
+
+            Waiting = false;
+
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

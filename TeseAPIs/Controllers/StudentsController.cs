@@ -7,7 +7,7 @@ using TeseAPIs.Services;
 namespace TeseAPIs.Controllers
 {
     [ApiController]
-    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider) : ControllerBase
+    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider, IRewardService rewardService) : ControllerBase
     {
 
         [HttpPost(ApiEndpoints.Tese.Create)]
@@ -142,6 +142,35 @@ namespace TeseAPIs.Controllers
             }
 
             return Ok(updatedProgress);
+        }
+
+        [HttpGet(ApiEndpoints.Tese.Rewards)]
+        public async Task<IActionResult> GetAllRewards()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var  rewards = await pipeline.ExecuteAsync(async ct => await rewardService.GetRewardsAsync());
+
+            if (rewards == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(rewards);
+        }
+
+
+        [HttpPut(ApiEndpoints.Tese.UpdateReward)]
+        public async Task<IActionResult> UpdateReward([FromRoute] int id, [FromBody] UpdateRewardDto dto)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await rewardService.UpdateRewardById(id, dto.Name, dto.Price));
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
         }
     }
 }

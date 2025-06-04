@@ -2,104 +2,124 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SuperUser.MainPage" Title="DEEC - Misterios Aquaticos Super User">
-    <StackLayout Padding="10">
-        <ActivityIndicator IsRunning="{Binding Waiting}"
-                           IsVisible="{Binding Waiting}"
-                           Color="Purple" VerticalOptions="Center" HorizontalOptions="Center"
-                            />
-        <Button Text="Refresh data" Command="{Binding RefreshData}" HorizontalOptions="Start" Margin="0,0,0,20"/>
-        <Label Text="Search by student number:" FontSize="12" FontAttributes="None" Margin="0,0,0,2"/>
-        <Grid VerticalOptions="Start" Margin="0,0,0,20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <Entry Text="{Binding StudentNumberToSearch}" Keyboard="Text" WidthRequest="250" HorizontalTextAlignment="Start" HorizontalOptions="Start" />
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="10">
 
-            <Button Text="Search" Grid.Column="1" Command="{Binding GetStudentByIdAsync}" WidthRequest="100"/>
-        </Grid>
+            <ActivityIndicator IsRunning="{Binding Waiting}"
+                               IsVisible="{Binding Waiting}"
+                               Color="Purple" HorizontalOptions="Center" />
 
-        <Grid Padding="5" BackgroundColor="DarkGray" WidthRequest="500" HorizontalOptions="Start">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="120" />
-            </Grid.ColumnDefinitions>
+            <Button Text="Refresh data" Command="{Binding RefreshData}" />
 
-            <Label Text="Student ID" FontSize="12" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center"/>
-            <Label Text="Nick name" FontSize="12" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Center"/>
-            <Label Text="Total credits" FontSize="12" FontAttributes="Bold" Grid.Column="2" HorizontalTextAlignment="Center"/>
+            <Label Text="Search by student number:" FontSize="12" />
 
-        </Grid>
+            <HorizontalStackLayout Spacing="10">
+                <Entry Text="{Binding StudentNumberToSearch}" Keyboard="Text" Placeholder="Student ID"
+                       HorizontalOptions="FillAndExpand" />
+                <Button Text="Search" Command="{Binding GetStudentByIdAsync}" />
+            </HorizontalStackLayout>
 
-        <ScrollView VerticalScrollBarVisibility="Always">
+            <!-- Table Header -->
+            <Grid ColumnSpacing="5" Padding="5" BackgroundColor="DarkGray">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Text="Student ID" FontAttributes="Bold" Grid.Column="0" HorizontalTextAlignment="Center" />
+                <Label Text="Nick name" FontAttributes="Bold" Grid.Column="1" HorizontalTextAlignment="Center" />
+                <Label Text="Total credits" FontAttributes="Bold" Grid.Column="2" HorizontalTextAlignment="Center" />
+            </Grid>
+
+            <!-- Student List -->
             <CollectionView ItemsSource="{Binding Students}"
-                        SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
-                        SelectionMode="Single" Margin="0,0,0,20" WidthRequest="500" HorizontalOptions="Start" BackgroundColor="Black">
-                <CollectionView.HeightRequest>500</CollectionView.HeightRequest>
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup Name="CommonStates">
-                        <VisualState Name="Normal"></VisualState>
-                        <VisualState Name="Selected">
-                            <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="White"></Setter>
-                            </VisualState.Setters>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
+                            SelectedItem="{Binding SelectedStudent, Mode=TwoWay}"
+                            SelectionMode="Single">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame CornerRadius="5" Margin="0,0,0,5" BackgroundColor="Transparent">
-                            <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding PlayerId}" 
-                               FontSize="14" 
-                               VerticalOptions="Center" 
-                               WidthRequest="130" />
-                                <Label Text="{Binding StudentNick}" 
-                               FontSize="14" 
-                               VerticalOptions="Center" 
-                               WidthRequest="150"/>
-                                <Label Text="{Binding Credits}" 
-                               FontSize="14" 
-                               VerticalOptions="Center"
-                               WidthRequest="100"/>
-                            </StackLayout>
-                        </Frame>
+                        <Grid Padding="5" ColumnSpacing="5" BackgroundColor="Black">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding PlayerId}" TextColor="White" Grid.Column="0" />
+                            <Label Text="{Binding StudentNick}" TextColor="White" Grid.Column="1" />
+                            <Label Text="{Binding Credits}" TextColor="White" Grid.Column="2" />
+                        </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </ScrollView>
 
-        <Grid WidthRequest="500" HorizontalOptions="Start">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="150" />
-            </Grid.ColumnDefinitions>
-            <Label Text="Student ID" Margin="0,0,0,5" Grid.Column="0"/>
-            <Label Text="Nick Name" Margin="0,0,0,5" Grid.Column="1"/>
-            <Label Text="Credits" Margin="0,0,0,5" Grid.Column="2"/>
-        </Grid>
+            <!-- Selected Student Info -->
+            <Grid ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Student ID" Grid.Column="0" />
+                <Label Text="Nick Name" Grid.Column="1" />
+                <Label Text="Credits" Grid.Column="2" />
+            </Grid>
 
-        <Grid WidthRequest="500" HorizontalOptions="Start" Margin="0,0,0,20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="150" />
-            </Grid.ColumnDefinitions>
+            <Grid ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <Entry Text="{Binding SelectedStudent.PlayerId}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="150" HorizontalOptions="Start" Grid.Column="0"/>
-            <Entry Text="{Binding SelectedStudent.StudentNick}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="1"/>
-            <Entry Text="{Binding SelectedStudent.Credits}" IsReadOnly="True" Margin="0,0,0,2" WidthRequest="100" HorizontalOptions="Start" Grid.Column="2"/>
-        </Grid>
+                <Entry Text="{Binding SelectedStudent.PlayerId}" IsReadOnly="True" Grid.Column="0" />
+                <Entry Text="{Binding SelectedStudent.StudentNick}" IsReadOnly="True" Grid.Column="1" />
+                <Entry Text="{Binding SelectedStudent.Credits}" IsReadOnly="True" Grid.Column="2" />
+            </Grid>
+
+            <!-- Update Credits Section -->
+            <Label Text="Update credits" />
+            <Entry Text="{Binding CustomCreditsAmount}" Keyboard="Numeric" Placeholder="+/- X créditos" />
+            <Button Text="Update Credits" Command="{Binding UpdateCustomCreditCommand}" />
+
+            <Label Text="{Binding UpdateCreditsMessage}" />
+            <Label Text="{Binding ShowErrorMessage}" FontAttributes="Bold" />
+
+            <Label Text="ACTIVE REWARDS" FontSize="18" HorizontalTextAlignment="Center" />
+
+            <!-- Reward List -->
+            <CollectionView ItemsSource="{Binding Rewards}"
+                            SelectedItem="{Binding SelectedReward, Mode=TwoWay}"
+                            SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="5" ColumnSpacing="5" BackgroundColor="Black">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding Name}" TextColor="White" Grid.Column="0" />
+                            <Label Text="{Binding Price}" TextColor="White" Grid.Column="2" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
 
-        <!-- Update Buttons -->
-        <Label Text="Update credits" Margin="0,0,0,5" WidthRequest="250" HorizontalOptions="Start"/>
-        <Entry Text="{Binding CustomCreditsAmount}" Keyboard="Numeric" Placeholder="+/- X créditos" WidthRequest="150" HorizontalOptions="Start" Margin="0,0,0,2"/>
-        <Button Text="Update Credits" Command="{Binding UpdateCustomCreditCommand}" WidthRequest="150" HorizontalOptions="Start"/>
-        <Label Text="{Binding UpdateCreditsMessage}" Margin="0,0,0,4" WidthRequest="500" HorizontalOptions="Start"/>
-        <Label Text="{Binding ShowErrorMessage}" Margin="0,0,0,2" WidthRequest="500" HorizontalOptions="Start" FontAttributes="Bold"/>
+            <Grid ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-    </StackLayout>
+                <Entry Text="{Binding SelectedReward.Name}" IsReadOnly="false" Grid.Column="0" />
+                <Entry Text="{Binding SelectedReward.Price}" IsReadOnly="false" Grid.Column="1" MaximumWidthRequest="200"/>
+            </Grid>
+
+            <Button Text="Update Rewards" Command="{Binding UpdateRewardCommand}"/>
+
+            <Label Text="{Binding UpdateRewardMessage}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

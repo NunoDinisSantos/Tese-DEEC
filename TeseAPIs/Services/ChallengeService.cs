@@ -10,14 +10,14 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var startDate = DateTime.ParseExact(challengeDTO.StartDate, "yyyy-MM-dd", null);
-            var endDate = DateTime.ParseExact(challengeDTO.EndDate, "yyyy-MM-dd", null);
+            var startDate = DateTime.ParseExact(challengeDTO.StartDate, "dd-MM-yyyy", null);
+            var endDate = DateTime.ParseExact(challengeDTO.EndDate, "dd-MM-yyyy", null);
 
             var challenge = new Challenge()
             {
                 Description = challengeDTO.Description,
-                StartDate = startDate.ToString("yyyy-MM-dd"),
-                EndDate = endDate.ToString("yyyy-MM-dd"),
+                StartDate = startDate.ToString("dd-MM-yyyy"),
+                EndDate = endDate.ToString("dd-MM-yyyy"),
                 Ended = false,
             };
 
@@ -25,7 +25,7 @@ namespace TeseAPIs.Services
                 INSERT INTO Challenge (startdate, enddate, description, ended) 
                 VALUES (
                     '{challenge.StartDate}',
-                    '{challenge.EndDate}',
+                    '{challenge.StartDate}',
                     '{challenge.Description}',
                     {Convert.ToInt32(challenge.Ended)}
                 );";

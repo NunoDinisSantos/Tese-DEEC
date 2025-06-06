@@ -10,20 +10,29 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"SELECT COUNT(*) FROM Challenge";
-            var result = connection.ExecuteScalar<int>(query)!;
 
             var challenge = new Challenge()
             {
-                Id = result++,
                 Description = challengeDTO.Description,
-                StartDate = DateTime.Parse(challengeDTO.StartDate).ToString("dd-MM-yyy"),
-                EndDate = DateTime.Parse(challengeDTO.EndDate).ToString("dd-MM-yyy"),
+                StartDate = DateTime.Parse(challengeDTO.StartDate).ToString("dd-MM-yyyy"),
+                EndDate = DateTime.Parse(challengeDTO.EndDate).ToString("dd-MM-yyyy"),
                 Ended = false,
             };
 
-            query = $"INSERT INTO Challenge (id,startdate,enddate,description,ended) VALUES ({challenge.Id},'{DateTime.Parse(challenge.StartDate).ToString("dd-MM-yyy")}','{DateTime.Parse(challenge.EndDate).ToString("dd-MM-yyy")}','{challenge.Description}',{challenge.Ended})";
-            result = await connection.ExecuteAsync(query);
+            var query = $@"
+                INSERT INTO Challenge (startdate, enddate, description, ended) 
+                VALUES (
+                    '{DateTime.Parse(challenge.StartDate):dd-MM-yyyy}',
+                    '{DateTime.Parse(challenge.EndDate):dd-MM-yyyy}',
+                    '{challenge.Description}',
+                    {Convert.ToInt32(challenge.Ended)}
+                );";
+            await connection.ExecuteAsync(query);
+
+            //query = $"INSERT INTO Challenge (id,startdate,enddate,description,ended) VALUES ({challenge.Id},'{DateTime.Parse(challenge.StartDate).ToString("dd-MM-yyyy")}','{DateTime.Parse(challenge.EndDate).ToString("dd-MM-yyyy")}','{challenge.Description}',{challenge.Ended})";
+            var id = connection.ExecuteScalar<long>("SELECT last_insert_rowid();");
+            challenge.Id = (int)id;
+
             return challenge;
         }
         public async Task<Challenge> EndChallengeById(Challenge challenge)
@@ -75,7 +84,7 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"SELECT * FROM Challenge ORDER BY enddate desc, ended";
+            var query = $"SELECT * FROM Challenge ORDER BY ended, enddate desc";
 
             var result = await connection.QueryAsync<Challenge>(query);
 

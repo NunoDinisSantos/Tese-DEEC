@@ -22,8 +22,8 @@ namespace TeseAPIs.Services
             var query = $@"
                 INSERT INTO Challenge (startdate, enddate, description, ended) 
                 VALUES (
-                    '{DateTime.Parse(challenge.StartDate):dd-MM-yyyy}',
-                    '{DateTime.Parse(challenge.EndDate):dd-MM-yyyy}',
+                    '{DateTime.ParseExact(challenge.StartDate, "dd/MM/yyyy", null)}',
+                    '{DateTime.ParseExact(challenge.EndDate, "dd/MM/yyyy", null)}',
                     '{challenge.Description}',
                     {Convert.ToInt32(challenge.Ended)}
                 );";

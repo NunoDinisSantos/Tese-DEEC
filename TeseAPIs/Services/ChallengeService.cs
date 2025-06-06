@@ -96,7 +96,9 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"UPDATE Challenge SET description = '{challenge.Description}', enddate = '{challenge.EndDate}' WHERE id = {challenge.Id}";
+            var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", null);
+
+            var query = $"UPDATE Challenge SET description = '{challenge.Description}', enddate = '{endDate}' WHERE id = {challenge.Id}";
 
             var result = await connection.ExecuteAsync(query);
 

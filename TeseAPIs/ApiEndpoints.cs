@@ -18,6 +18,10 @@
             public const string UpdateDayStreak = $"{Base}/{{id:int}}/daystreak";
             public const string Rewards = $"{Base}/rewards";
             public const string UpdateReward = $"{Base}/rewards/{{id:int}}";
+            public const string Challenges = $"{Base}/challenges";
+            public const string Challenge = $"{Base}/challenges/latest";
+            public const string UpdateChallenge = $"{Base}/challenges/{{id:int}}";
+            public const string EndChallenge = $"{Base}/challenges/end/{{id:int}}";
 
             public const string GetAll = Base;
         }

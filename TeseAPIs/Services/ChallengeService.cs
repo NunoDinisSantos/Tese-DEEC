@@ -17,12 +17,12 @@ namespace TeseAPIs.Services
             {
                 Id = result++,
                 Description = challengeDTO.Description,
-                StartDate = DateTime.Parse(challengeDTO.StartDate).ToString("yyyy-MM-dd"),
-                EndDate = DateTime.Parse(challengeDTO.EndDate).ToString("yyyy-MM-dd"),
+                StartDate = DateTime.Parse(challengeDTO.StartDate).ToString("dd-MM-yyy"),
+                EndDate = DateTime.Parse(challengeDTO.EndDate).ToString("dd-MM-yyy"),
                 Ended = false,
             };
 
-            query = $"INSERT INTO Challenge (id,startdate,enddate,description,ended) VALUES ({challenge.Id},'{DateTime.Parse(challenge.StartDate).ToString("yyyy-MM-dd")}','{DateTime.Parse(challenge.EndDate).ToString("yyyy-MM-dd")}','{challenge.Description}',{challenge.Ended})";
+            query = $"INSERT INTO Challenge (id,startdate,enddate,description,ended) VALUES ({challenge.Id},'{DateTime.Parse(challenge.StartDate).ToString("dd-MM-yyy")}','{DateTime.Parse(challenge.EndDate).ToString("dd-MM-yyy")}','{challenge.Description}',{challenge.Ended})";
             result = await connection.ExecuteAsync(query);
             return challenge;
         }

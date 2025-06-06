@@ -14,8 +14,8 @@ namespace TeseAPIs.Services
             var challenge = new Challenge()
             {
                 Description = challengeDTO.Description,
-                StartDate = DateTime.Parse(challengeDTO.StartDate).ToString("dd-MM-yyyy"),
-                EndDate = DateTime.Parse(challengeDTO.EndDate).ToString("dd-MM-yyyy"),
+                StartDate = DateTime.ParseExact(challengeDTO.StartDate, "dd/MM/yyyy", null).ToString(),
+                EndDate = DateTime.ParseExact(challengeDTO.EndDate, "dd/MM/yyyy", null).ToString(),
                 Ended = false,
             };
 
@@ -29,7 +29,6 @@ namespace TeseAPIs.Services
                 );";
             await connection.ExecuteAsync(query);
 
-            //query = $"INSERT INTO Challenge (id,startdate,enddate,description,ended) VALUES ({challenge.Id},'{DateTime.Parse(challenge.StartDate).ToString("dd-MM-yyyy")}','{DateTime.Parse(challenge.EndDate).ToString("dd-MM-yyyy")}','{challenge.Description}',{challenge.Ended})";
             var id = connection.ExecuteScalar<long>("SELECT last_insert_rowid();");
             challenge.Id = (int)id;
 

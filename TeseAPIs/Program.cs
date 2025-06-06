@@ -42,6 +42,7 @@ builder.Services.AddSingleton<IRegistrationValidations, RegistrationValidations>
 builder.Services.AddSingleton<IStudentProgressService, StudentProgressService>();
 builder.Services.AddSingleton<IStudentService, StudentService>();
 builder.Services.AddSingleton<IRewardService, RewardService>();
+builder.Services.AddSingleton<IChallengeService, ChallengeService>();
 
 builder.Services.AddResiliencePipeline("default", x =>
 {

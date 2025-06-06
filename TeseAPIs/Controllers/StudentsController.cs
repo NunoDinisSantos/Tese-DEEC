@@ -7,7 +7,7 @@ using TeseAPIs.Services;
 namespace TeseAPIs.Controllers
 {
     [ApiController]
-    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider, IRewardService rewardService) : ControllerBase
+    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider, IRewardService rewardService, IChallengeService challengeService) : ControllerBase
     {
 
         [HttpPost(ApiEndpoints.Tese.Create)]
@@ -158,12 +158,81 @@ namespace TeseAPIs.Controllers
             return Ok(rewards);
         }
 
-
         [HttpPut(ApiEndpoints.Tese.UpdateReward)]
         public async Task<IActionResult> UpdateReward([FromRoute] int id, [FromBody] UpdateRewardDto dto)
         {
             var pipeline = _pipelineProvider.GetPipeline("default");
             var result = await pipeline.ExecuteAsync(async ct => await rewardService.UpdateRewardById(id, dto.Name, dto.Price));
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet(ApiEndpoints.Tese.Challenges)]
+        public async Task<IActionResult> GetChallenges()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var challenge = await pipeline.ExecuteAsync(async ct => await challengeService.GetChallengesAsync());
+
+            if (challenge == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(challenge);
+        }
+
+        [HttpGet(ApiEndpoints.Tese.Challenge)]
+        public async Task<IActionResult> GetLatestChallenge()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var challenge = await pipeline.ExecuteAsync(async ct => await challengeService.GetChallengeAsync());
+
+            if (challenge == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(challenge);
+        }
+
+        [HttpPost(ApiEndpoints.Tese.Challenges)]
+        public async Task<IActionResult> CreateChallenge(ChallengeDTO challengeDTO)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var challenge = await pipeline.ExecuteAsync(async ct => await challengeService.CreateChallenge(challengeDTO));
+
+            if (challenge == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(challenge);
+        }
+
+        [HttpPut(ApiEndpoints.Tese.UpdateChallenge)]
+        public async Task<IActionResult> UpdateChallenge([FromBody] Challenge dto)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await challengeService.UpdateChallengeById(dto));
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPut(ApiEndpoints.Tese.EndChallenge)]
+        public async Task<IActionResult> EndChallenge([FromBody] Challenge dto)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await challengeService.EndChallengeById(dto));
 
             if (result == null)
             {

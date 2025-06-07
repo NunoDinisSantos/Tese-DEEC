@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using System.Reflection;
 using TeseAPIs.Data;
 using TeseAPIs.Models;
 
@@ -65,9 +66,6 @@ namespace TeseAPIs.Services
                     QuantityYYY = challenge.QuantityYYY,
                     QuantityZZZ = challenge.QuantityZZZ
                 };
-
-                query = "UPDATE ChallengeProgress SET fishcaught = 0, coins = 0, credits = 0";
-                await connection.ExecuteAsync(query);
 
                 return returnChallenge;
             }

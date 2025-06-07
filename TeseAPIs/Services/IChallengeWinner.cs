@@ -6,5 +6,6 @@ namespace TeseAPIs.Services
     {
         public Task<IEnumerable<ChallengeWinnerData>> GetWinners();
         public Task<bool> PostWinner(ChallengeWinnerDataDTO dto);
+        public Task<ChallengeWinnerData> GetLastWinner();
     }
 }

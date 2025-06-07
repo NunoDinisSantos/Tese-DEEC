@@ -327,6 +327,20 @@ namespace TeseAPIs.Controllers
             return Ok(challengeProgress);
         }
 
+        [HttpGet(ApiEndpoints.Tese.LastChallengeWinners)]
+        public async Task<IActionResult> GetLastChallengeWinner()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var challengeProgress = await pipeline.ExecuteAsync(async ct => await challengeWinnerService.GetLastWinner());
+
+            if (challengeProgress == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(challengeProgress);
+        }
+
         [HttpGet(ApiEndpoints.Tese.VerifyWin)]
         public async Task<IActionResult> CheckWinCondition()
         {

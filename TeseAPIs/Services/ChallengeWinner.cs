@@ -17,6 +17,17 @@ namespace TeseAPIs.Services
             return result;
         }
 
+        public async Task<ChallengeWinnerData> GetLastWinner()
+        {
+            using var connection = await connectionFactory.CreateConnectionAsync();
+
+            var query = $"Select * FROM ChallengeWinners ORDER BY id desc LIMIT 1";
+
+            var result = await connection.QueryAsync<ChallengeWinnerData>(query);
+
+            return result.FirstOrDefault()!;
+        }
+
         public async Task<bool> PostWinner(ChallengeWinnerDataDTO dto)
         {
             using var connection = await connectionFactory.CreateConnectionAsync();

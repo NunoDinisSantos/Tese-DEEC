@@ -27,6 +27,7 @@
             public const string UpdateChallengeProgress = $"{Base}/challengeProgress/player";
             public const string ResetChallengeProgress = $"{Base}/challengeProgress/reset";
             public const string ChallengeWinners = $"{Base}/challengeWinners";
+            public const string LastChallengeWinners = $"{Base}/lastChallengeWinners";
             public const string VerifyWin = $"{Base}/checkwin";
             public const string AbortChallenge = $"{Base}/challenges/abort";
             public const string CheckConflictChallengeDates = $"{Base}/challenges/conflicts";

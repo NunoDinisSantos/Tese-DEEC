@@ -8,6 +8,8 @@
 
         public string EndDate { get; set; } = string.Empty;
 
+        public bool Started { get; set; } = false;
+
         public bool Ended { get; set; } = false;
         
         public int EventType { get; set; }

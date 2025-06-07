@@ -6,7 +6,7 @@ using TeseAPIs.Services.Helper;
 
 namespace TeseAPIs.Services
 {
-    public class ChallengeService(IDbConnectionFactory connectionFactory, IChallengeManagerService challengeManagerService) : IChallengeService
+    public class ChallengeService(IDbConnectionFactory connectionFactory, IChallengeManagerService challengeManagerService, IChallengeProgress challengeProgressService) : IChallengeService
     {
         public async Task<Challenge> CreateChallenge(ChallengeDTO challengeDTO)
         {
@@ -20,6 +20,7 @@ namespace TeseAPIs.Services
                 Description = challengeDTO.Description,
                 StartDate = startDate.ToString("dd-MM-yyyy"),
                 EndDate = endDate.ToString("dd-MM-yyyy"),
+                Started = challengeDTO.Started,
                 Ended = false,
                 EventType = challengeDTO.EventType,
                 QuantityXXX = challengeDTO.QuantityXXX,
@@ -28,7 +29,7 @@ namespace TeseAPIs.Services
             };
 
             var query = $@"
-                INSERT INTO Challenge (startdate, enddate, description, ended, eventtype, quantityx, quantityy, quantityz) 
+                INSERT INTO Challenge (startdate, enddate, description, ended, eventtype, quantityx, quantityy, quantityz, started) 
                 VALUES (
                     '{challenge.StartDate}',
                     '{challenge.EndDate}',
@@ -37,7 +38,8 @@ namespace TeseAPIs.Services
                     {challenge.EventType},
                     {challenge.QuantityXXX},
                     {challenge.QuantityYYY},
-                    {challenge.QuantityZZZ}
+                    {challenge.QuantityZZZ},
+                    {Convert.ToInt32(challenge.Started)}
                 );";
             await connection.ExecuteAsync(query);
 
@@ -61,6 +63,7 @@ namespace TeseAPIs.Services
                     Id = challenge.Id,
                     Description = challenge.Description,
                     EndDate = challenge.EndDate,
+                    Started = challenge.Started,
                     Ended = true,
                     EventType = challenge.EventType,
                     QuantityXXX = challenge.QuantityXXX,
@@ -71,14 +74,14 @@ namespace TeseAPIs.Services
                 return returnChallenge;
             }
 
-            return new Challenge() {Id = -1 };
+            return new Challenge() { Id = -1 };
         }
 
         public async Task<Challenge> GetChallengeAsync()
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"SELECT * FROM Challenge WHERE ended = 0 order by startdate";
+            var query = $"SELECT * FROM Challenge WHERE ended = 0 and started = 1 order by startdate";
 
             var result = await connection.QueryAsync<Challenge>(query);
 
@@ -123,6 +126,7 @@ namespace TeseAPIs.Services
                     Description = challenge.Description,
                     EndDate = challenge.EndDate,
                     EventType = challenge.EventType,
+                    Started = challenge.Started,
                     QuantityXXX = challenge.QuantityXXX,
                     QuantityYYY = challenge.QuantityYYY,
                     QuantityZZZ = challenge.QuantityZZZ
@@ -136,7 +140,7 @@ namespace TeseAPIs.Services
 
         public async Task<Challenge> EndChallengeByIdAPP(Challenge challenge)
         {
-            if(challenge.Ended)
+            if (challenge.Ended)
             {
                 return challenge;
             }
@@ -154,6 +158,7 @@ namespace TeseAPIs.Services
                     Id = challenge.Id,
                     Description = challenge.Description,
                     EndDate = challenge.EndDate,
+                    Started = challenge.Started,
                     Ended = true,
                     EventType = challenge.EventType,
                     QuantityXXX = challenge.QuantityXXX,
@@ -175,5 +180,44 @@ namespace TeseAPIs.Services
             return new Challenge();
         }
 
+        public async Task<bool> AbortLatestChallenge()
+        {
+            var latestChallenge = await GetChallengeAsync();
+            latestChallenge.Ended = true;
+
+            using var connection = await connectionFactory.CreateConnectionAsync();
+
+            var query = $"UPDATE Challenge SET ended = 1 WHERE id = {latestChallenge.Id}";
+
+            var resultQuery = await connection.ExecuteAsync(query) > 0;
+
+            bool result = await challengeProgressService.ResetChallengeProgress();
+
+            return result && resultQuery;
+        }
+
+        public async Task<bool> HasConflictsDates(ChallengeDTO challenge)
+        {
+            using var connection = await connectionFactory.CreateConnectionAsync();
+
+            var newStart = DateTime.ParseExact(challenge.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var newEnd = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            var existingChallenges = await connection.QueryAsync<Challenge>(
+                "SELECT * FROM Challenge WHERE Ended = 0");
+
+            foreach (var existing in existingChallenges)
+            {
+                var existingStart = DateTime.ParseExact(existing.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                var existingEnd = DateTime.ParseExact(existing.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+                if (existingStart < newEnd && existingEnd > newStart)
+                {
+                    return true; 
+                }
+            }
+
+            return false;
+        }
     }
 }

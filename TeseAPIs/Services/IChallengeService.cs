@@ -15,5 +15,9 @@ namespace TeseAPIs.Services
         Task<Challenge> EndChallengeByIdAPP(Challenge challenge);
 
         Task<Challenge> CreateChallenge(ChallengeDTO challengeDTO);
+
+        Task<bool> AbortLatestChallenge();
+
+        Task<bool> HasConflictsDates(ChallengeDTO challenge);
     }
 }

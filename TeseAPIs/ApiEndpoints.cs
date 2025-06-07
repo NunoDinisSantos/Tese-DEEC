@@ -28,6 +28,8 @@
             public const string ResetChallengeProgress = $"{Base}/challengeProgress/reset";
             public const string ChallengeWinners = $"{Base}/challengeWinners";
             public const string VerifyWin = $"{Base}/checkwin";
+            public const string AbortChallenge = $"{Base}/challenges/abort";
+            public const string CheckConflictChallengeDates = $"{Base}/challenges/conflicts";
 
             public const string GetAll = Base;
             

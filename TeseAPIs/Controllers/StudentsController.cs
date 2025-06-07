@@ -340,5 +340,35 @@ namespace TeseAPIs.Controllers
 
             return Ok(true);
         }
+
+
+        [HttpGet(ApiEndpoints.Tese.AbortChallenge)]
+        public async Task<IActionResult> AbortLatestChallenge()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var checkWin = await pipeline.ExecuteAsync(async ct => await challengeService.AbortLatestChallenge());
+
+            if (!checkWin)
+            {
+                return NotFound();
+            }
+
+            return Ok(true);
+        }
+
+
+        [HttpPut(ApiEndpoints.Tese.CheckConflictChallengeDates)]
+        public async Task<IActionResult> CheckChallengeConflictsDates([FromBody] ChallengeDTO challenge)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var hasConflict = await pipeline.ExecuteAsync(async ct => await challengeService.HasConflictsDates(challenge));
+
+            if (hasConflict)
+            {
+                return NotFound();
+            }
+
+            return Ok(true);
+        }
     }
 }

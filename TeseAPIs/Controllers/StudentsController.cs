@@ -7,7 +7,8 @@ using TeseAPIs.Services;
 namespace TeseAPIs.Controllers
 {
     [ApiController]
-    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider, IRewardService rewardService, IChallengeService challengeService, IChallengeProgress challengeProgressService) : ControllerBase
+    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider,
+        IRewardService rewardService, IChallengeService challengeService, IChallengeProgress challengeProgressService, IChallengeWinner challengeWinnerService) : ControllerBase
     {
 
         [HttpPost(ApiEndpoints.Tese.Create)]
@@ -282,6 +283,34 @@ namespace TeseAPIs.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPost(ApiEndpoints.Tese.ChallengeWinners)]
+        public async Task<IActionResult> PostWinnerChallenge([FromBody] ChallengeWinnerDataDTO dto)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await challengeWinnerService.PostWinner(dto));
+
+            if (result == false)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet(ApiEndpoints.Tese.ChallengeWinners)]
+        public async Task<IActionResult> GetChallengeWinners()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var challengeProgress = await pipeline.ExecuteAsync(async ct => await challengeWinnerService.GetWinners());
+
+            if (challengeProgress == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(challengeProgress);
         }
     }
 }

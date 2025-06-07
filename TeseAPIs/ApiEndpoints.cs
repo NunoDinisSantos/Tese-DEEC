@@ -25,7 +25,10 @@
             public const string ChallengeProgress = $"{Base}/challengeProgress";
             public const string UpdateChallengeProgress = $"{Base}/challengeProgress/player";
             public const string ResetChallengeProgress = $"{Base}/challengeProgress/reset";
+            public const string ChallengeWinners = $"{Base}/challengeWinners";
+
             public const string GetAll = Base;
+            
         }
     }
 }

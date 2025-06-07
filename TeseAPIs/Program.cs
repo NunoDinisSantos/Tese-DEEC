@@ -4,6 +4,7 @@ using Polly;
 using System.Text;
 using TeseAPIs.Data;
 using TeseAPIs.Services;
+using TeseAPIs.Services.Helper;
 using TeseAPIs.Validations;
 
 var builder = WebApplication.CreateBuilder(args);

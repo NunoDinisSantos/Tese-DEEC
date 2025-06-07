@@ -8,7 +8,7 @@ namespace TeseAPIs.Controllers
 {
     [ApiController]
     public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider,
-        IRewardService rewardService, IChallengeService challengeService, IChallengeProgress challengeProgressService, IChallengeWinner challengeWinnerService) : ControllerBase
+        IRewardService rewardService, IChallengeService challengeService, IChallengeProgress challengeProgressService, IChallengeWinner challengeWinnerService, ICheckWinCondition checkWinCondition) : ControllerBase
     {
 
         [HttpPost(ApiEndpoints.Tese.Create)]
@@ -243,6 +243,20 @@ namespace TeseAPIs.Controllers
             return Ok(result);
         }
 
+        [HttpPut(ApiEndpoints.Tese.EndChallengeApp)]
+        public async Task<IActionResult> EndChallengeApp([FromBody] Challenge dto)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await challengeService.EndChallengeByIdAPP(dto));
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
         [HttpGet(ApiEndpoints.Tese.ChallengeProgress)]
         public async Task<IActionResult> GetAllChallengeProgress()
         {
@@ -311,6 +325,20 @@ namespace TeseAPIs.Controllers
             }
 
             return Ok(challengeProgress);
+        }
+
+        [HttpGet(ApiEndpoints.Tese.VerifyWin)]
+        public async Task<IActionResult> CheckWinCondition()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var checkWin = await pipeline.ExecuteAsync(async ct => await checkWinCondition.Check());
+
+            if (!checkWin)
+            {
+                return NotFound();
+            }
+
+            return Ok(true);
         }
     }
 }

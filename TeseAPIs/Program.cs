@@ -45,6 +45,8 @@ builder.Services.AddSingleton<IRewardService, RewardService>();
 builder.Services.AddSingleton<IChallengeService, ChallengeService>();
 builder.Services.AddSingleton<IChallengeProgress, ChallengeProgress>();
 builder.Services.AddSingleton<IChallengeWinner, ChallengeWinner>();
+builder.Services.AddSingleton<IChallengeManagerService, ChallengeManagerService>();
+builder.Services.AddSingleton<ICheckWinCondition, CheckWinCondition>();
 
 builder.Services.AddResiliencePipeline("default", x =>
 {

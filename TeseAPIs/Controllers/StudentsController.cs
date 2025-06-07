@@ -7,7 +7,7 @@ using TeseAPIs.Services;
 namespace TeseAPIs.Controllers
 {
     [ApiController]
-    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider, IRewardService rewardService, IChallengeService challengeService) : ControllerBase
+    public class StudentsController(IStudentService studentRepository, IStudentProgressService studentProgressService, ResiliencePipelineProvider<string> _pipelineProvider, IRewardService rewardService, IChallengeService challengeService, IChallengeProgress challengeProgressService) : ControllerBase
     {
 
         [HttpPost(ApiEndpoints.Tese.Create)]
@@ -235,6 +235,48 @@ namespace TeseAPIs.Controllers
             var result = await pipeline.ExecuteAsync(async ct => await challengeService.EndChallengeById(dto));
 
             if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet(ApiEndpoints.Tese.ChallengeProgress)]
+        public async Task<IActionResult> GetAllChallengeProgress()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var challengeProgress = await pipeline.ExecuteAsync(async ct => await challengeProgressService.GetChallengeProgress());
+
+            if (challengeProgress == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(challengeProgress);
+        }
+
+        [HttpPut(ApiEndpoints.Tese.UpdateChallengeProgress)]
+        public async Task<IActionResult> CreateUpdateChallengeProgress([FromBody] ChallengeProgressData dto)
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await challengeProgressService.CreateUpdateChallengeProgressById(dto));
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPut(ApiEndpoints.Tese.ResetChallengeProgress)]
+        public async Task<IActionResult> ResetChallengeProgress()
+        {
+            var pipeline = _pipelineProvider.GetPipeline("default");
+            var result = await pipeline.ExecuteAsync(async ct => await challengeProgressService.ResetChallengeProgress());
+
+            if (result == false)
             {
                 return BadRequest();
             }

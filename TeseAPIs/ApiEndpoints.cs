@@ -22,7 +22,9 @@
             public const string Challenge = $"{Base}/challenges/latest";
             public const string UpdateChallenge = $"{Base}/challenges/{{id:int}}";
             public const string EndChallenge = $"{Base}/challenges/end/{{id:int}}";
-
+            public const string ChallengeProgress = $"{Base}/challengeProgress";
+            public const string UpdateChallengeProgress = $"{Base}/challengeProgress/player";
+            public const string ResetChallengeProgress = $"{Base}/challengeProgress/reset";
             public const string GetAll = Base;
         }
     }

@@ -43,6 +43,7 @@ builder.Services.AddSingleton<IStudentProgressService, StudentProgressService>()
 builder.Services.AddSingleton<IStudentService, StudentService>();
 builder.Services.AddSingleton<IRewardService, RewardService>();
 builder.Services.AddSingleton<IChallengeService, ChallengeService>();
+builder.Services.AddSingleton<IChallengeProgress, ChallengeProgress>();
 
 builder.Services.AddResiliencePipeline("default", x =>
 {

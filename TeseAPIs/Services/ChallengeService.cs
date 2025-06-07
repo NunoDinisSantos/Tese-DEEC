@@ -19,15 +19,23 @@ namespace TeseAPIs.Services
                 StartDate = startDate.ToString("dd-MM-yyyy"),
                 EndDate = endDate.ToString("dd-MM-yyyy"),
                 Ended = false,
+                EventType = challengeDTO.EventType,
+                QuantityXXX = challengeDTO.QuantityXXX,
+                QuantityYYY = challengeDTO.QuantityYYY,
+                QuantityZZZ = challengeDTO.QuantityZZZ
             };
 
             var query = $@"
-                INSERT INTO Challenge (startdate, enddate, description, ended) 
+                INSERT INTO Challenge (startdate, enddate, description, ended, eventtype, quantityx, quantityy, quantityz) 
                 VALUES (
                     '{challenge.StartDate}',
                     '{challenge.StartDate}',
                     '{challenge.Description}',
-                    {Convert.ToInt32(challenge.Ended)}
+                    {Convert.ToInt32(challenge.Ended)},
+                    {challenge.EventType},
+                    {challenge.QuantityXXX},
+                    {challenge.QuantityYYY},
+                    {challenge.QuantityZZZ}
                 );";
             await connection.ExecuteAsync(query);
 
@@ -51,8 +59,15 @@ namespace TeseAPIs.Services
                     Id = challenge.Id,
                     Description = challenge.Description,
                     EndDate = challenge.EndDate,
-                    Ended = true
+                    Ended = true,
+                    EventType = challenge.EventType,
+                    QuantityXXX = challenge.QuantityXXX,
+                    QuantityYYY = challenge.QuantityYYY,
+                    QuantityZZZ = challenge.QuantityZZZ
                 };
+
+                query = "UPDATE ChallengeProgress SET fishcaught = 0, coins = 0, credits = 0";
+                await connection.ExecuteAsync(query);
 
                 return returnChallenge;
             }
@@ -108,7 +123,11 @@ namespace TeseAPIs.Services
                 {
                     Id = challenge.Id,
                     Description = challenge.Description,
-                    EndDate = challenge.EndDate
+                    EndDate = challenge.EndDate,
+                    EventType = challenge.EventType,
+                    QuantityXXX = challenge.QuantityXXX,
+                    QuantityYYY = challenge.QuantityYYY,
+                    QuantityZZZ = challenge.QuantityZZZ
                 };
 
                 return returnChallenge;

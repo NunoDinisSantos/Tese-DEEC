@@ -8,7 +8,7 @@ namespace TeseAPIs.Services.Helper
     {
         public async Task<bool> ValidateForChallenges(Challenge challenge, bool endedByApp)
         {
-            var possibleWinners = await challengeWinnerProgress.GetChallengeProgress();
+            var possibleWinners = await challengeWinnerProgress.GetChallengeProgress(challenge.EventType);
 
             using var connection = await connectionFactory.CreateConnectionAsync();
 

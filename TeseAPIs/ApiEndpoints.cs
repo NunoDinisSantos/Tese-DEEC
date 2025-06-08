@@ -23,7 +23,7 @@
             public const string UpdateChallenge = $"{Base}/challenges/{{id:int}}";
             public const string EndChallenge = $"{Base}/challenges/end/{{id:int}}";
             public const string EndChallengeApp = $"{Base}/challenges/endapp/{{id:int}}";
-            public const string ChallengeProgress = $"{Base}/challengeProgress";
+            public const string ChallengeProgress = $"{Base}/challengeProgress/{{eventType:int}}";
             public const string UpdateChallengeProgress = $"{Base}/challengeProgress/player";
             public const string ResetChallengeProgress = $"{Base}/challengeProgress/reset";
             public const string ChallengeWinners = $"{Base}/challengeWinners";

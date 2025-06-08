@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using TeseAPIs.Data;
 using TeseAPIs.Models;
+using TeseAPIs.Services.Helper;
 
 namespace TeseAPIs.Services
 {
@@ -26,7 +27,7 @@ namespace TeseAPIs.Services
                     PlayerId = progressData.PlayerId,
                     Coins = progressData.Coins,
                     Credits = progressData.Credits,
-                    FishCaught = progressData.FishCaught
+                    FishCaught = progressData.FishCaught,
                 };
             }
 
@@ -44,11 +45,13 @@ namespace TeseAPIs.Services
             return result.First();
         }
 
-        public async Task<IEnumerable<ChallengeProgressData>> GetChallengeProgress()
+        public async Task<IEnumerable<ChallengeProgressData>> GetChallengeProgress(int eventType)
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"Select * FROM ChallengeProgress";
+            var queryHelper = new GetQueryForChallenges();
+
+            var query = queryHelper.GetProgressQueryForChallenge(eventType);
 
             var result = await connection.QueryAsync<ChallengeProgressData>(query);          
 

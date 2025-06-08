@@ -258,10 +258,10 @@ namespace TeseAPIs.Controllers
         }
 
         [HttpGet(ApiEndpoints.Tese.ChallengeProgress)]
-        public async Task<IActionResult> GetAllChallengeProgress()
+        public async Task<IActionResult> GetAllChallengeProgress([FromRoute] int eventType)
         {
             var pipeline = _pipelineProvider.GetPipeline("default");
-            var challengeProgress = await pipeline.ExecuteAsync(async ct => await challengeProgressService.GetChallengeProgress());
+            var challengeProgress = await pipeline.ExecuteAsync(async ct => await challengeProgressService.GetChallengeProgress(eventType));
 
             if (challengeProgress == null)
             {

@@ -11,7 +11,7 @@ public class MainMenuManager : MonoBehaviour
     [HideInInspector] public int playerId;
     [HideInInspector] public GameObject[] panels;
     [HideInInspector] public TMP_InputField[] inputFields;
-    [HideInInspector] public Button[] Buttons;
+    //[HideInInspector] public Button[] Buttons;
     [HideInInspector] public Slider loadingSlider;
     [HideInInspector] public DataBaseLoaderScript database;
     private bool startScene = false;
@@ -19,8 +19,8 @@ public class MainMenuManager : MonoBehaviour
     void Start()
     {
         startScene = false;
-        Buttons[0].interactable = false;
-        Buttons[1].interactable = false;
+        //Buttons[0].interactable = false;
+        //Buttons[1].interactable = false;
         Application.targetFrameRate = 60;
     }
 
@@ -54,13 +54,13 @@ public class MainMenuManager : MonoBehaviour
         if (x == 0)
         {
             playerId = Convert.ToInt32(inputFields[x].text);
-            Buttons[0].interactable = true;
+            //Buttons[0].interactable = true;
         }
 
         if (x == 2) // Cria por ID
         {
             playerId = Convert.ToInt32(inputFields[x].text);
-            Buttons[0].interactable = true;
+            //Buttons[0].interactable = true;
         }
     }
 

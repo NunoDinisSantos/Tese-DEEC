@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -72,6 +73,9 @@ public class ShopManager : MonoBehaviour
     [HideInInspector] public GameObject FlashLight;
 
     public GameObject ConfirmBackToMenu;
+
+    [SerializeField]
+    private DataBaseLoaderScript database;
 
     private void Start()
     {
@@ -380,11 +384,12 @@ public class ShopManager : MonoBehaviour
 
         if (x == 2)
         {
-            SellFish();
+            StartCoroutine("SellFish");
             ConfirmBackToMenu.SetActive(false);
             SceneManager.LoadScene(0);
         }
     }
+
     public void SellFish()
     {
         if (newDayWaiting)
@@ -399,6 +404,15 @@ public class ShopManager : MonoBehaviour
         _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
 
         _PlayerProgress.UpdateCreditsCombined(creditsGained);
+
+        var playerProgress = new ChallengeProgressData()
+        {
+            playerId = PlayerDataScript.playerDataInstance.PlayerId,
+            coins = moneyGained,
+            fishCaught = inventory.fishDayCatched,
+            credits = creditsGained,
+            nick_Name = PlayerDataScript.playerDataInstance.StudentNick
+        };
 
         inventory.fishDayCatched = 0;
         inventory.fishListMoneyWorth.Clear();
@@ -415,9 +429,12 @@ public class ShopManager : MonoBehaviour
 
         _PlayerProgress.UpdateMoney(moneyGained);
 
+        database.UpdatePlayerProgress(playerProgress);
 
         playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
         playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
+
+
         animationStore.Play("CoinAnim");
         moneyGained = 0;
         timePlayed = TimeSpan.Zero;

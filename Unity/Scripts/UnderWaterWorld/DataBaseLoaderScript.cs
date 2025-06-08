@@ -25,6 +25,16 @@ public class DataBaseLoaderScript : MonoBehaviour
     public TMP_Text[] RewardsNames;
     public TMP_Text[] RewardsPrices;
 
+    public TMP_Text ChallengeEndDate;
+    public TMP_Text ChallengeStartDate;
+    public TMP_Text ChallengeDescription;
+    public TMP_Text Desafio;
+
+    public TMP_Text LastWinnerText;
+    public TMP_Text RunnerUps;
+
+
+    public GameObject[] DesafioPanels;
 
     private void Start()
     {
@@ -37,7 +47,7 @@ public class DataBaseLoaderScript : MonoBehaviour
     private IEnumerator GetPlayersForLB()
     {
         var playersLB = new List<PlayerData>();
-
+        int eventType = -1;
         string fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/";
         Debug.Log("Calling endpoint: " + fullEndpoint);
 
@@ -55,10 +65,12 @@ public class DataBaseLoaderScript : MonoBehaviour
         {
             PlayerData[] playersArray = JsonHelper.FromJson<PlayerData>(jsonResponse);
             playersLB = playersArray.ToList();
-            playersLB = playersLB.OrderByDescending(p => p.fishCaught).Take(10).ToList();
+            playersLB = playersLB.OrderByDescending(p => p.fishCaught).Take(5).ToList();
             WriteLB(playersLB);
         }
 
+        // REWARDS NO LONGER WILL BE AVAILABLE! (CHALLENGES IS BETTER)
+        /*
         var rewards = new List<Reward>();
 
         fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/rewards";
@@ -86,8 +98,118 @@ public class DataBaseLoaderScript : MonoBehaviour
                 RewardsNames[i].text = rewards[i].name;
             }
         }
+        */
 
-        yield return new WaitForSeconds(60);
+        DesafioPanels[0].SetActive(true);
+        DesafioPanels[1].SetActive(true);
+
+        fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/challenges/latest";
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+        data = UnityWebRequest.Get(fullEndpoint);
+        yield return data.SendWebRequest();
+
+        jsonResponse = data.downloadHandler.text;
+
+        if (data.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error fetching data: " + data.error);
+            errorGettingPlayer = true;
+        }
+        else
+        {
+            ChallengeDTO challenge = JsonUtility.FromJson<ChallengeDTO>(jsonResponse);
+
+            if (challenge.description == string.Empty)
+            {
+                ChallengeStartDate.text = "";
+                ChallengeEndDate.text = "";
+                Desafio.text = "Desafio para vir em breve! Fiquem atentos!";
+                DesafioPanels[1].SetActive(false);
+            }
+
+            else
+            {
+                ChallengeDescription.text = challenge.description;
+                ChallengeEndDate.text = challenge.endDate;
+                ChallengeStartDate.text = challenge.startDate;
+                eventType = challenge.eventType;
+            }         
+        }
+
+        Debug.Log("Event type is: "+eventType);
+
+        LastWinnerText.text = string.Empty;
+
+        fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/lastChallengeWinners";
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+        data = UnityWebRequest.Get(fullEndpoint);
+        yield return data.SendWebRequest();
+
+        jsonResponse = data.downloadHandler.text;
+
+        if (data.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error fetching data: " + data.error);
+            errorGettingPlayer = true;
+        }
+        else
+        {
+            ChallengeProgressDataDTO lastWinner = JsonUtility.FromJson<ChallengeProgressDataDTO>(jsonResponse);
+
+            if (lastWinner.nick_Name == string.Empty)
+            {
+                LastWinnerText.text = "SEM VENCEDOR";
+            }
+
+            else
+            {
+                LastWinnerText.text = lastWinner.nick_Name;
+            }
+        }
+
+        if (eventType >= 0)
+        {
+            RunnerUps.text = string.Empty;
+
+            fullEndpoint = partialFileEndpoint + $"api/misteriosaquaticos/challengeProgressEvent/{eventType}";
+            Debug.Log("Calling endpoint: " + fullEndpoint);
+
+            data = UnityWebRequest.Get(fullEndpoint);
+            yield return data.SendWebRequest();
+
+            jsonResponse = data.downloadHandler.text;
+
+            if (data.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Error fetching data: " + data.error);
+                errorGettingPlayer = true;
+            }
+            else
+            {
+                var runnerUps = new List<ChallengeProgressDataDTO>();
+
+                ChallengeProgressDataDTO[] runnerUpsArray = JsonHelper.FromJson<ChallengeProgressDataDTO>(jsonResponse);
+                runnerUps = runnerUpsArray.ToList();
+
+                WriteRunnerUps(runnerUps);
+            }
+        }
+
+        else
+        {
+            RunnerUps.text = "";
+        }
+
+        fullEndpoint = partialFileEndpoint + $"api/misteriosaquaticos/checkwin";
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+        data = UnityWebRequest.Get(fullEndpoint);
+        yield return data.SendWebRequest();
+
+
+        yield return new WaitForSeconds(15);
 
         StartCoroutine("GetPlayersForLB");
     }
@@ -100,6 +222,59 @@ public class DataBaseLoaderScript : MonoBehaviour
             LBTexts.text += playerData.studentNick + " - " + playerData.fishCaught + " peixes" + "\n";
         }
     }
+
+    private void WriteRunnerUps(List<ChallengeProgressDataDTO> runnerUps)
+    {
+        RunnerUps.text = string.Empty;
+        foreach (ChallengeProgressDataDTO runnerUpPlayer in runnerUps)
+        {
+            RunnerUps.text += runnerUpPlayer.nick_Name + " | " + runnerUpPlayer.coins + " moedas " + "| " + runnerUpPlayer.credits + " creditos" + " | " + runnerUpPlayer.fishCaught + " peixes" +"\n";
+        }
+    }
+    IEnumerator UpdatePlayerProgressFromAPi(ChallengeProgressData progress)
+    {
+        var fullEndpoint = "https://misteriosaquaticos.pt/" + $"api/misteriosaquaticos/challengeProgress/player";
+
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+
+        var progressDTO = new ChallengeProgressDataDTO()
+        {
+            coins = progress.coins,
+            credits = progress.credits,
+            fishCaught = progress.fishCaught,
+            nick_Name = progress.nick_Name,
+            playerId = progress.playerId,
+        };
+
+        string jsonBody = JsonUtility.ToJson(progressDTO);
+
+        UnityWebRequest www = new UnityWebRequest(fullEndpoint, UnityWebRequest.kHttpVerbPUT);
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
+        www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        www.downloadHandler = new DownloadHandlerBuffer();
+
+        www.SetRequestHeader("Content-Type", "application/json");
+
+        yield return www.SendWebRequest();
+
+        progressDTO = new ChallengeProgressDataDTO()
+        {
+            coins = 0,
+            credits = 0,
+            fishCaught = 0,
+        };
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error updating data: " + www.error);
+        }
+        else
+        {
+            Debug.Log("Update successful: " + www.downloadHandler.text);
+        }
+    }
+
 
     IEnumerator GetDataFromApi(string playerId)
     {
@@ -344,6 +519,11 @@ public class DataBaseLoaderScript : MonoBehaviour
         StartCoroutine(UpdateAchievFromApi(id, array));
     }
 
+    public void UpdatePlayerProgress(ChallengeProgressData progress)
+    {
+        StartCoroutine(UpdatePlayerProgressFromAPi(progress));
+    }
+
     private void HandleDayStreak()
     {
         if(DateTime.Now.Day - PlayerDataScript.playerDataInstance.LastLogin.Day == 1 &&
@@ -568,10 +748,29 @@ public class DataBaseLoaderScript : MonoBehaviour
     #endregion
 }
 
+[System.Serializable] // torna visivel no inspector
+public class ChallengeProgressData
+{
+    public string playerId { get; set; }
+    public string nick_Name { get; set; } = string.Empty;
+    public int coins { get; set; }
+    public int fishCaught { get; set; }
+    public int credits { get; set; }
+}
+
 [Serializable]
 public class PlayersData
 {
     public List<PlayerData> playersData;
+}
+
+[System.Serializable] // torna visivel no inspector
+public class ChallengeWinnerData
+{
+    public int Id { get; set; }
+    public string Player_Id { get; set; } = string.Empty;
+    public int ChallengeId { get; set; }
+    public string Nick_Name { get; set; } = string.Empty;
 }
 
 [System.Serializable] // torna visivel no inspector
@@ -610,6 +809,36 @@ public class Reward
     public int price;
 }
 
+[System.Serializable] // torna visivel no inspector
+public class Challenge
+{
+    public int id;
+    public string description;
+    public string startDate;
+    public string endDate;
+    public bool started;
+    public bool ended;
+    public int eventType;
+    public int quantityx;
+    public int quantityy;
+    public int quantityz;
+}
+
+public class ChallengeDTO
+{
+    public int id;
+    public string description;
+    public string startDate;
+    public string endDate;
+    public bool started;
+    public bool ended;
+    public int eventType;
+    public int quantityx;
+    public int quantityy;
+    public int quantityz;
+}
+
+
 public class AchievementData
 {
     public bool treasure;
@@ -643,6 +872,16 @@ public class ModuleData
     public int storageModule;
     public int reelModule;
     public int tempModule;
+}
+
+[System.Serializable]
+public class ChallengeProgressDataDTO
+{
+    public string playerId;
+    public string nick_Name;
+    public int coins;
+    public int fishCaught;
+    public int credits;
 }
 
 public static class JsonHelper

@@ -7,12 +7,17 @@ import json
 import time
 
 
+from flask import Flask, request, make_response
+import threading
+app = Flask(__name__)
+send_images_enabled = False
+last_frame = None
+
 HOST = "127.0.0.1"
 PORT = 25001
 
 server_socket = None
 client = None
-
 
 # Initialize MediaPipe Pose and Drawing utilities
 mp_pose = mp.solutions.pose
@@ -53,8 +58,7 @@ right_knee_initial = None
 calibrated = False   # Flag to check if calibration is done
 calibratedDirection = False
 #UNITY#######################################
-host = "127.0.0.1"# localhost
-port = 25001
+
 
 horizontal = 0.0
 vertical = 0.0
@@ -103,6 +107,32 @@ data = {
     "calibrated": calibrated and calibratedDirection
 }
 
+
+def run_flask():
+    app.run(host='127.0.0.1', port=5000)
+
+flask_thread = threading.Thread(target=run_flask)
+flask_thread.daemon = True
+flask_thread.start()
+
+@app.route('/set_image_stream', methods=['POST'])
+def set_image_stream():
+    global send_images_enabled
+    send_images_enabled = request.json.get("enabled", False)
+    return {"status": "ok"}
+
+
+@app.route('/get_image', methods=['GET'])
+def get_image():
+    global last_frame
+    if not send_images_enabled or last_frame is None:
+        return '', 204
+
+    response = make_response(last_frame)
+    response.headers['Content-Type'] = 'image/jpeg'
+    return response
+
+
 def calculate_angle(a,b,c):
     a = np.array(a)
     b = np.array(b)
@@ -128,7 +158,7 @@ def calculate_distanceVec(a,b):
 def connect_to_server():
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((host, port))
+        sock.connect((HOST, PORT))
         return sock
     except Exception as e:
         print(f"Connection failed: {e}. Retrying...")
@@ -139,7 +169,7 @@ def reconnect_to_server():
     global connectionLost
     try:
         new_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        new_sock.connect((host, port))
+        new_sock.connect((HOST, PORT))
         print("✅ Reconnected to Unity server.")
         connectionLost = False
         return new_sock
@@ -167,7 +197,7 @@ def send_data():
         print(f"⚠️ Connection lost: {e}. Reconnecting...")
         connectionLost = True
         client.close()
-        client=None
+        client= None
         calibrated = False
         calibratedDirection = False
         data["horizontalLook"] = 0
@@ -213,7 +243,8 @@ def calculate_pose():
     global bypassMode
     global PlayerId
     global client
-
+    global last_frame
+    
     frame_count = 0
     scanned = False
     moving = False
@@ -262,6 +293,13 @@ def calculate_pose():
             #Tentar rodar camara para jogador ficar mais perto
             ##PARA CAMARA QUE VAI SER USADA. USAR ISTO:
             frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+
+            #last_frame = frame.copy() # FLASK ---> memory problem
+            if frame_count % 2 == 0:
+                frame_resized = cv2.resize(frame, (320, 240))
+                _, jpeg = cv2.imencode('.jpg', frame_resized, [cv2.IMWRITE_JPEG_QUALITY, 60])
+                last_frame = jpeg.tobytes()
 
             # RGB to send to mediapipe
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -413,7 +451,7 @@ def calculate_pose():
                         ankleDistance = calculate_distance(right_ankle[0], left_ankle[0])  # 0.08 max
                         kneeDistance = calculate_distance(right_knee[0], left_knee[0])  # 0.25 max
 
-                        normalizor = calculate_distance(left_hip[1], left_shoulder[1])
+                        normalizor = calculate_distance(left_ankle[1], left_shoulder[1])
 
                         if leftDownAngle > 90 and leftDownAngle < 110 and leftUpAngle > 145 and leftUpAngle < 180 and rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 145 and rightUpAngle < 180 and ankleDistance < 0.08 and kneeDistance < 0.25:
                             if not calibrated:  # Save initial positions once
@@ -422,10 +460,6 @@ def calculate_pose():
                                 send_data()
                                 head_initial = head
                                 right_wrist_initial = right_wrist
-                                left_knee_initial = left_knee
-                                right_knee_initial = right_knee
-                                left_ankle_initial = left_ankle
-                                right_ankle_initial = right_ankle
 
 
 
@@ -433,7 +467,8 @@ def calculate_pose():
 
 
                         if calibrated and calibratedDirection == False:
-                            if calculate_angle(right_elbow, right_shoulder, right_hip) > 120 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor * 0.65 and right_wrist_initial[1] > head_initial:
+                            print(calculate_angle(right_elbow, right_shoulder, right_hip))
+                            if calculate_angle(right_elbow, right_shoulder, right_hip) > 110 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor * 0.4 and right_wrist_initial[1] > head_initial:
                                 restingPointHand = left_wrist
                                 print("✅ Saving resting point of direction.")
                                 calibratedDirection = True
@@ -523,7 +558,9 @@ def calculate_pose():
                             data["vertical"] = 0
                         else:
                             #if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
-                            if right_foot > left_foot + normalizor * 0.1 or left_foot > right_foot + normalizor * 0.1:
+                            #print(f"right_foot is at {right_foot} and needs to be higher than: {left_foot + normalizor * 0.15}")
+                            print(right_foot > left_foot + normalizor * 0.12)
+                            if right_foot > left_foot + normalizor * 0.12 or left_foot > right_foot + normalizor * 0.12:
                                 moving = True
                                 movingTimer = time.time() + 0.5
 
@@ -536,10 +573,7 @@ def calculate_pose():
                             else:
                                 data["vertical"] = 0
 
-                            #if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
-                            #    data["vertical"] = -1
-                            #else:
-                            #    data["vertical"] = 0
+
                 #endregion
 
                     # region Fire

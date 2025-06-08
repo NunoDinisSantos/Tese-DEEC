@@ -1,12 +1,17 @@
 using System;
+using System.Collections;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class UnityClientProxy : MonoBehaviour
 {
+    [SerializeField] private RawImage rawImage;
+
     TcpClient client;
     NetworkStream stream;
     private string mode = "0";
@@ -370,5 +375,94 @@ public class UnityClientProxy : MonoBehaviour
     {
         stream.Close();
         client.Close();
+    }
+
+    //FLASK
+
+    //TO CALL FROM CALIBRATION!
+
+    public IEnumerator EnableImageStream()
+    {
+        string url = "http://127.0.0.1:5000/set_image_stream";
+
+        var json = "{\"enabled\": true}";
+        var request = new UnityWebRequest(url, "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Image stream enabled.");
+        }
+        else
+        {
+            Debug.LogError("Failed to enable image stream: " + request.error);
+        }
+    }
+
+    public IEnumerator GetImageCoroutine()
+    {
+        while (true) // Or use a flag to stop later
+        {
+            UnityWebRequest request = UnityWebRequestTexture.GetTexture("http://127.0.0.1:5000/get_image");
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                Texture2D texture = DownloadHandlerTexture.GetContent(request);
+                rawImage.texture = texture; // Assign to a RawImage in your UI
+            }
+            else
+            {
+                Debug.LogWarning("No image or error: " + request.error);
+            }
+
+            yield return new WaitForSeconds(0.2f); // Limit FPS to 5 per second
+        }
+    }
+
+
+    public IEnumerator GetImageCoroutineNew()
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture("http://127.0.0.1:5000/get_image");
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Texture2D texture = DownloadHandlerTexture.GetContent(request);
+            rawImage.texture = texture; // Assign to a RawImage in your UI
+        }
+        else
+        {
+            Debug.LogWarning("No image or error: " + request.error);
+        }
+    }
+
+
+    public IEnumerator DisableImageStream()
+    {
+        string url = "http://127.0.0.1:5000/set_image_stream";
+
+        var json = "{\"enabled\": false}";
+        var request = new UnityWebRequest(url, "POST");
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Image stream disabled.");
+        }
+        else
+        {
+            Debug.LogError("Failed to disable image stream: " + request.error);
+        }
     }
 }

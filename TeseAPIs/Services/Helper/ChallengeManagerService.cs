@@ -78,45 +78,45 @@ namespace TeseAPIs.Services.Helper
                 case 7:
                     //First player to get to XXX coins.
                     winner = possibleWinners
-                        .FirstOrDefault(x => x.Coins >= challenge.QuantityXXX);
+                        .FirstOrDefault(x => x.Coins >= challenge.QuantityX);
 
                     break;
 
                 case 8:
                     //First player to get to XXX credits.
                     winner = possibleWinners
-                        .FirstOrDefault(x => x.Credits >= challenge.QuantityXXX);
+                        .FirstOrDefault(x => x.Credits >= challenge.QuantityX);
                     break;
 
                 case 9:
                     //First player to get to XXX fish.
                     winner = possibleWinners
-                        .FirstOrDefault(x => x.FishCaught >= challenge.QuantityXXX);
+                        .FirstOrDefault(x => x.FishCaught >= challenge.QuantityX);
                     break;
 
                 case 10:
                     //First player to get to XXX coins and YYY credits.
                     winner = possibleWinners
-                            .FirstOrDefault(x => x.Coins >= challenge.QuantityXXX && x.Credits >= challenge.QuantityYYY);
+                            .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY);
                     break;
 
                 case 11:
                     //First player to get to XXX coins and YYY fish caught.
                     winner = possibleWinners
-                        .FirstOrDefault(x => x.Coins >= challenge.QuantityXXX && x.FishCaught >= challenge.QuantityYYY);
+                        .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.FishCaught >= challenge.QuantityY);
                     break;
 
                 case 12:
                     //First player to get to XXX fish caught and YYY credits.
                     winner = possibleWinners
-                        .FirstOrDefault(x => x.FishCaught >= challenge.QuantityXXX && x.Credits >= challenge.QuantityYYY);
+                        .FirstOrDefault(x => x.FishCaught >= challenge.QuantityX && x.Credits >= challenge.QuantityY);
                     break;
 
                 case 13:
                     //First player to get to XXX coins, YYY credits and ZZZ fish caught.
                     winner = possibleWinners
-                        .FirstOrDefault(x => x.Coins >= challenge.QuantityXXX && x.Credits >= challenge.QuantityYYY
-                        && x.FishCaught >= challenge.QuantityZZZ);
+                        .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY
+                        && x.FishCaught >= challenge.QuantityZ);
                     break;
             }
 

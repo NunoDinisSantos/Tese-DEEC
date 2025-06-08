@@ -23,9 +23,9 @@ namespace TeseAPIs.Services
                 Started = challengeDTO.Started,
                 Ended = false,
                 EventType = challengeDTO.EventType,
-                QuantityXXX = challengeDTO.QuantityXXX,
-                QuantityYYY = challengeDTO.QuantityYYY,
-                QuantityZZZ = challengeDTO.QuantityZZZ
+                QuantityX = challengeDTO.QuantityX,
+                QuantityY = challengeDTO.QuantityY,
+                QuantityZ = challengeDTO.QuantityZ
             };
 
             var query = $@"
@@ -36,9 +36,9 @@ namespace TeseAPIs.Services
                     '{challenge.Description}',
                     {Convert.ToInt32(challenge.Ended)},
                     {challenge.EventType},
-                    {challenge.QuantityXXX},
-                    {challenge.QuantityYYY},
-                    {challenge.QuantityZZZ},
+                    {challenge.QuantityX},
+                    {challenge.QuantityY},
+                    {challenge.QuantityZ},
                     {Convert.ToInt32(challenge.Started)}
                 );";
             await connection.ExecuteAsync(query);
@@ -66,9 +66,9 @@ namespace TeseAPIs.Services
                     Started = challenge.Started,
                     Ended = true,
                     EventType = challenge.EventType,
-                    QuantityXXX = challenge.QuantityXXX,
-                    QuantityYYY = challenge.QuantityYYY,
-                    QuantityZZZ = challenge.QuantityZZZ
+                    QuantityX = challenge.QuantityX,
+                    QuantityY = challenge.QuantityY,
+                    QuantityZ = challenge.QuantityZ
                 };
 
                 return returnChallenge;
@@ -127,9 +127,9 @@ namespace TeseAPIs.Services
                     EndDate = challenge.EndDate,
                     EventType = challenge.EventType,
                     Started = challenge.Started,
-                    QuantityXXX = challenge.QuantityXXX,
-                    QuantityYYY = challenge.QuantityYYY,
-                    QuantityZZZ = challenge.QuantityZZZ
+                    QuantityX = challenge.QuantityX,
+                    QuantityY = challenge.QuantityY,
+                    QuantityZ = challenge.QuantityZ
                 };
 
                 return returnChallenge;
@@ -161,9 +161,9 @@ namespace TeseAPIs.Services
                     Started = challenge.Started,
                     Ended = true,
                     EventType = challenge.EventType,
-                    QuantityXXX = challenge.QuantityXXX,
-                    QuantityYYY = challenge.QuantityYYY,
-                    QuantityZZZ = challenge.QuantityZZZ
+                    QuantityX = challenge.QuantityX,
+                    QuantityY = challenge.QuantityY,
+                    QuantityZ = challenge.QuantityZ
                 };
 
                 var startDate = DateTime.ParseExact(challenge.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);

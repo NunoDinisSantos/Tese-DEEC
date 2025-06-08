@@ -16,10 +16,10 @@
 
         public int EventType { get; set; }
 
-        public int QuantityXXX { get; set; }
+        public int QuantityX { get; set; }
 
-        public int QuantityYYY { get; set; }
+        public int QuantityY { get; set; }
 
-        public int QuantityZZZ { get; set; }
+        public int QuantityZ { get; set; }
     }
 }

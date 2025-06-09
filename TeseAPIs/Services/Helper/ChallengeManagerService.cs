@@ -124,15 +124,15 @@ namespace TeseAPIs.Services.Helper
 
             if(winner == null || winner.PlayerId == string.Empty)
             {
-                var noWinnerDto = new ChallengeWinnerDataDTO()
-                {
-                    ChallengeId = challenge.Id,
-                    Nick_Name = "SEM VENCEDOR",
-                    Player_Id = ""
-                };
+                //var noWinnerDto = new ChallengeWinnerDataDTO()
+                //{
+                //   ChallengeId = challenge.Id,
+                //    Nick_Name = "SEM VENCEDOR",
+                //    Player_Id = ""
+                //};
 
-                await challengeWinnerService.PostWinner(noWinnerDto);
-                await challengeProgressService.ResetChallengeProgress();
+                //await challengeWinnerService.PostWinner(noWinnerDto); // always posting
+                //await challengeProgressService.ResetChallengeProgress();
 
                 return false;
             }

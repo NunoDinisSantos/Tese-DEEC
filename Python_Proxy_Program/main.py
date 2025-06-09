@@ -453,6 +453,12 @@ def calculate_pose():
 
                         normalizor = calculate_distance(left_ankle[1], left_shoulder[1])
 
+                        #print(
+                           # f"Wrist distance is : {calculate_distance(right_wrist[0],left_wrist[0]) < 0.1 * normalizor}") # TO CHECK ARM DIR START
+
+
+
+
                         if leftDownAngle > 90 and leftDownAngle < 110 and leftUpAngle > 145 and leftUpAngle < 180 and rightDownAngle > 90 and rightDownAngle < 110 and rightUpAngle > 145 and rightUpAngle < 180 and ankleDistance < 0.08 and kneeDistance < 0.25:
                             if not calibrated:  # Save initial positions once
                                 calibrated = True
@@ -467,8 +473,8 @@ def calculate_pose():
 
 
                         if calibrated and calibratedDirection == False:
-                            print(calculate_angle(right_elbow, right_shoulder, right_hip))
-                            if calculate_angle(right_elbow, right_shoulder, right_hip) > 110 and calculate_distance(right_wrist[0], right_hip[0]) > normalizor * 0.4 and right_wrist_initial[1] > head_initial:
+                            #print(calculate_angle(right_elbow, right_shoulder, right_hip))
+                            if calculate_distance(right_wrist[0],left_wrist[0]) < 0.1 * normalizor:
                                 restingPointHand = left_wrist
                                 print("✅ Saving resting point of direction.")
                                 calibratedDirection = True

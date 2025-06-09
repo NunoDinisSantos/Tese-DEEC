@@ -101,7 +101,7 @@ public class DataBaseLoaderScript : MonoBehaviour
         */
 
         DesafioPanels[0].SetActive(true);
-        DesafioPanels[1].SetActive(true);
+        DesafioPanels[1].SetActive(false);
 
         fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/challenges/latest";
         Debug.Log("Calling endpoint: " + fullEndpoint);
@@ -134,7 +134,8 @@ public class DataBaseLoaderScript : MonoBehaviour
                 ChallengeEndDate.text = challenge.endDate;
                 ChallengeStartDate.text = challenge.startDate;
                 eventType = challenge.eventType;
-            }         
+                DesafioPanels[1].SetActive(true);
+            }
         }
 
         Debug.Log("Event type is: "+eventType);

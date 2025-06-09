@@ -9,119 +9,131 @@ namespace TeseAPIs.Services.Helper
         public async Task<bool> ValidateForChallenges(Challenge challenge, bool endedByApp)
         {
             var possibleWinners = await challengeWinnerProgress.GetChallengeProgress(challenge.EventType);
+            var winner = new ChallengeProgressData() { PlayerId = "" };
 
-            using var connection = await connectionFactory.CreateConnectionAsync();
+            if (possibleWinners.Any() && possibleWinners.OrderByDescending(x => x.Coins).First().Coins > 0) {
 
-            var winner = new ChallengeProgressData() { PlayerId = ""};
+                using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
-            if (challenge.EventType < 7 && !endedByApp) // need to wait for challenge to end
-            {
-                if(DateTime.Compare(DateTime.Now, endDate) < 1) //Challenge still ongoing
+                if (challenge.EventType < 7 && !endedByApp) // need to wait for challenge to end
                 {
-                    return false;
+                    if (DateTime.Compare(DateTime.Now, endDate) < 1) //Challenge still ongoing
+                    {
+                        return false;
+                    }
                 }
-            }
 
-            switch (challenge.EventType)
-            {
-                case 0:
-                    //Highest amount of coins until challenge end
-                    winner = possibleWinners.OrderByDescending(x => x.Coins)
-                        .FirstOrDefault();                    
+                switch (challenge.EventType)
+                {
+                    case 0:
+                        //Highest amount of coins until challenge end
+                        winner = possibleWinners.OrderByDescending(x => x.Coins)
+                            .FirstOrDefault();
 
-                    break;
+                        break;
 
-                case 1:
-                    //Highest amount of credits until challenge end.
-                    winner = possibleWinners.OrderByDescending(x => x.Credits)
-                        .FirstOrDefault();
+                    case 1:
+                        //Highest amount of credits until challenge end.
+                        winner = possibleWinners.OrderByDescending(x => x.Credits)
+                            .FirstOrDefault();
 
-                    break;
+                        break;
 
-                case 2:
-                    //Highest amount of fish caught until challenge end.
-                    winner = possibleWinners.OrderByDescending(x => x.FishCaught)
-                        .FirstOrDefault();
+                    case 2:
+                        //Highest amount of fish caught until challenge end.
+                        winner = possibleWinners.OrderByDescending(x => x.FishCaught)
+                            .FirstOrDefault();
 
-                    break;
+                        break;
 
-                case 3:
-                    //Highest amount of coins and fish caught until challenge end.
-                    winner = possibleWinners
-                        .OrderByDescending(x => x.Coins + x.FishCaught)
-                        .FirstOrDefault();
-                    break;
+                    case 3:
+                        //Highest amount of coins and fish caught until challenge end.
+                        winner = possibleWinners
+                            .OrderByDescending(x => x.Coins + x.FishCaught)
+                            .FirstOrDefault();
+                        break;
 
-                case 4:
-                    //Highest amount of coins and credits until challenge end.
-                    winner = possibleWinners
-                        .OrderByDescending(x => x.Coins + x.Credits)
-                        .FirstOrDefault();
-                    break;
+                    case 4:
+                        //Highest amount of coins and credits until challenge end.
+                        winner = possibleWinners
+                            .OrderByDescending(x => x.Coins + x.Credits)
+                            .FirstOrDefault();
+                        break;
 
-                case 5:
-                    //Highest amount of credits and fish caught until challenge end.
-                    winner = possibleWinners
-                        .OrderByDescending(x => x.Credits + x.FishCaught)
-                        .FirstOrDefault();
-                    break;
+                    case 5:
+                        //Highest amount of credits and fish caught until challenge end.
+                        winner = possibleWinners
+                            .OrderByDescending(x => x.Credits + x.FishCaught)
+                            .FirstOrDefault();
+                        break;
 
-                case 6:
-                    //Highest amount of coins, credits and fish caught until challenge end.
-                    winner = possibleWinners
-                        .OrderByDescending(x => x.Coins + x.FishCaught + x.Credits)
-                        .FirstOrDefault();
-                    break;
+                    case 6:
+                        //Highest amount of coins, credits and fish caught until challenge end.
+                        winner = possibleWinners
+                            .OrderByDescending(x => x.Coins + x.FishCaught + x.Credits)
+                            .FirstOrDefault();
+                        break;
 
-                case 7:
-                    //First player to get to XXX coins.
-                    winner = possibleWinners
-                        .FirstOrDefault(x => x.Coins >= challenge.QuantityX);
+                    case 7:
+                        //First player to get to XXX coins.
+                        winner = possibleWinners
+                            .FirstOrDefault(x => x.Coins >= challenge.QuantityX);
 
-                    break;
+                        break;
 
-                case 8:
-                    //First player to get to XXX credits.
-                    winner = possibleWinners
-                        .FirstOrDefault(x => x.Credits >= challenge.QuantityX);
-                    break;
+                    case 8:
+                        //First player to get to XXX credits.
+                        winner = possibleWinners
+                            .FirstOrDefault(x => x.Credits >= challenge.QuantityX);
+                        break;
 
-                case 9:
-                    //First player to get to XXX fish.
-                    winner = possibleWinners
-                        .FirstOrDefault(x => x.FishCaught >= challenge.QuantityX);
-                    break;
+                    case 9:
+                        //First player to get to XXX fish.
+                        winner = possibleWinners
+                            .FirstOrDefault(x => x.FishCaught >= challenge.QuantityX);
+                        break;
 
-                case 10:
-                    //First player to get to XXX coins and YYY credits.
-                    winner = possibleWinners
-                            .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY);
-                    break;
+                    case 10:
+                        //First player to get to XXX coins and YYY credits.
+                        winner = possibleWinners
+                                .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY);
+                        break;
 
-                case 11:
-                    //First player to get to XXX coins and YYY fish caught.
-                    winner = possibleWinners
-                        .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.FishCaught >= challenge.QuantityY);
-                    break;
+                    case 11:
+                        //First player to get to XXX coins and YYY fish caught.
+                        winner = possibleWinners
+                            .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.FishCaught >= challenge.QuantityY);
+                        break;
 
-                case 12:
-                    //First player to get to XXX fish caught and YYY credits.
-                    winner = possibleWinners
-                        .FirstOrDefault(x => x.FishCaught >= challenge.QuantityX && x.Credits >= challenge.QuantityY);
-                    break;
+                    case 12:
+                        //First player to get to XXX fish caught and YYY credits.
+                        winner = possibleWinners
+                            .FirstOrDefault(x => x.FishCaught >= challenge.QuantityX && x.Credits >= challenge.QuantityY);
+                        break;
 
-                case 13:
-                    //First player to get to XXX coins, YYY credits and ZZZ fish caught.
-                    winner = possibleWinners
-                        .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY
-                        && x.FishCaught >= challenge.QuantityZ);
-                    break;
+                    case 13:
+                        //First player to get to XXX coins, YYY credits and ZZZ fish caught.
+                        winner = possibleWinners
+                            .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY
+                            && x.FishCaught >= challenge.QuantityZ);
+                        break;
+                }
             }
 
             if(winner == null || winner.PlayerId == string.Empty)
             {
+                var noWinnerDto = new ChallengeWinnerDataDTO()
+                {
+                    ChallengeId = challenge.Id,
+                    Nick_Name = "SEM VENCEDOR",
+                    Player_Id = ""
+                };
+
+                await challengeWinnerService.PostWinner(noWinnerDto);
+                await challengeProgressService.ResetChallengeProgress();
+
                 return false;
             }
 

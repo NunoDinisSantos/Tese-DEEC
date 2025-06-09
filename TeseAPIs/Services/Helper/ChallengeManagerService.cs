@@ -11,7 +11,9 @@ namespace TeseAPIs.Services.Helper
             var possibleWinners = await challengeWinnerProgress.GetChallengeProgress(challenge.EventType);
             var winner = new ChallengeProgressData() { PlayerId = "" };
 
-            if (possibleWinners.Any() && possibleWinners.OrderByDescending(x => x.Coins).First().Coins > 0) {
+            bool playerParticipation = possibleWinners.OrderByDescending(x => x.Coins).First().Coins > 0;
+
+            if (possibleWinners.Any() && playerParticipation) {
 
                 using var connection = await connectionFactory.CreateConnectionAsync();
 
@@ -123,7 +125,7 @@ namespace TeseAPIs.Services.Helper
             }
 
 
-            if (winner == null || winner.PlayerId == string.Empty)
+            if (winner == null || winner.PlayerId == string.Empty || !playerParticipation)
             {
                 var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 

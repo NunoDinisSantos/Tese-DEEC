@@ -127,7 +127,7 @@ namespace TeseAPIs.Services.Helper
             {
                 var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
-                if (DateTime.Compare(DateTime.Now, endDate) > 1) //Challenge ended ongoing
+                if (DateTime.Compare(DateTime.Now, endDate) > 1 || endedByApp) //Challenge ended ongoing
                 {
                     var noWinnerDto = new ChallengeWinnerDataDTO()
                     {

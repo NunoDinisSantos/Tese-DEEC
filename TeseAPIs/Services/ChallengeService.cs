@@ -93,7 +93,7 @@ namespace TeseAPIs.Services
 
             else
             {
-                return new Challenge() { Id = -1 };
+                return new Challenge() { Id = -1, EventType = -1 };
             }
         }
 

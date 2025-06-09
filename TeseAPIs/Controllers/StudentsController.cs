@@ -275,6 +275,14 @@ namespace TeseAPIs.Controllers
         public async Task<IActionResult> CreateUpdateChallengeProgress([FromBody] ChallengeProgressData dto)
         {
             var pipeline = _pipelineProvider.GetPipeline("default");
+
+            var hasChallengeActive = challengeService.GetChallengeAsync().Id;
+
+            if(hasChallengeActive < 0)
+            {
+                return BadRequest();
+            }
+
             var result = await pipeline.ExecuteAsync(async ct => await challengeProgressService.CreateUpdateChallengeProgressById(dto));
 
             if (result == null)

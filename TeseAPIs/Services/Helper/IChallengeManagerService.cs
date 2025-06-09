@@ -4,6 +4,6 @@ namespace TeseAPIs.Services.Helper
 {
     public interface IChallengeManagerService
     {
-        public Task<bool> ValidateForChallenges(Challenge id, bool endedByApp);
+        public Task<int> ValidateForChallenges(Challenge id, bool endedByApp);
     }
 }

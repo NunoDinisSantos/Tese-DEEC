@@ -6,7 +6,7 @@ namespace TeseAPIs.Services.Helper
 {
     public class ChallengeManagerService(IChallengeProgress challengeWinnerProgress, IDbConnectionFactory connectionFactory, IChallengeProgress challengeProgressService, IChallengeWinner challengeWinnerService) : IChallengeManagerService
     {
-        public async Task<bool> ValidateForChallenges(Challenge challenge, bool endedByApp)
+        public async Task<int> ValidateForChallenges(Challenge challenge, bool endedByApp)
         {
             var possibleWinners = await challengeWinnerProgress.GetChallengeProgress(challenge.EventType);
             var winner = new ChallengeProgressData() { PlayerId = "" };
@@ -21,7 +21,7 @@ namespace TeseAPIs.Services.Helper
                 {
                     if (DateTime.Compare(DateTime.Now, endDate) < 1) //Challenge still ongoing
                     {
-                        return false;
+                        return 0;
                     }
                 }
 
@@ -122,19 +122,27 @@ namespace TeseAPIs.Services.Helper
                 }
             }
 
-            if(winner == null || winner.PlayerId == string.Empty)
+
+            if (winner == null || winner.PlayerId == string.Empty)
             {
-                //var noWinnerDto = new ChallengeWinnerDataDTO()
-                //{
-                //   ChallengeId = challenge.Id,
-                //    Nick_Name = "SEM VENCEDOR",
-                //    Player_Id = ""
-                //};
+                var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
-                //await challengeWinnerService.PostWinner(noWinnerDto); // always posting
-                //await challengeProgressService.ResetChallengeProgress();
+                if (DateTime.Compare(DateTime.Now, endDate) > 1) //Challenge ended ongoing
+                {
+                    var noWinnerDto = new ChallengeWinnerDataDTO()
+                    {
+                        ChallengeId = challenge.Id,
+                        Nick_Name = "SEM VENCEDOR",
+                        Player_Id = ""
+                    };
 
-                return false;
+
+                    await challengeWinnerService.PostWinner(noWinnerDto); 
+                    //await challengeProgressService.ResetChallengeProgress();
+                    return -1;
+                }
+
+                return 0;
             }
 
             var winnerDto = new ChallengeWinnerDataDTO()
@@ -145,9 +153,9 @@ namespace TeseAPIs.Services.Helper
             };
 
             await challengeWinnerService.PostWinner(winnerDto);
-            await challengeProgressService.ResetChallengeProgress();
+            // await challengeProgressService.ResetChallengeProgress();
 
-            return true;
+            return 1;
         }
     }
 }

@@ -11,9 +11,14 @@ namespace TeseAPIs.Services.Helper
             var possibleWinners = await challengeWinnerProgress.GetChallengeProgress(challenge.EventType);
             var winner = new ChallengeProgressData() { PlayerId = "" };
 
-            bool playerParticipation = possibleWinners.OrderByDescending(x => x.Coins).First().Coins > 0;
+            bool playerParticipation = false;
 
-            if (possibleWinners.Any() && playerParticipation) {
+            if (possibleWinners != null && possibleWinners.Any())
+            {
+                playerParticipation = possibleWinners.OrderByDescending(x => x.Coins).First().Coins > 0;
+            }
+
+            if (playerParticipation) {
 
                 using var connection = await connectionFactory.CreateConnectionAsync();
 
@@ -155,7 +160,7 @@ namespace TeseAPIs.Services.Helper
             };
 
             await challengeWinnerService.PostWinner(winnerDto);
-            // await challengeProgressService.ResetChallengeProgress();
+            //await challengeProgressService.ResetChallengeProgress();
 
             return 1;
         }

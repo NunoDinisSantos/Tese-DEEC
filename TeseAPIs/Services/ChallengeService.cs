@@ -169,10 +169,13 @@ namespace TeseAPIs.Services
                 var startDate = DateTime.ParseExact(challenge.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
 
-                if (DateTime.Compare(DateTime.Now, startDate) > 0)
-                {
-                    await challengeManagerService.ValidateForChallenges(challenge, true);
-                }
+                //if (DateTime.Compare(DateTime.Now, startDate) > 0)
+                //{
+                //}
+
+                result = await challengeManagerService.ValidateForChallenges(challenge, true); // get winner
+                await challengeProgressService.ResetChallengeProgress();
+
 
                 return returnChallenge;
             }

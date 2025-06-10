@@ -36,7 +36,7 @@ namespace TeseAPIs.Services
                 $"ach.boat_jewel AS BoatJewel," +
                 $"ach.old_ice AS OldIce" +
                 $" FROM MisteriosAquaticos ma" +
-                $" LEFT JOIN Achievements ach ON ma.player_id = ach.player_id";
+                $" LEFT JOIN Achievements ach ON ma.player_id = ach.player_id ORDER BY Credits desc";
 
             var result = await connection.QueryAsync<PlayerProgressResponse>(query);
 

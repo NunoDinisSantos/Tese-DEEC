@@ -84,7 +84,7 @@ public class HarpoonTrigger : MonoBehaviour
     private float vertical;
     private float horizontal;
 
-    [Description("Dá créditos enquanto está reeling de X em X segundos")]
+    [Description("Gives credits each X second")]
     public const float GiveCreditTimer = 1f;
     private float creditTimer;
     //#################################################################################
@@ -238,7 +238,7 @@ public class HarpoonTrigger : MonoBehaviour
         if (grabbedAchievObject && inventory.CheckIfGoingFull(GrabbedFishTransform.gameObject.GetComponent<AchievementObject>().Size))
         {
             PlayerMessageScript.SetActive(true);
-            PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage("Inventario de peixes cheio!");
+            PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage("Fish storage full!");
             cuesManagerScript.PlayAudioClip(2);
 
             ResetStatus();
@@ -247,7 +247,7 @@ public class HarpoonTrigger : MonoBehaviour
         if (!grabbedAchievObject && inventory.CheckIfGoingFull(GrabbedFishTransform.gameObject.GetComponent<Fish>().fishSpaceSize))
         {
             PlayerMessageScript.SetActive(true);
-            PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage("Inventario de peixes cheio!");
+            PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage("Fish storage full!");
             cuesManagerScript.PlayAudioClip(2);
 
             ResetStatus();

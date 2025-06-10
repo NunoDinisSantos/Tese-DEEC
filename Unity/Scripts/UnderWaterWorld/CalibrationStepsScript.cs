@@ -54,14 +54,17 @@ public class CalibrationStepsScript : MonoBehaviour
                 holder.gameObject.SetActive(true);
                 CalibrateImage.gameObject.SetActive(true);
 
-                calibrateText.text = "Faz uma T-POSE. Tem em conta desvios!";
+                //calibrateText.text = "Faz uma T-POSE. Tem em conta desvios!";
+                calibrateText.text = "Do a T-POSE. Have in mind deviations!";
+
                 calibrateText.color = Color.red;
                 //CalibrateImage.sprite = calibrateIcons[0];
             }
 
             if (tPose && !armDir)
             {
-                calibrateText.text = "Coloca o braço direito a apontar para a câmara numa posição confortável e central (figura 1). Quando achares que está bem, confirma colocando o pulso esquerdo em cima do pulso direito (figura 2).";
+                //calibrateText.text = "Coloca o braço direito a apontar para a câmara numa posição confortável e central (figura 1). Quando achares que está bem, confirma colocando o pulso esquerdo em cima do pulso direito (figura 2).";
+                calibrateText.text = "Point your right arm to the camera in a central and comfortable position (figure 1). When you think it's fine, confirm it by putting your left wrist on top of your right wrist (figure 2).";
                 calibrateText.color = Color.yellow;
                 //CalibrateImage.sprite = calibrateIcons[1];
                 CalibrateImage.gameObject.SetActive(false);

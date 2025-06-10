@@ -89,8 +89,8 @@ public class ShopManager : MonoBehaviour
         shipTemperatureModule = _PlayerProgress.shipTemperatureModule;
         BuyButton.interactable = false;
         Cursor.lockState = CursorLockMode.None;
-        playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
-        playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
+        playerMoney[0].text = "Coins: " + _PlayerProgress.Money;
+        playerMoney[1].text = "Credits: " + _PlayerProgress.Creditos;
         //playerMoney[1].text = "Moedas: " + _PlayerProgress.Money;
         DecorateSub();
     }
@@ -109,41 +109,41 @@ public class ShopManager : MonoBehaviour
         {
             case 0:
                 itemCost = depthModuleBaseCost + shipDepthModule*depthModuleLevelMultiplier;
-                itemDescription = "Este módulo garante mais protecção ao submarino podendo ir até mais fundo!";
+                itemDescription = "This module grants more protection and allows you go deeper!";
                 descriptionText.text = itemDescription;
-                comprarCusto.text = "Comprar: " + itemCost;
+                comprarCusto.text = "Buy: " + itemCost;
                 if (shipDepthModule < 2)
                     DeepModule[shipDepthModule].SetActive(true);
                 break;
             case 1:
                 itemCost = tempModuleBaseCost + shipTemperatureModule * tempModuleLevelMultiplier;
-                itemDescription = "Este módulo garante mais protecção ao submarino permitindo aguentar temperaturas mais baixas (nível 1) ou elevadas (nível 2)!";
+                itemDescription = "This module grants more protection to cold (nível 1) and hot (nível 2) temperatures!";
                 descriptionText.text = itemDescription;
-                comprarCusto.text = "Comprar: " + itemCost;
+                comprarCusto.text = "Buy: " + itemCost;
                 if (shipTemperatureModule < 2)
                     TempModule[shipTemperatureModule].SetActive(true);
                 break;
             case 2:
                 itemCost = reelModuleBaseCost + shipReelStrenghtModule * reelModuleLevelMultiplier;
-                itemDescription = "Este módulo equipa o submarino com uma corda mais comprida e um motor que permite disparar a ventosa mais rápido!";
+                itemDescription = "This module grants a longer rope and faster motor that shoots faster!";
                 descriptionText.text = itemDescription;
-                comprarCusto.text = "Comprar: " + itemCost;
+                comprarCusto.text = "Buy: " + itemCost;
                 if (shipReelStrenghtModule < 2)
                     ReelModule[shipReelStrenghtModule].SetActive(true);
                 break;
             case 3:
                 itemCost = storageModuleBaseCost + shipStorageModule * storageModuleLevelMultiplier; ;
-                itemDescription = "Este módulo aumenta o tamanho do reservatório. Assim pode apanhar mais peixes, ou peixes maiores!";
+                itemDescription = "This module upgrades the fish storage size. It allows you to catch bigger and more fish!";
                 descriptionText.text = itemDescription;
-                comprarCusto.text = "Comprar: " + itemCost;
+                comprarCusto.text = "Buy: " + itemCost;
                 if(shipStorageModule<2)
                     StorageModule[shipStorageModule].SetActive(true);
                 break;
             case 4:
                 itemCost = flashlightBaseCost;
-                itemDescription = "Este módulo adiciona uma lanterna para conseguir ver nas zonas mais escuras!";
+                itemDescription = "This module gives you a lantern allowing you to go to deeper and darker places!";
                 descriptionText.text = itemDescription;
-                comprarCusto.text = "Comprar: " + itemCost;
+                comprarCusto.text = "Buy: " + itemCost;
                 FlashLight.SetActive(false);
                 break;
         }
@@ -151,35 +151,35 @@ public class ShopManager : MonoBehaviour
         if (itemIndex == 4 && shipFlashlight > 0)
         {
             BuyButton.interactable = false;
-            comprarCusto.text = "Nível máximo!";
+            comprarCusto.text = "Max level!";
             return;
         }
 
         if (itemIndex == 0 && shipDepthModule == 2)
         {
             BuyButton.interactable = false;
-            comprarCusto.text = "Nível máximo!";
+            comprarCusto.text = "Max level!";
             return;
         }
 
         if (itemIndex == 1 && shipTemperatureModule == 2)
         {
             BuyButton.interactable = false;
-            comprarCusto.text = "Nível máximo!";
+            comprarCusto.text = "Max level!";
             return;
         }
 
         if (itemIndex == 2 && shipReelStrenghtModule == 2)
         {
             BuyButton.interactable = false;
-            comprarCusto.text = "Nível máximo!";
+            comprarCusto.text = "Max level!";
             return;
         }
 
         if (itemIndex == 3 && shipStorageModule == 2)
         {
             BuyButton.interactable = false;
-            comprarCusto.text = "Nível máximo!";
+            comprarCusto.text = "Max level!";
             return;
         }
 
@@ -249,8 +249,8 @@ public class ShopManager : MonoBehaviour
         animationStore.Play("BuyItemAnimation");
         GainSpentMoneyText.text = "-" + itemCost;
         GainSpentMoneyText.color = Color.red;
-        playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
-        playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
+        playerMoney[0].text = "Coins: " + _PlayerProgress.Money;
+        playerMoney[1].text = "Credits: " + _PlayerProgress.Creditos;
         ChooseItem(itemIndex);
     }
 
@@ -270,17 +270,17 @@ public class ShopManager : MonoBehaviour
         int achievCount = inventory.achievListMoneyWorth.Count + underwaterInventory.achievListMoneyWorth.Count;
         timePlayed = DateTime.Now - dateNow;
 
-        string statsString = "- Apanhou " + fishCount + " peixes!\n\n";
+        string statsString = "- You got " + fishCount + " fish!\n\n";
         if (timePlayed.Minutes == 0)
         {
-            statsString += "- Este dia durou " + timePlayed.Seconds + " segundos!\n\n";
+            statsString += "- This day lasted " + timePlayed.Seconds + " seconds!\n\n";
         }
         else
         {
-            statsString += "- Este dia durou " + timePlayed.Minutes + " minutos!\n\n";
+            statsString += "- This day lasted " + timePlayed.Minutes + " minutes!\n\n";
         }
         
-        statsString += "- Apanhou " + achievCount + " objectos raros!";
+        statsString += "- You got " + achievCount + " rare items!";
         stats.text = statsString;       
     }
 
@@ -301,18 +301,18 @@ public class ShopManager : MonoBehaviour
         int achievCount = inventory.achievListMoneyWorth.Count + underwaterInventory.achievListMoneyWorth.Count;
         timePlayed = DateTime.Now - dateNow;
 
-        string statsString = "- Até agora apanhou " + fishCount + " peixes!\n\n";
+        string statsString = "- So far you catched " + fishCount + " peixes!\n\n";
         if (timePlayed.Minutes == 0)
         {
-            statsString += "- Este dia durou " + timePlayed.Seconds + " segundos!\n\n";
+            statsString += "- This day lasted " + timePlayed.Seconds + " seconds!\n\n";
         }
         else
         {
-            statsString += "- Este dia durou " + timePlayed.Minutes + " minutos!\n\n";
+            statsString += "- This day lasted " + timePlayed.Minutes + " minutes!\n\n";
         }
-        statsString += "- Até agora tem " + moneyGained + " moedas em peixe!\n\n";
-        statsString += "- Até agora conseguiu " + creditsGained + " créditos!\n\n"; 
-        statsString += "- Apanhou " + achievCount + " objectos raros!";
+        statsString += "- So far you have " + moneyGained + " coins from fish!\n\n";
+        statsString += "- So far you got " + creditsGained + " credits!\n\n"; 
+        statsString += "- You got " + achievCount + " rare items!";
 
         stats.text = statsString;
     }
@@ -431,8 +431,8 @@ public class ShopManager : MonoBehaviour
 
         database.UpdatePlayerProgress(playerProgress);
 
-        playerMoney[0].text = "Moedas: " + _PlayerProgress.Money;
-        playerMoney[1].text = "Creditos: " + _PlayerProgress.Creditos;
+        playerMoney[0].text = "Coins: " + _PlayerProgress.Money;
+        playerMoney[1].text = "Credits: " + _PlayerProgress.Creditos;
 
 
         animationStore.Play("CoinAnim");

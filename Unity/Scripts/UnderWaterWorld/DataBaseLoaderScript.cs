@@ -124,7 +124,8 @@ public class DataBaseLoaderScript : MonoBehaviour
             {
                 ChallengeStartDate.text = "";
                 ChallengeEndDate.text = "";
-                Desafio.text = "Desafio para vir em breve! Fiquem atentos!";
+                Desafio.text = "Challenge coming soon!";
+                DesafioPanels[1].GetComponent<TMP_Text>().text = string.Empty;
                 DesafioPanels[1].SetActive(false);
             }
 
@@ -134,6 +135,7 @@ public class DataBaseLoaderScript : MonoBehaviour
                 ChallengeEndDate.text = challenge.endDate;
                 ChallengeStartDate.text = challenge.startDate;
                 eventType = challenge.eventType;
+                DesafioPanels[1].GetComponent<TMP_Text>().text = "to";
                 DesafioPanels[1].SetActive(true);
             }
         }
@@ -161,7 +163,7 @@ public class DataBaseLoaderScript : MonoBehaviour
 
             if (lastWinner.nick_Name == string.Empty)
             {
-                LastWinnerText.text = "SEM VENCEDOR";
+                LastWinnerText.text = "NO WINNER";
             }
 
             else
@@ -209,6 +211,8 @@ public class DataBaseLoaderScript : MonoBehaviour
         data = UnityWebRequest.Get(fullEndpoint);
         yield return data.SendWebRequest();
 
+        //Debug.Log(data.result);
+        //if(data.result != UnityWebRequest.Result.Success)
 
         yield return new WaitForSeconds(15);
 
@@ -220,7 +224,7 @@ public class DataBaseLoaderScript : MonoBehaviour
         LBTexts.text = string.Empty;
         foreach (PlayerData playerData in playersList)
         {
-            LBTexts.text += playerData.studentNick + " - " + playerData.fishCaught + " peixes" + "\n";
+            LBTexts.text += playerData.studentNick + " - " + playerData.fishCaught + " fish" + "\n";
         }
     }
 
@@ -229,7 +233,7 @@ public class DataBaseLoaderScript : MonoBehaviour
         RunnerUps.text = string.Empty;
         foreach (ChallengeProgressDataDTO runnerUpPlayer in runnerUps)
         {
-            RunnerUps.text += runnerUpPlayer.nick_Name + " | " + runnerUpPlayer.coins + " moedas " + "| " + runnerUpPlayer.credits + " creditos" + " | " + runnerUpPlayer.fishCaught + " peixes" +"\n";
+            RunnerUps.text += runnerUpPlayer.nick_Name + " | " + runnerUpPlayer.coins + " coins " + "| " + runnerUpPlayer.credits + " credits" + " | " + runnerUpPlayer.fishCaught + " fish" +"\n";
         }
     }
     IEnumerator UpdatePlayerProgressFromAPi(ChallengeProgressData progress)
@@ -556,197 +560,6 @@ public class DataBaseLoaderScript : MonoBehaviour
             StartCoroutine(UpdateDayStreakFromApi(PlayerDataScript.playerDataInstance.PlayerId, PlayerDataScript.playerDataInstance.DayStreak, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
         }
     }
-
-    #region OLD_PHP_WAY
-    IEnumerator GetData(string playerId)
-    {
-        errorGettingPlayer = false;
-        Debug.Log("Calling playerId: " + playerId);
-
-        string fullEndpoint = partialFileEndpoint + "getPlayerData.php?player_id=" + playerId;
-        Debug.Log("Calling endpoint: " + fullEndpoint);
-
-        UnityWebRequest data = UnityWebRequest.Get(fullEndpoint);
-
-        yield return data.SendWebRequest();
-
-        string jsonResponse = data.downloadHandler.text;
-
-        if (data.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Error fetching data: " + data.error);
-            errorGettingPlayer = true;
-        }
-        else
-        {
-            playerData = JsonUtility.FromJson<PlayerData>(jsonResponse);
-            PlayerDataScript.playerDataInstance.PlayerId = playerData.playerId;
-            PlayerDataScript.playerDataInstance.Coins = playerData.coins;
-            PlayerDataScript.playerDataInstance.TimePlayed = playerData.timePlayed;
-            PlayerDataScript.playerDataInstance.FishCaught = playerData.fishCaught;
-            PlayerDataScript.playerDataInstance.Tutorial = playerData.tutorial;
-            PlayerDataScript.playerDataInstance.Flashlight = playerData.flashlight;
-            PlayerDataScript.playerDataInstance.DepthModule = playerData.depthModule;
-            PlayerDataScript.playerDataInstance.StorageModule = playerData.storageModule;
-            PlayerDataScript.playerDataInstance.ReelModule = playerData.reelModule;
-            PlayerDataScript.playerDataInstance.TempModule = playerData.tempModule;
-            PlayerDataScript.playerDataInstance.Days = playerData.days;
-            PlayerDataScript.playerDataInstance.Credits = playerData.credits;
-            PlayerDataScript.playerDataInstance.LastLogin = DateTime.Parse(playerData.lastLogin);
-
-            PlayerDataScript.playerDataInstance.Treasure = playerData.treasure;
-            PlayerDataScript.playerDataInstance.AncientCoral = playerData.ancientCoral;
-            PlayerDataScript.playerDataInstance.LostResearch = playerData.lostResearch;
-            PlayerDataScript.playerDataInstance.BoatJewel = playerData.boatJewel;
-            PlayerDataScript.playerDataInstance.TempleJewel = playerData.templeJewel;
-            PlayerDataScript.playerDataInstance.OldIce = playerData.oldIce;
-
-            HandleDayStreak();
-        }
-    }
-
-    IEnumerator UpdateTutorial(string id)
-    {
-        string fullEndpoint = partialFileEndpoint + "updateTutorial.php";
-        Debug.Log("Calling playerId: " + id);
-        Debug.Log("Calling endpoint: " + fullEndpoint);
-
-        WWWForm form = new WWWForm();
-        form.AddField("player_id", id);
-
-        UnityWebRequest www = UnityWebRequest.Post(fullEndpoint, form);
-
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Error updating data: " + www.error);
-        }
-        else
-        {
-            // Success response (handle JSON if needed)
-            Debug.Log("Update successful: " + www.downloadHandler.text);
-        }
-    }
-
-    IEnumerator UpdateDays(string id, int days, int fishCaught, int money, int creditos)
-    {
-        string fullEndpoint = partialFileEndpoint + "updateDayFishMoney.php";
-        Debug.Log("Calling playerId: " + id);
-        Debug.Log("Calling endpoint: " + fullEndpoint);
-
-        WWWForm form = new WWWForm();
-
-        form.AddField("player_id", id);
-        form.AddField("days", days);
-        form.AddField("fish_caught", fishCaught);
-        form.AddField("coins", money);
-        form.AddField("credits", creditos);
-
-        UnityWebRequest www = UnityWebRequest.Post(fullEndpoint, form);
-
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Error updating data: " + www.error);
-        }
-        else
-        {
-            Debug.Log("Update successful: " + www.downloadHandler.text);
-        }
-    }
-
-    IEnumerator UpdateModules(string id, int depth, int temp, int reel, int storage, int flashlight, int money)
-    {
-        string fullEndpoint = partialFileEndpoint + "updateModules.php";
-        Debug.Log("Calling playerId: " + id);
-        Debug.Log("Calling endpoint: " + fullEndpoint);
-        WWWForm form = new WWWForm();
-        form.AddField("player_id", id);
-        form.AddField("depth_module", depth);
-        form.AddField("temp_module", temp);
-        form.AddField("reel_module", reel);
-        form.AddField("storage_module", storage);
-        form.AddField("flashlight", flashlight);
-        form.AddField("coins", money);
-
-        UnityWebRequest www = UnityWebRequest.Post(fullEndpoint, form);
-
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Error updating data: " + www.error);
-        }
-        else
-        {
-            Debug.Log("Update successful: " + www.downloadHandler.text);
-        }
-    }
-
-    IEnumerator SaveAchiev(string id, bool[] array)
-    {
-        string fullEndpoint = partialFileEndpoint + "updateAchievements.php";
-        Debug.Log("Calling playerId: " + id);
-        Debug.Log("Calling endpoint: " + fullEndpoint);
-        WWWForm form = new WWWForm();
-        form.AddField("player_id", id);
-        form.AddField("treasure", Convert.ToInt32(array[0]));
-        form.AddField("ancient_coral", Convert.ToInt32(array[1]));
-        form.AddField("lost_research", Convert.ToInt32(array[2]));
-        form.AddField("temple_jewel", Convert.ToInt32(array[3]));
-        form.AddField("boat_jewel", Convert.ToInt32(array[4]));
-        form.AddField("old_ice", Convert.ToInt32(array[5]));
-
-        UnityWebRequest www = UnityWebRequest.Post(fullEndpoint, form);
-
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Error updating data: " + www.error);
-        }
-        else
-        {
-            Debug.Log("Update successful: " + www.downloadHandler.text);
-        }
-    }
-    #endregion
-
-    #region Obsolete_VR
-
-    /*
-    public void CallSaveDataCircle(int id, string jsonData)
-    {
-        StartCoroutine(SaveMovement(id,jsonData));
-    }
-    */
-
-    /*IEnumerator SaveMovement(int id, string jsonData)
-    {
-        string fullEndpoint = partialFileEndpoint + "saveCircleData.php";
-        Debug.Log("Calling playerId: " + id);
-        Debug.Log("Calling endpoint: " + fullEndpoint);
-        WWWForm form = new();
-        form.AddField("PlayerId", id);
-        form.AddField("CircleData",id);
-
-        UnityWebRequest www = UnityWebRequest.Post(fullEndpoint, form);
-
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError("Error updating data: " + www.error);
-        }
-        else
-        {
-            Debug.Log("Update successful: " + www.downloadHandler.text);
-        }
-    }
-    */
-    #endregion
 }
 
 [System.Serializable] // torna visivel no inspector

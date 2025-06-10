@@ -120,33 +120,33 @@ public class PlayerHealth : MonoBehaviour
         hotWarningText.SetActive(false);
         coldAudioSource.enabled = false;
         coldWarningText.SetActive(false);
-        string line = "Mais um dia de trabalho! Boa!";
+        string line = "Another good day! Nice!";
         _playerVision.SetWaterOriginalColor();
 
         int i = Random.Range(0, 5);
         switch(i)
         {
             case 0:
-                line = "Hoje há churrasco na sala de convívio! Vamos!";
+                line = "Barbecue in the lounge area tonight! Let's go!!";
                 break;
             case 1:
-                line = "Mais um dia de trabalho! Boa!";
+                line = "Another good day! Nice!";
                 break;
             case 2:
-                line = "Hoje foi cansativo! Merecemos descanso!";
+                line = "Today was tiring! We deserve the rest!";
                 break;
             case 3:
-                line = "Hoje é noite de jogos! Vamos até à sala de convívio!";
+                line = "Today is game night in the lounge area!";
                 break;
             case 4:
-                line = "Todos os dias são bons dias!";
+                line = "Every day is a good day!";
                 break;
         }
 
         i = Random.Range(0, 100);
         if (i > 95)
         {
-            line = "Ouvi dizer que existe um templo secreto por baixo da zona quente!";
+            line = "Legend says there's a hidden temple beneath the lava zone!";
         }
 
         PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage(line);
@@ -163,7 +163,7 @@ public class PlayerHealth : MonoBehaviour
     private IEnumerator RespawnPickUp()
     {
         PlayerMessageScript.SetActive(true);
-        string line = "Boleia a caminho! Vrum vrum!";
+        string line = "Coming to pick you! Vrum vrum!";
         PlayerMessageScript.GetComponent<ShowPlayerMessageScript>().ShowMessage(line);
 
         hotAudioSource.enabled = false;

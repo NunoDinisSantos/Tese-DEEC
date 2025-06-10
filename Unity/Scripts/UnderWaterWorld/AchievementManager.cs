@@ -95,8 +95,8 @@ public class AchievementManager : MonoBehaviour
                 {
                     hasTempleAchiv  = true;
                     canvasAchievAnimation.Play("Achiev");
-                    AchievementTextTitle.text = "O templo esquecido";
-                    AchievementText.text = "Encontre o templo esquecido!";                    
+                    AchievementTextTitle.text = "Forgotten temple";
+                    AchievementText.text = "Find the lost temple!";                    
                 }
                 break;
             case 3:
@@ -104,8 +104,8 @@ public class AchievementManager : MonoBehaviour
                 {
                     hasBaseAchiv = true;
                     canvasAchievAnimation.Play("Achiev");
-                    AchievementTextTitle.text = "A pesquisa perdida!";
-                    AchievementText.text = "Encontre a preciosa pesquisa perdida no fundo do mar!";
+                    AchievementTextTitle.text = "Lost research!";
+                    AchievementText.text = "Find the precious research lost at sea!";
                 }
                 break;
             case 0:
@@ -114,8 +114,8 @@ public class AchievementManager : MonoBehaviour
                     Debug.Log("acieve treasure");
                     hasTreasureAchiev = true;
                     canvasAchievAnimation.Play("Achiev");
-                    AchievementTextTitle.text = "Caça ao tesouro!";
-                    AchievementText.text = "Encontre um tesouro!";
+                    AchievementTextTitle.text = "Treasure hunt!";
+                    AchievementText.text = "Find the treasure!";
                 }
                 break;
             case 5:
@@ -123,8 +123,8 @@ public class AchievementManager : MonoBehaviour
                 {
                     hasIceAchiv = true;
                     canvasAchievAnimation.Play("Achiev");
-                    AchievementTextTitle.text = "Segredos congelados!";
-                    AchievementText.text = "Encontre o gelo com milhões de anos!";
+                    AchievementTextTitle.text = "Frozen secrets!";
+                    AchievementText.text = "Find the million year ice!";
                 }
                 break;
 
@@ -133,8 +133,8 @@ public class AchievementManager : MonoBehaviour
                 {
                     hasCoralAchiev = true;
                     canvasAchievAnimation.Play("Achiev");
-                    AchievementTextTitle.text = "O coral ancestral";
-                    AchievementText.text = "Encontre o coral ancestral! Dizem que tem poderes curativos!";
+                    AchievementTextTitle.text = "The Ancient Coral";
+                    AchievementText.text = "Find the ancient coral!";
                 }
                 break;
             case 1:
@@ -142,8 +142,8 @@ public class AchievementManager : MonoBehaviour
                 {
                     hasShipAchiev = true;
                     canvasAchievAnimation.Play("Achiev");
-                    AchievementTextTitle.text = "O barco perdido";
-                    AchievementText.text = "Encontre o barco perdido!";
+                    AchievementTextTitle.text = "The lost ship";
+                    AchievementText.text = "Find the lost ship!";
                 }
                 break;
         }

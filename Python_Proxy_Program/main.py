@@ -250,7 +250,6 @@ def calculate_pose():
     moving = False
     movingTimer = 0.5
 
-
     PROCESS_EVERY_N_FRAMES = 2
     #endregion
     # Initialize MediaPipe Pose
@@ -364,35 +363,10 @@ def calculate_pose():
                                         myData = f"<START>ID:{PlayerId}<END>"
                                         client.sendall(myData.encode("utf-8"))
                                         scanned = True
+
                                     except Exception as e:
                                         print(f"⚠️ Failed to send data: {e}")
 
-                        '''
-                        decoded_QR = decode(frame_resized)
-                        
-                        if decoded_QR:
-                            # Only process the first detected QR code
-                            obj = decoded_QR[0]
-                            decodedText = obj.data.decode('utf-8')
-                            print(decodedText)
-
-                            print(f"QR Code Detected: {decodedText}")
-
-                        if decodedText != "":
-                            scanningPlayerId = int(decodedText)
-                            if scanningPlayerId != PlayerId:
-                                scanned = False
-
-                            if scanned == False:
-                                PlayerId = scanningPlayerId
-                                print(f"✅ PlayerId scanned: {PlayerId}")
-                                try:
-                                    myData = f"<START>ID:{PlayerId}<END>"
-                                    client.sendall(myData.encode("utf-8"))
-                                    scanned = True
-                                except Exception as e:
-                                    print(f"⚠️ Failed to send data: {e}")  # ✅ Print error for debugging
-                            '''
                     except:
                         pass
 
@@ -409,6 +383,7 @@ def calculate_pose():
                     try:
 
                         landmarks = results.pose_landmarks.landmark
+                        PlayerId = 0
 
                         head = landmarks[mp_pose.PoseLandmark.NOSE.value].y
 
@@ -492,7 +467,6 @@ def calculate_pose():
                                 send_data()
                                 head_initial = head
                                 right_wrist_initial = right_wrist
-
 
 
                                 print("✅ T-Pose detected! Initial calibration complete.")

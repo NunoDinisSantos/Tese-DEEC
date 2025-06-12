@@ -11,8 +11,8 @@ using UnityEngine.Networking;
 public class DataBaseLoaderScript : MonoBehaviour
 {
     [HideInInspector] public string playerId;
-    private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
-    //private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
+    //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
+    private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
     [HideInInspector] public PlayerData playerData;
     [HideInInspector] public bool loaded = false;
     public int maxDayStreak = 3;
@@ -21,6 +21,7 @@ public class DataBaseLoaderScript : MonoBehaviour
 
     [SerializeField] private TMP_Text LBTexts;
     [SerializeField] private bool menu = false;
+    [SerializeField] private bool gameScene = false;
 
     public TMP_Text[] RewardsNames;
     public TMP_Text[] RewardsPrices;
@@ -44,7 +45,38 @@ public class DataBaseLoaderScript : MonoBehaviour
         {
             StartCoroutine("GetPlayersForLB");
         }
+
+        if(gameScene)
+        {
+            StartCoroutine("GetChallengeData");
+        }
     }
+
+    private IEnumerator GetChallengeData()
+    {
+        string fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/";
+        fullEndpoint = partialFileEndpoint + "api/misteriosaquaticos/challenges/latest";
+        Debug.Log("Calling endpoint: " + fullEndpoint);
+
+        var data = UnityWebRequest.Get(fullEndpoint);
+        yield return data.SendWebRequest();
+
+        var jsonResponse = data.downloadHandler.text;
+
+        if (data.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error fetching data: " + data.error);
+            errorGettingPlayer = true;
+        }
+        else
+        {
+            ChallengeDTO challenge = JsonUtility.FromJson<ChallengeDTO>(jsonResponse);
+            ChallengeType = challenge.eventType;
+            savedChallengeId = challenge.id;         
+        }
+        Debug.Log("ChallengeId is: "+ savedChallengeId + " and Event type is: " + ChallengeType);
+    }
+
 
     private IEnumerator GetPlayersForLB()
     {

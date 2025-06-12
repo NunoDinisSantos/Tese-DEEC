@@ -1,15 +1,14 @@
-using System.Linq;
 using UnityEngine;
 
 public class PlayerLookSimpleEDITOR : MonoBehaviour
 {
     [SerializeField] float sensibilidadeX = 70f;
-    [SerializeField] float sensibilidadeY = 70f;
-    float xRotation;
-    float yRotation;
+    [SerializeField] float sensibilidadeY = 100f;
+    public float xRotation;
+    public float yRotation;
 
-    private float verticalLook;
-    private float horizontalLook;
+    public float verticalLook;
+    public float horizontalLook;
 
     [SerializeField] private bool UnityEditor = true;
 

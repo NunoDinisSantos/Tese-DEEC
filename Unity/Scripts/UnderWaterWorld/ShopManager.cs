@@ -384,8 +384,40 @@ public class ShopManager : MonoBehaviour
 
         if (x == 2)
         {
-            StartCoroutine("SellFish");
+            moneyGained = showInventoryStore.HandleStoreInventory(underwaterInventory);
+            moneyGained += showInventoryStore.HandleStoreInventory(inventory);
+
+            creditsGained = showInventoryStore.HandleAchievCreditsStore(inventory);
+            creditsGained += showInventoryStore.HandleAchievCreditsStore(underwaterInventory);
+            creditsGained += _PlayerProgress.CheckCreditsGainedFromMoney(moneyGained);
+            creditsGained += _PlayerProgress.CreditosGainedDay;
+            int fishCount = inventory.fishListMoneyWorth.Count + underwaterInventory.fishListMoneyWorth.Count;
+            int achievCount = inventory.achievListMoneyWorth.Count + underwaterInventory.achievListMoneyWorth.Count;
+            timePlayed = DateTime.Now - dateNow;
+            //SellFish();
+            _PlayerProgress.TimePlayed = timePlayed;
+            _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
+            _PlayerProgress.UpdateCreditsCombined(creditsGained);
+            var playerProgress = new ChallengeProgressData()
+            {
+                playerId = PlayerDataScript.playerDataInstance.PlayerId,
+                coins = moneyGained,
+                fishCaught = inventory.fishDayCatched,
+                credits = creditsGained,
+                nick_Name = PlayerDataScript.playerDataInstance.StudentNick
+            };
+            inventory.fishDayCatched = 0;
+            inventory.fishListMoneyWorth.Clear();
+            inventory.achievListMoneyWorth.Clear();
+            inventory.fishListType.Clear();
+            inventory.achievListType.Clear();
+            inventory.ResetStorage();
+            _PlayerProgress.UpdateMoney(moneyGained);
+            database.UpdatePlayerProgress(playerProgress);
             ConfirmBackToMenu.SetActive(false);
+            moneyGained = 0;
+            timePlayed = TimeSpan.Zero;
+            _PlayerProgress.CreditosGainedDay = 0;
             SceneManager.LoadScene(0);
         }
     }

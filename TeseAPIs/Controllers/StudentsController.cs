@@ -283,7 +283,9 @@ namespace TeseAPIs.Controllers
                 return BadRequest();
             }
 
-            var result = await pipeline.ExecuteAsync(async ct => await challengeProgressService.CreateUpdateChallengeProgressById(dto));
+            dto.ChallengeId = hasChallengeActive;
+
+            var result = await pipeline.ExecuteAsync(async ct => await challengeProgressService.CreateUpdateChallengeProgressById(dto, dto.ChallengeId == hasChallengeActive));
 
             if (result == null)
             {

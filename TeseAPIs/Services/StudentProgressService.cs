@@ -183,7 +183,7 @@ namespace TeseAPIs.Services
 
             using var connection = await connectionFactory.CreateConnectionAsync();
             var resultMisteriosAquaticos = await connection.ExecuteAsync($"UPDATE MisteriosAquaticos SET" +
-                $" last_login = '{DateTime.Parse(dayStreakProgress.LastLogin).ToString("yyyy-MM-ddTHH:mm:ss")}'," +
+                $" last_login = '{DateTime.Parse(dayStreakProgress.LastLogin).ToString("yyyy-MM-dd")}'," +
                 $" days_streak = {dayStreakProgress.DayStreak}" +
                 $" WHERE player_id = {studentProgress.PlayerId}");
 

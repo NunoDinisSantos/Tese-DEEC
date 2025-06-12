@@ -12,14 +12,14 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var startDate = DateTime.ParseExact(challengeDTO.StartDate, "dd-MM-yyyy", null);
-            var endDate = DateTime.ParseExact(challengeDTO.EndDate, "dd-MM-yyyy", null);
+            var startDate = DateTime.Parse(challengeDTO.StartDate,CultureInfo.InvariantCulture);
+            var endDate = DateTime.Parse(challengeDTO.EndDate, CultureInfo.InvariantCulture);
 
             var challenge = new Challenge()
             {
                 Description = challengeDTO.Description,
-                StartDate = startDate.ToString("dd-MM-yyyy"),
-                EndDate = endDate.ToString("dd-MM-yyyy"),
+                StartDate = startDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                EndDate = endDate.ToString("yyyy-MM-dd HH:mm:ss"),
                 Started = challengeDTO.Started,
                 Ended = false,
                 EventType = challengeDTO.EventType,
@@ -81,7 +81,14 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"SELECT * FROM Challenge WHERE ended = 0 and started = 1 order by startdate";
+            var query = $"UPDATE Challenge SET ended = 1 WHERE DATETIME('now') > DATETIME(enddate) and ended = 0"; // closes challenges
+            int closed = await connection.ExecuteAsync(query);
+
+            query = $"UPDATE Challenge SET started = 1 WHERE DATETIME('now') > DATETIME(startdate) and ended = 0"; // updates the challenges startdate
+
+            await connection.ExecuteAsync(query);
+
+            query = $"SELECT * FROM Challenge WHERE ended = 0 and started = 1 order by startdate";
 
             var result = await connection.QueryAsync<Challenge>(query);
 
@@ -112,7 +119,7 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", null).ToString("dd-MM-yyyy");
+            var endDate = DateTime.Parse(challenge.EndDate, CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
 
             var query = $"UPDATE Challenge SET description = '{challenge.Description}', enddate = '{endDate}' WHERE id = {challenge.Id}";
 
@@ -166,9 +173,7 @@ namespace TeseAPIs.Services
                     QuantityZ = challenge.QuantityZ
                 };
 
-                var startDate = DateTime.ParseExact(challenge.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-
-
+                //var startDate = DateTime.Parse(challenge.StartDate, CultureInfo.InvariantCulture);
                 //if (DateTime.Compare(DateTime.Now, startDate) > 0)
                 //{
                 //}
@@ -203,16 +208,16 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var newStart = DateTime.ParseExact(challenge.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            var newEnd = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var newStart = DateTime.Parse(challenge.StartDate, CultureInfo.InvariantCulture);
+            var newEnd = DateTime.Parse(challenge.EndDate, CultureInfo.InvariantCulture);
 
             var existingChallenges = await connection.QueryAsync<Challenge>(
                 "SELECT * FROM Challenge WHERE Ended = 0");
 
             foreach (var existing in existingChallenges)
             {
-                var existingStart = DateTime.ParseExact(existing.StartDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-                var existingEnd = DateTime.ParseExact(existing.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                var existingStart = DateTime.Parse(existing.StartDate, CultureInfo.InvariantCulture);
+                var existingEnd = DateTime.Parse(existing.EndDate, CultureInfo.InvariantCulture);
 
                 if (existingStart < newEnd && existingEnd > newStart)
                 {

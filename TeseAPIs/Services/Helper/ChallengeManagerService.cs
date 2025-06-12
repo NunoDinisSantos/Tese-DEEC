@@ -22,7 +22,7 @@ namespace TeseAPIs.Services.Helper
 
                 using var connection = await connectionFactory.CreateConnectionAsync();
 
-                var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                var endDate = DateTime.Parse(challenge.EndDate, CultureInfo.InvariantCulture);
 
                 if (challenge.EventType < 7 && !endedByApp) // need to wait for challenge to end
                 {
@@ -129,10 +129,9 @@ namespace TeseAPIs.Services.Helper
                 }
             }
 
-
             if (winner == null || winner.PlayerId == string.Empty || !playerParticipation)
             {
-                var endDate = DateTime.ParseExact(challenge.EndDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                var endDate = DateTime.Parse(challenge.EndDate, CultureInfo.InvariantCulture);
 
                 if (DateTime.Compare(DateTime.Now, endDate) > 0 || endedByApp) //Challenge ended 
                 {

@@ -5,7 +5,7 @@ import numpy as np
 import socket
 import json
 import time
-
+from pyzbar.pyzbar import decode
 
 from flask import Flask, request, make_response
 import threading
@@ -295,11 +295,10 @@ def calculate_pose():
             frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
 
-            #last_frame = frame.copy() # FLASK ---> memory problem
-            if frame_count % 2 == 0:
-                frame_resized = cv2.resize(frame, (320, 240))
-                _, jpeg = cv2.imencode('.jpg', frame_resized, [cv2.IMWRITE_JPEG_QUALITY, 60])
-                last_frame = jpeg.tobytes()
+            #if frame_count % 2 == 0:
+            frame_resized = cv2.resize(frame, (320, 240))
+            _, jpeg = cv2.imencode('.jpg', frame_resized, [cv2.IMWRITE_JPEG_QUALITY, 60])
+            last_frame = jpeg.tobytes()
 
             # RGB to send to mediapipe
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -324,10 +323,8 @@ def calculate_pose():
                 else:
                     results.pose_landmarks = None  # Clear the pose to prevent tracking
             '''
-            #if frame_count % 5 == 0:  # Draw every 5 frames
-            #    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
-
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            #To draw the dots, uncomment this
+            #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
 
             # Display the image
@@ -348,9 +345,38 @@ def calculate_pose():
             if calibrated == False or calibratedDirection == False:
                 if inMenu == "mm":  # meaning it is in menu
                     try:
-                        detector = cv2.QRCodeDetector()
-                        decodedText, points, _ = detector.detectAndDecode(image)
+                        decodedText = ""
+                        decoded_QR = decode(frame_resized)
 
+                        if decoded_QR:
+                            obj = decoded_QR[0]
+                            decodedText = obj.data.decode('utf-8')
+                            print(f"QR Code Detected: {decodedText}")
+
+                            if decodedText != "":
+                                scanningPlayerId = int(decodedText)
+
+                                # Only update if it's a *new* scan
+                                if not scanned or scanningPlayerId != PlayerId:
+                                    PlayerId = scanningPlayerId
+                                    print(f"✅ PlayerId scanned: {PlayerId}")
+                                    try:
+                                        myData = f"<START>ID:{PlayerId}<END>"
+                                        client.sendall(myData.encode("utf-8"))
+                                        scanned = True
+                                    except Exception as e:
+                                        print(f"⚠️ Failed to send data: {e}")
+
+                        '''
+                        decoded_QR = decode(frame_resized)
+                        
+                        if decoded_QR:
+                            # Only process the first detected QR code
+                            obj = decoded_QR[0]
+                            decodedText = obj.data.decode('utf-8')
+                            print(decodedText)
+
+                            print(f"QR Code Detected: {decodedText}")
 
                         if decodedText != "":
                             scanningPlayerId = int(decodedText)
@@ -366,7 +392,7 @@ def calculate_pose():
                                     scanned = True
                                 except Exception as e:
                                     print(f"⚠️ Failed to send data: {e}")  # ✅ Print error for debugging
-
+                            '''
                     except:
                         pass
 
@@ -565,7 +591,7 @@ def calculate_pose():
                         else:
                             #if calculate_distance(right_ankle[1], right_ankle_initial[1]) > normalizor * 0.1 or calculate_distance(left_ankle[1], left_ankle_initial[1]) > normalizor * 0.1:
                             #print(f"right_foot is at {right_foot} and needs to be higher than: {left_foot + normalizor * 0.15}")
-                            print(right_foot > left_foot + normalizor * 0.12)
+                            #print(right_foot > left_foot + normalizor * 0.12)
                             if right_foot > left_foot + normalizor * 0.12 or left_foot > right_foot + normalizor * 0.12:
                                 moving = True
                                 movingTimer = time.time() + 0.5

@@ -54,6 +54,10 @@ namespace TeseAPIs.Services
 
             var query = $"UPDATE Challenge SET ended = 1 WHERE id = {challenge.Id}";
 
+
+            //query = $"UPDATE Challenge SET ended = 1 WHERE DATETIME('now') > DATETIME(enddate) and ended = 0"; // closes challenges that shouldnt exists (maybe not needed)
+            //await connection.ExecuteAsync(query);
+
             var result = await connection.ExecuteAsync(query);
 
             if (result > 0)
@@ -81,10 +85,10 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"UPDATE Challenge SET ended = 1 WHERE DATETIME('now') > DATETIME(enddate) and ended = 0"; // closes challenges
-            int closed = await connection.ExecuteAsync(query);
+            //var query = $"UPDATE Challenge SET ended = 1 WHERE DATETIME('now') > DATETIME(enddate) and ended = 0"; // closes challenges
+            //int closed = await connection.ExecuteAsync(query);
 
-            query = $"UPDATE Challenge SET started = 1 WHERE DATETIME('now') > DATETIME(startdate) and ended = 0"; // updates the challenges startdate
+            var query = $"UPDATE Challenge SET started = 1 WHERE DATETIME('now') > DATETIME(startdate) and ended = 0"; // updates the challenges startdate
 
             await connection.ExecuteAsync(query);
 

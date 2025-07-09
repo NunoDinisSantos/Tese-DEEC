@@ -143,7 +143,7 @@ namespace TeseAPIs.Services.Helper
                     var noWinnerDto = new ChallengeWinnerDataDTO()
                     {
                         ChallengeId = challenge.Id,
-                        Nick_Name = "SEM VENCEDOR",
+                        Nick_Name = "NO WINNER",
                         Player_Id = ""
                     };
 

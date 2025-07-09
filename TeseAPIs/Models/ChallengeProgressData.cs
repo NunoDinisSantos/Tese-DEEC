@@ -8,5 +8,6 @@
         public int FishCaught { get; set; }
         public int Credits { get; set; }
         public int ChallengeId { get; set; }
+        public int CaughtRareFish { get; set; }
     }
 }

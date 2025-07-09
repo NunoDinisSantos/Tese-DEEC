@@ -25,11 +25,13 @@ namespace TeseAPIs.Services
                 EventType = challengeDTO.EventType,
                 QuantityX = challengeDTO.QuantityX,
                 QuantityY = challengeDTO.QuantityY,
-                QuantityZ = challengeDTO.QuantityZ
+                QuantityZ = challengeDTO.QuantityZ,
+                FishIndex = challengeDTO.FishIndex,
+                FishZoneIndex = challengeDTO.FishZoneIndex,
             };
 
             var query = $@"
-                INSERT INTO Challenge (startdate, enddate, description, ended, eventtype, quantityx, quantityy, quantityz, started) 
+                INSERT INTO Challenge (startdate, enddate, description, ended, eventtype, quantityx, quantityy, quantityz, started, fishindex, fishzoneindex) 
                 VALUES (
                     '{challenge.StartDate}',
                     '{challenge.EndDate}',
@@ -39,7 +41,9 @@ namespace TeseAPIs.Services
                     {challenge.QuantityX},
                     {challenge.QuantityY},
                     {challenge.QuantityZ},
-                    {Convert.ToInt32(challenge.Started)}
+                    {Convert.ToInt32(challenge.Started)},
+                    {challenge.FishIndex},
+                    {challenge.FishZoneIndex}
                 );";
             await connection.ExecuteAsync(query);
 
@@ -72,7 +76,9 @@ namespace TeseAPIs.Services
                     EventType = challenge.EventType,
                     QuantityX = challenge.QuantityX,
                     QuantityY = challenge.QuantityY,
-                    QuantityZ = challenge.QuantityZ
+                    QuantityZ = challenge.QuantityZ,
+                    FishIndex = challenge.FishIndex,
+                    FishZoneIndex = challenge.FishZoneIndex,
                 };
 
                 return returnChallenge;
@@ -140,7 +146,9 @@ namespace TeseAPIs.Services
                     Started = challenge.Started,
                     QuantityX = challenge.QuantityX,
                     QuantityY = challenge.QuantityY,
-                    QuantityZ = challenge.QuantityZ
+                    QuantityZ = challenge.QuantityZ,
+                    FishZoneIndex = challenge.FishZoneIndex,
+                    FishIndex = challenge.FishIndex,
                 };
 
                 return returnChallenge;
@@ -174,7 +182,9 @@ namespace TeseAPIs.Services
                     EventType = challenge.EventType,
                     QuantityX = challenge.QuantityX,
                     QuantityY = challenge.QuantityY,
-                    QuantityZ = challenge.QuantityZ
+                    QuantityZ = challenge.QuantityZ,
+                    FishIndex = challenge.FishIndex,
+                    FishZoneIndex= challenge.FishZoneIndex,
                 };
 
                 //var startDate = DateTime.Parse(challenge.StartDate, CultureInfo.InvariantCulture);

@@ -19,5 +19,9 @@
         public int QuantityY { get; set; }
 
         public int QuantityZ { get; set; }
+
+        public int FishIndex { get; set; }
+
+        public int FishZoneIndex { get; set; }
     }
 }

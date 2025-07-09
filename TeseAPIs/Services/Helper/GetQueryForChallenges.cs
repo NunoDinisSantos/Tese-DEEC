@@ -48,6 +48,10 @@
                     SELECT * FROM ChallengeProgress 
                     ORDER BY (coins + credits + fishcaught) DESC LIMIT 3",
 
+                14 => $@"
+                    SELECT * FROM ChallengeProgress 
+                    ORDER BY (caughtrarefish) DESC LIMIT 3",
+
                 _ => throw new ArgumentException("Unknown challenge type")
             };
 

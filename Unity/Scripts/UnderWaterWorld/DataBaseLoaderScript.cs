@@ -11,8 +11,8 @@ using UnityEngine.Networking;
 public class DataBaseLoaderScript : MonoBehaviour
 {
     [HideInInspector] public string playerId;
-    //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
-    private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
+    private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
+    //private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
     [HideInInspector] public PlayerData playerData;
     [HideInInspector] public bool loaded = false;
     public int maxDayStreak = 3;
@@ -36,6 +36,8 @@ public class DataBaseLoaderScript : MonoBehaviour
 
     public int savedChallengeId = -1;
     public int ChallengeType = -1;
+    public int FishZoneIndex = -1;
+    public int FishIndex = -1;
 
     public GameObject[] DesafioPanels;
 
@@ -72,7 +74,9 @@ public class DataBaseLoaderScript : MonoBehaviour
         {
             ChallengeDTO challenge = JsonUtility.FromJson<ChallengeDTO>(jsonResponse);
             ChallengeType = challenge.eventType;
-            savedChallengeId = challenge.id;         
+            savedChallengeId = challenge.id;
+            FishZoneIndex = challenge.fishZoneIndex;
+            FishIndex = challenge.fishIndex;
         }
         Debug.Log("ChallengeId is: "+ savedChallengeId + " and Event type is: " + ChallengeType);
     }
@@ -140,6 +144,8 @@ public class DataBaseLoaderScript : MonoBehaviour
                 ChallengeEndDate.text = end.Day+"-"+end.Month+"-"+end.Year;
                 ChallengeStartDate.text = start.Day + "-" + start.Month + "-" + start.Year;
                 ChallengeType = challenge.eventType;
+                FishZoneIndex = challenge.fishZoneIndex;
+                FishIndex = challenge.fishIndex;
                 savedChallengeId = challenge.id;
                 DesafioPanels[1].GetComponent<TMP_Text>().text = "to";
                 DesafioPanels[1].SetActive(true);
@@ -259,7 +265,8 @@ public class DataBaseLoaderScript : MonoBehaviour
             fishCaught = progress.fishCaught,
             nick_Name = progress.nick_Name,
             playerId = progress.playerId,
-            challengeId = savedChallengeId
+            challengeId = savedChallengeId,
+            caughtRareFish = progress.caughtRareFish,
         };
 
         string jsonBody = JsonUtility.ToJson(progressDTO);
@@ -608,6 +615,7 @@ public class ChallengeProgressData
     public int fishCaught { get; set; }
     public int credits { get; set; }
     public int challengeId { get; set; }
+    public int caughtRareFish { get; set; }
 }
 
 [Serializable]
@@ -674,6 +682,8 @@ public class Challenge
     public int quantityx;
     public int quantityy;
     public int quantityz;
+    public int fishZoneIndex;
+    public int fishIndex;
 }
 
 public class ChallengeDTO
@@ -688,6 +698,8 @@ public class ChallengeDTO
     public int quantityx;
     public int quantityy;
     public int quantityz;
+    public int fishZoneIndex;
+    public int fishIndex;
 }
 
 
@@ -735,6 +747,7 @@ public class ChallengeProgressDataDTO
     public int fishCaught;
     public int credits;
     public int challengeId;
+    public int caughtRareFish;
 }
 
 public static class JsonHelper

@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -398,13 +398,15 @@ public class ShopManager : MonoBehaviour
             _PlayerProgress.TimePlayed = timePlayed;
             _PlayerProgress.UpdateFishCaught(inventory.fishDayCatched);
             _PlayerProgress.UpdateCreditsCombined(creditsGained);
+
             var playerProgress = new ChallengeProgressData()
             {
                 playerId = PlayerDataScript.playerDataInstance.PlayerId,
                 coins = moneyGained,
                 fishCaught = inventory.fishDayCatched,
                 credits = creditsGained,
-                nick_Name = PlayerDataScript.playerDataInstance.StudentNick
+                nick_Name = PlayerDataScript.playerDataInstance.StudentNick,
+                caughtRareFish = inventory.fishListType.Any(x => x == 999) ? 1 : 0,
             };
             inventory.fishDayCatched = 0;
             inventory.fishListMoneyWorth.Clear();
@@ -443,7 +445,8 @@ public class ShopManager : MonoBehaviour
             coins = moneyGained,
             fishCaught = inventory.fishDayCatched,
             credits = creditsGained,
-            nick_Name = PlayerDataScript.playerDataInstance.StudentNick
+            nick_Name = PlayerDataScript.playerDataInstance.StudentNick,
+            caughtRareFish = inventory.fishListType.Any(x => x == 999) ? 1 : 0,
         };
 
         inventory.fishDayCatched = 0;

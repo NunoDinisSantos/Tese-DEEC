@@ -21,7 +21,7 @@ namespace TeseAPIs.Services
 
                 if (result.Count() == 0)
                 {
-                    query = $@"INSERT INTO ChallengeProgress (playerId, nick_name,coins, credits, fishcaught, challengeId) VALUES ('{progressData.PlayerId}', '{progressData.Nick_Name}',{progressData.Coins}, {progressData.Credits},{progressData.FishCaught}, {progressData.ChallengeId})";
+                    query = $@"INSERT INTO ChallengeProgress (playerId, nick_name,coins, credits, fishcaught, challengeId, caughtrarefish) VALUES ('{progressData.PlayerId}', '{progressData.Nick_Name}',{progressData.Coins}, {progressData.Credits},{progressData.FishCaught}, {progressData.ChallengeId}, {progressData.CaughtRareFish})";
                     await connection.ExecuteAsync(query);
 
                     return new ChallengeProgressData()
@@ -32,6 +32,7 @@ namespace TeseAPIs.Services
                         Credits = progressData.Credits,
                         FishCaught = progressData.FishCaught,
                         ChallengeId = progressData.ChallengeId,
+                        CaughtRareFish = progressData.CaughtRareFish,
                     };
                 }
 
@@ -40,8 +41,9 @@ namespace TeseAPIs.Services
                     result.First().Coins += progressData.Coins;
                     result.First().Credits += progressData.Credits;
                     result.First().FishCaught += progressData.FishCaught;
+                    result.First().CaughtRareFish += progressData.CaughtRareFish;
 
-                    query = $@"UPDATE ChallengeProgress SET coins = {result.First().Coins}, credits = {result.First().Credits}, fishcaught = {result.First().FishCaught} WHERE playerId = '{progressData.PlayerId}'";
+                    query = $@"UPDATE ChallengeProgress SET coins = {result.First().Coins}, credits = {result.First().Credits}, fishcaught = {result.First().FishCaught}, caughtrarefish = {result.First().CaughtRareFish} WHERE playerId = '{progressData.PlayerId}'";
 
                     await connection.ExecuteAsync(query);
                 }
@@ -75,7 +77,7 @@ namespace TeseAPIs.Services
         {
             using var connection = await connectionFactory.CreateConnectionAsync();
 
-            var query = $"UPDATE ChallengeProgress SET fishcaught = 0, coins = 0, credits = 0";
+            var query = $"UPDATE ChallengeProgress SET fishcaught = 0, coins = 0, credits = 0, caughtrarefish = 0";
 
             var result = await connection.ExecuteAsync(query);
 

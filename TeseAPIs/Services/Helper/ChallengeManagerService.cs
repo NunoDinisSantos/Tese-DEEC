@@ -126,6 +126,11 @@ namespace TeseAPIs.Services.Helper
                             .FirstOrDefault(x => x.Coins >= challenge.QuantityX && x.Credits >= challenge.QuantityY
                             && x.FishCaught >= challenge.QuantityZ);
                         break;
+
+                    case 14:
+                        winner = possibleWinners
+                        .FirstOrDefault(x => x.CaughtRareFish > 0);
+                        break;
                 }
             }
 

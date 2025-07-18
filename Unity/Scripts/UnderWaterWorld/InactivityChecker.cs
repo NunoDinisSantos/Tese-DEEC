@@ -29,6 +29,8 @@ public class InactivityChecker : MonoBehaviour
     [SerializeField]
     private bool InTutorial = false;
 
+    public bool inStore = false;
+
     private void Start()
     {
         Timer = InactivityTime;
@@ -61,7 +63,10 @@ public class InactivityChecker : MonoBehaviour
 
         else
         {
-            Timer--;
+            if (!inStore)
+            {
+                Timer--;
+            }
 
             if (Timer <= 30)
             {

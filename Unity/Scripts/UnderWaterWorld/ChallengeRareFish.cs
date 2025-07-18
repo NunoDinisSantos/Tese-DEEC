@@ -17,7 +17,7 @@ public class ChallengeRareFish : MonoBehaviour
     [SerializeField] private bool RareFishChallenge = false;
     [SerializeField] private bool spawned = false;
 
-    [SerializeField] private int maxProbabilityNumber = 1000;
+    [SerializeField] private int maxProbabilityNumber = 3000;
     [SerializeField] private int jackpotNumber = 500;
 
     [SerializeField] private bool IAmACheater = false;

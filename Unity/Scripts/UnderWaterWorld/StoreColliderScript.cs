@@ -20,11 +20,14 @@ public class StoreColliderScript : MonoBehaviour
     [HideInInspector][SerializeField] private GameObject storeSub;
     [HideInInspector][SerializeField] private GameObject miscStoreObjects;
 
+    [SerializeField] private InactivityChecker inactivityChecker;
+
     private void OnTriggerEnter(Collider other)
     {
         if(!inStore)
         {
             inStore = true;
+            inactivityChecker.inStore = inStore;
             playerMovement.speed = 0.0f; // alterar para 10 depois
             playerMovement.ByPassWater = true;  // alterar para false depois
             playerMovement.lookLocked = true; 
@@ -113,6 +116,7 @@ public class StoreColliderScript : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         //playerMovement.gameObject.transform.GetChild(0).GetComponent<Animation>().Play("CameraAnimationStoreReset");
         inStore = false;
+        inactivityChecker.inStore = inStore;
         playerMovement.speed = 15.0f;
         playerMovement.ByPassWater = false;
         playerMovement.lookLocked = false;

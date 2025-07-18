@@ -11,8 +11,8 @@ using UnityEngine.Networking;
 public class DataBaseLoaderScript : MonoBehaviour
 {
     [HideInInspector] public string playerId;
-    private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
-    //private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
+    //private string partialFileEndpoint = "https://localhost:44335/"; // TO CHANGE 
+    private string partialFileEndpoint = "https://misteriosaquaticos.pt/";
     [HideInInspector] public PlayerData playerData;
     [HideInInspector] public bool loaded = false;
     public int maxDayStreak = 3;
